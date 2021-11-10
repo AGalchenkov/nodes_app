@@ -1,0 +1,46 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'nodes/style.css' %}">
+<script type="text/javascript" src="{% static 'nodes/js/jquery-3.6.0.min.js' %}"></script>
+<a href="{% url 'nodes:rack_list' %}"><div class="left_top_fixed">Rack List</div></a>
+<div class="node_tbl_cnt">
+    <h1 class="tbl_header">{{ location }}</h1>
+    <table class="table">
+	    <thead>
+		    <tr>
+			    <td class="rack_tbl">Unit</td>
+			    <td>Node</td>
+			    <td>Owner</td>
+                <td>Comment</td>
+		    </tr>
+	    </thead>
+	    <tbody class="section">
+        {% for item in u_list %}
+                <tr>
+                    {% if item.unit_num in units_used %}
+                    <td class="rack_tbl"><span class="in_used">U{{item.unit_num}}</span></td>
+                    {% else %}
+                        <td class="rack_tbl">U{{item.unit_num}}</td>
+                    {% endif %}
+                    {% if not item.created %}
+                        <td class="rack_tbl"><a href="{% url 'nodes:unit_create' rack_id item.unit_num %}">empty</a></td>
+                    {% elif item.model == None %}
+                        <td class="rack_tbl"><a href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">empty</a></td>
+                    {% else %}
+                        {% if item.model.units_takes > 1 %}
+                            <td class="rack_tbl"><a href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">{{item.model}}{{item.hostname}} ({{item.model.units_takes}}U)</a></td>
+                        {% else %}
+                            <td class="rack_tbl"><a href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">{{item.model}}{{item.hostname}}</a></td>
+                        {% endif %}
+                    {% endif%}
+                    {% if item.owner == None %}
+                        <td></td>
+                    {% else %}
+                        <td>{{item.owner}}</td>
+                    {% endif %}
+                    <td class="comment">{{item.comment}}</td>
+                </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

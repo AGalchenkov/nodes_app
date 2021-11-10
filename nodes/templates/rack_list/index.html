@@ -1,0 +1,11 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'nodes/style.css' %}">
+<div class="small_tbl_cnt">
+    <h1 class="tbl_header">Rack List</h1>
+    <ul>
+    {% for r in r_list %}
+        <a href="{% url 'nodes:rack' r.id %}"><li>{{ r }}</li></a>
+    {% endfor %}
+</ul>
+</div>
