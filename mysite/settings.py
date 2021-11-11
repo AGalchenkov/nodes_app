@@ -35,6 +35,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     #MY_APPS
     'nodes.apps.NodesConfig',
+    'users',
     #default
     'django.contrib.admin',
     'django.contrib.auth',
