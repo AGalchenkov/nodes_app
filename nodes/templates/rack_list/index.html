@@ -1,4 +1,8 @@
+{% extends 'nodes/base.html' %}
+
 {% load static %}
+
+{% block content %}
 
 <link rel="stylesheet" type="text/css" href="{% static 'nodes/style.css' %}">
 <div class="small_tbl_cnt">
@@ -9,3 +13,4 @@
     {% endfor %}
 </ul>
 </div>
+{% endblock content %}

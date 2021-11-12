@@ -3,6 +3,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.views import generic
 from django.forms import *
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+
 
 from .models import *
 
@@ -18,6 +21,10 @@ class RackListView(generic.ListView):
 def index(request):
     return HttpResponse("THIS IS NODES APP!")
 
+def base(request):
+    return render(request, 'nodes/base.html')
+
+@login_required
 def rack_list(request):
     r_list = Racks.objects.all()
     context = {
@@ -25,6 +32,7 @@ def rack_list(request):
     }
     return render(request, 'rack_list/index.html', context)
 
+@login_required
 def rack(request, rack_id):
     units_used = Units.objects.values_list('unit_num', flat=True).filter(in_use=True,rack_id=rack_id)
     u_list = []
@@ -73,6 +81,7 @@ def rack(request, rack_id):
     }
     return render(request, 'rack/index.html', context)
 
+@login_required
 def unit_detail(request, rack_id, unit_num):
     rack = Racks.objects.get(id=rack_id)
     try:
@@ -88,12 +97,19 @@ def unit_detail(request, rack_id, unit_num):
     if request.method != 'POST':
         unit_form = UnitForm(instance=unit)
     else:
-        comments.text = request.POST['comment']
+        #comments.text = request.POST['comment']
+        if request.POST['comment']:
+            if comments.text != request.POST['comment']:
+                comments.text = request.POST['comment']
+                comments.author = request.user
+                #comments.save()
         unit_form = UnitForm(instance=unit, data=request.POST)
-        comment_form = CommentForm(instance=comments, data=comments.__dict__)
-        if unit_form.is_valid() and comment_form.is_valid():
+        #comment_form = CommentForm(instance=comments, data=comments.__dict__)
+        if unit_form.is_valid(): # and comment_form.is_valid():
+            comments.save()
             unit_form.save()
-            comment_form.save()
+
+          #  comment_form.save()
             return HttpResponseRedirect(reverse('nodes:rack', args=[rack_id]))
     context = {
         'unit': unit,
@@ -104,6 +120,7 @@ def unit_detail(request, rack_id, unit_num):
     }
     return render(request, 'unit_detail/index.html', context)
 
+@login_required
 def unit_create(request, rack_id, unit_num):
     rack = Racks.objects.get(id=rack_id)
     form = UnitCreateForm(instance=Units, initial={
@@ -120,3 +137,4 @@ def unit_create(request, rack_id, unit_num):
         'unit_num': unit_num
     }
     return render(request, 'unit_create/index.html', context)
+

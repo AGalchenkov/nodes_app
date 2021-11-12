@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from django.forms import ModelForm, Textarea, CharField, ChoiceField, Field
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
@@ -44,14 +45,25 @@ class Models(models.Model):
     def __str__(self):
         return self.model_name
 
+class Vendors(models.Model):
+    vendor_name = models.CharField(unique=True, max_length=20)
+    def __str__(self):
+        return self.vendor_name
+
+class PowerSupply(models.Model):
+    power = models.CharField(unique=True, max_length=2)
+    def __str__(self):
+        return self.power
 
 class Units(models.Model):
     in_use = models.BooleanField(default=False)
     used_by_other_unit = models.BooleanField(default=False)
-    owner = models.ForeignKey(Customers, null=True, blank=True, default='', on_delete=models.SET_DEFAULT)
+    owner = models.ForeignKey(User, null=True, blank=True, default='', on_delete=models.SET_DEFAULT)
     rack = models.ForeignKey(Racks, on_delete=models.CASCADE)
   #  comment = models.OneToOneField(Comments, null=True, blank=True, default='', on_delete=models.SET_DEFAULT)
     model = models.ForeignKey(Models, null=True, blank=True, on_delete=models.RESTRICT)
+    vendor = models.ForeignKey(Vendors,null=True, blank=True, on_delete=models.RESTRICT)
+    power = models.ForeignKey(PowerSupply,null=True, blank=True, on_delete=models.RESTRICT)
     mng_ip = models.GenericIPAddressField(blank=True, null=True)
     sn = models.CharField(blank=True, max_length=30)
     unit_num = models.IntegerField(blank=False,
@@ -78,8 +90,8 @@ class Units(models.Model):
         return super(Units, self).save(*args, **kwargs)
 
 class Comments(models.Model):
-    unit = models.OneToOneField(Units, null=True, blank=True, default='', on_delete=models.SET_DEFAULT)
-    author = models.OneToOneField(Customers, null=True, blank=True, on_delete=models.CASCADE)
+    unit = models.OneToOneField(Units, null=True, blank=True, default=None, on_delete=models.SET_DEFAULT)
+    author = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     text = models.CharField(max_length=1000, blank=True)
     pub_date = models.DateTimeField(auto_now=True)
     def __str__(self):
@@ -92,7 +104,7 @@ class UnitForm(ModelForm):
     modified = Field(disabled=True)
     unit_num = CharField(disabled=True)
     comment = CharField(widget=Textarea(attrs={'cols': 40, 'rows': 3}), required=False)
-    comment_owner = CharField(disabled=True, required=False)
+    comment_author = CharField(disabled=True, required=False)
     model = Units
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -100,8 +112,10 @@ class UnitForm(ModelForm):
         print(self.initial)
         try:
             self.initial['comment'] = kwargs['instance'].comments
+            self.initial['comment_author'] = kwargs['instance'].comments.author
         except models.ObjectDoesNotExist:
             self.initial['comment'] = ''
+            self.initial['comment_author'] = None
 
     def clean(self):
         cleaned_data = super().clean()

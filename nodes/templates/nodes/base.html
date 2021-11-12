@@ -1,0 +1,8 @@
+{% if user.is_authenticated %}
+    <div class="username">
+        User@{{ user.username }}
+    </div>
+{% endif %}
+
+
+{% block content %}{% endblock content %}

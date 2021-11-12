@@ -281,3 +281,18 @@ input[type=submit]:hover {
     font-weight: bold;
     width: 70%;
 }
+
+.username {
+    display: inline-block;
+    padding: 15px;
+    background-color: white;
+    box-shadow: 0 0 15px #d7d7d7;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    font-weight: bold;
+    position: absolute;
+    top: 25px;
+    right: 0px;
+    font-size: large;
+    color: #484848;
+}
