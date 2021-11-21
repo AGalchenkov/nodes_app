@@ -5,8 +5,6 @@ from django.views import generic
 from django.forms import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-
-
 from .models import *
 
 class IndexView(generic.ListView):
@@ -34,44 +32,12 @@ def rack_list(request):
 
 @login_required
 def rack(request, rack_id):
-    units_used = Units.objects.values_list('unit_num', flat=True).filter(in_use=True,rack_id=rack_id)
+    units_used = Units.objects.values_list('unit_num', flat=True).filter(in_use=True, rack_id=rack_id)
     u_list = []
-    rack = Racks.objects.filter(id=rack_id)
-    location = rack[0].__str__().replace('_', ' ')
-    units = [i for i in range(1,rack[0].units_num+1)]
-    for item in units:
-        try:
-            u_item = Units.objects.get(rack_id=rack_id, unit_num=item)
-            hostname = f'@{u_item.hostname}' if u_item.hostname else ''
-            if u_item.model:
-                u_list.append({
-                    'created': True,
-                    'unit_num': item,
-                    'model': u_item.model,
-                    'owner': u_item.owner,
-                    'units_takes': u_item.model.units_takes,
-                    'comment': u_item.comments,
-                    'hostname': hostname,
-                })
-            else:
-                u_list.append({
-                    'created': True,
-                    'unit_num': item,
-                    'model': u_item.model,
-                    'owner': u_item.owner,
-                    'comment': u_item.comments,
-                    'hostname': hostname,
-                })
-        except ObjectDoesNotExist:
-            hostname = ''
-            u_list.append({
-                'created': False,
-                'unit_num': item,
-                'model': 'empty',
-                'owner': '',
-                'comment': '',
-                'hostname': hostname,
-            })
+    rack = Racks.objects.get(id=rack_id)
+    location = rack.__str__().replace('_', ' ')
+    u_list = Units.objects.filter(rack=rack)
+    u_list = reversed(u_list)
     context = {
         'u_list': u_list,
         'rack': rack,
@@ -83,33 +49,34 @@ def rack(request, rack_id):
 
 @login_required
 def unit_detail(request, rack_id, unit_num):
+    if Units.objects.get(rack_id=rack_id, unit_num=unit_num).used_by_unit:
+        return HttpResponseRedirect(reverse('nodes:rack', args=[rack_id]))
     rack = Racks.objects.get(id=rack_id)
     try:
         unit = Units.objects.get(rack_id=rack_id, unit_num=unit_num)
     except ObjectDoesNotExist:
         unit = Units(rack_id=rack_id, unit_num=unit_num, owner=None)
         unit.save()
-    try:
-        comments = Comments.objects.get(unit=unit)
-    except ObjectDoesNotExist:
-        comments = Comments(unit=unit, text='')
-        comments.save()
     if request.method != 'POST':
-        unit_form = UnitForm(instance=unit)
+        unit_form = UnitForm(instance=unit, initial={'modified_by': unit.modified_by, 'comment': unit.comment})
     else:
-        #comments.text = request.POST['comment']
+        print(f"###########1 Comment:   {request.POST['comment']}")
         if request.POST['comment']:
-            if comments.text != request.POST['comment']:
-                comments.text = request.POST['comment']
-                comments.author = request.user
-                #comments.save()
-        unit_form = UnitForm(instance=unit, data=request.POST)
-        #comment_form = CommentForm(instance=comments, data=comments.__dict__)
-        if unit_form.is_valid(): # and comment_form.is_valid():
-            comments.save()
+            if not unit.comment or unit.comment.text != request.POST['comment']:
+                c1 = Comments(text=request.POST['comment'], author=request.user, units=unit)
+                c1.save()
+                unit_form = UnitForm(request=request, instance=unit, data=request.POST, initial={'comment': unit.comment})
+            else:
+                unit_form = UnitForm(request=request, instance=unit, data=request.POST)
+        else:
+            #if not unit.comment:
+             c1 = Comments(text=None, author=None, units=unit, pub_date=None)
+             c1.save()
+             unit_form = UnitForm(request=request, instance=unit, data=request.POST, initial={'comment': unit.comment})
+            #else:
+            #    unit_form = UnitForm(request=request, instance=unit, data=request.POST)
+        if unit_form.is_valid():
             unit_form.save()
-
-          #  comment_form.save()
             return HttpResponseRedirect(reverse('nodes:rack', args=[rack_id]))
     context = {
         'unit': unit,
@@ -119,6 +86,63 @@ def unit_detail(request, rack_id, unit_num):
         'form': unit_form,
     }
     return render(request, 'unit_detail/index.html', context)
+
+@login_required
+def search(request):
+    qs = {}
+
+    form = SearchForm(instance=Units)
+
+    if request.method != 'POST':
+        form = SearchForm(instance=Units, initial={'sn': '', 'comment': '', 'hostname': '', 'mng_ip': ''})
+    else:
+        qs = Units.objects.all()
+        for key, val in request.POST.items():
+            if key == 'csrfmiddlewaretoken':
+                continue
+            if key == 'comment':
+                qs = qs.filter(comment__text__icontains=val)
+                continue
+            if key == 'hostname':
+                qs = qs.filter(hostname__icontains=val)
+                continue
+            if key == 'has_model':
+                if request.POST['has_model'] == '2':
+                    qs = qs.filter(model__isnull=False)
+                    continue
+                elif request.POST['has_model'] == '3':
+                    qs = qs.filter(model__isnull=True)
+                    continue
+                else:
+                    continue
+            if val:
+                qs = qs.filter(**{ key:val })
+        print(request.POST)
+        sn = request.POST['sn'] if request.POST['sn'] else ''
+        mng_ip = request.POST['mng_ip'] if request.POST['mng_ip'] else ''
+        hostname = request.POST['hostname'] if request.POST['hostname'] else ''
+
+        print(f"##################### HAS_MODEL:      {request.POST['has_model']}")
+        form = SearchForm(instance=Units, initial={
+            'owner': request.POST['owner'],
+            'rack': request.POST['rack'],
+            'model': request.POST['model'],
+            'vendor': request.POST['vendor'],
+            'power': request.POST['power'],
+            'vendor_model': request.POST['vendor_model'],
+            'sn': sn,
+            'mng_ip': mng_ip,
+            'hostname': hostname,
+            'has_model': request.POST['has_model'],
+            'comment': request.POST['comment'],
+        })
+
+    context = {
+        'form': form,
+        'qs': qs,
+        'request': request,
+    }
+    return render(request, 'search/index.html', context)
 
 @login_required
 def unit_create(request, rack_id, unit_num):

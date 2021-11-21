@@ -26,15 +26,23 @@
                     {% else %}
                         <td class="rack_tbl">U{{item.unit_num}}</td>
                     {% endif %}
-                    {% if not item.created %}
-                        <td class="rack_tbl"><a href="{% url 'nodes:unit_create' rack_id item.unit_num %}">empty</a></td>
+                    {% if item.used_by_unit %}
+                        <td class="not_active">U{{item.used_by_unit}}</td>
                     {% elif item.model == None %}
                         <td class="rack_tbl"><a href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">empty</a></td>
                     {% else %}
                         {% if item.model.units_takes > 1 %}
-                            <td class="rack_tbl"><a href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">{{item.model}}{{item.hostname}} ({{item.model.units_takes}}U)</a></td>
+                            {% if item.hostname %}
+                                <td class="rack_tbl with_model"><a class="bold" href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">{{item.model}}@{{item.hostname}} ({{item.model.units_takes}}U)</a></td>
+                            {% else %}
+                                <td class="rack_tbl with_model bold"><a class="bold" href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">{{item.model}}{{item.hostname}} ({{item.model.units_takes}}U)</a></td>
+                            {% endif %}
                         {% else %}
-                            <td class="rack_tbl"><a href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">{{item.model}}{{item.hostname}}</a></td>
+                                {% if item.hostname %}
+                                    <td class="rack_tbl with_model"><a class="bold" href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">{{item.model}}@{{item.hostname}}</a></td>
+                                {% else %}
+                                    <td class="rack_tbl with_model"><a class="bold" href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">{{item.model}}{{item.hostname}}</a></td>
+                                {% endif %}
                         {% endif %}
                     {% endif%}
                     {% if item.owner == None %}
@@ -42,7 +50,11 @@
                     {% else %}
                         <td>{{item.owner}}</td>
                     {% endif %}
-                    <td class="comment">{{item.comment}}</td>
+                    {% if item.comment == None %}
+                        <td class="comment"></td>
+                    {% else %}
+                        <td class="comment">{{item.comment}}</td>
+                    {% endif %}
                 </tr>
         {% endfor %}
         </tbody>

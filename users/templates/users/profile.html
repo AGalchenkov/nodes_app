@@ -1,0 +1,32 @@
+{% extends "nodes/base.html" %}
+
+{% block content %}
+
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'nodes/style.css' %}">
+
+<a href="{% url 'nodes:rack_list' %}"><div class="left_top_fixed">Rack List</div></a>
+<div class="small_tbl_cnt">
+    <h1 class="tbl_header">My units</h1>
+    <div class="unit_dtl_main_conteiner">
+        <ul>
+        {% for u in unit_link_list %}
+            <a href="{% url 'nodes:unit_detail' u.rack_id u.unit_num %}"><li class="rack_list">{{ u.url_text }}</li></a>
+        {% empty %}
+            <div class="rack_list">There are no units yet</div>
+        {% endfor %}
+        </ul>
+    </div>
+    <h1 class="tbl_header">Manage</h1>
+    <div class="unit_dtl_main_conteiner">
+        <ul>
+            <li>
+                <a href="{% url 'users:password_change' %}"><li class="rack_list">Change Password</li></a>
+                <a href="{% url 'users:logout' %}"><li class="rack_list">Log Out</li></a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,40 @@
+{% extends "nodes/base.html" %}
+
+{% block content %}
+
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'nodes/style.css' %}">
+<script type="text/javascript" src="{% static 'nodes/js/jquery-3.6.0.min.js' %}"></script>
+
+<a href="{% url 'nodes:rack_list' %}"><div class="left_top_fixed">Rack List</div></a>
+<div class="search">
+<div class="small_tbl_cnt_search">
+    <h1 class="tbl_header">Search</h1>
+    <div class="unit_dtl_main_conteiner">
+        <form action="{% url 'nodes:search'%}" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+    </div>
+    <input type="Submit" value="Search">
+</form>
+</div>
+<div class="small_tbl_cnt_search">
+    <h1 class="tbl_header">Result</h1>
+    <div class="unit_dtl_main_conteiner">
+        {% if request.method == 'POST' %}
+            <h1 class="tbl_header">Count {{ qs.count }}</h1>
+        {% endif %}
+        <ul>
+            {% for q in qs %}
+                <a href="{% url 'nodes:unit_detail' q.rack_id q.unit_num %}"><li class="rack_list">{{ q }}</li></a>
+            {% empty %}
+                {% if request.method != 'POST' %}
+                    <h2 class="tbl_header">There are no results yet</h2>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+</div>
+{% endblock content %}
