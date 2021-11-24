@@ -66,25 +66,25 @@ thead tr:first-child td{
 			padding-bottom: 15px;
 			font-size: 23px;
 			font-weight: bold;
-			width: 15%;
+			width: 20%;
 }
 
 thead tr:first-child td:first-child {
 			border-bottom-left-radius: 15px;
 			border-top-left-radius: 15px;
-			width:8%;
+			width:5%;
 }
 
 thead tr:first-child td:nth-child(2) {
-            width: 40%
+            width: 20%
 }
 
 thead tr:first-child td:nth-child(3) {
-            width: 30%
+            width: 5%
 }
 
 thead tr:first-child td:last-child {
-            width: 22%
+            width: 50%
 }
 
 thead tr:first-child td:last-child {
@@ -135,6 +135,15 @@ tbody td.bg_green:hover {
 .bg_green {
     		background-color: #3caa3c;
 }
+
+.bg_red {
+    		background-color: red;
+}
+
+.bg_gray {
+    		background-color: gray;
+}
+
 .bg_blue {
 			background-color: rgba(34, 82, 155, 0.98);
 }
@@ -207,7 +216,7 @@ a {
 .node_tbl_cnt {
             margin-top: 30px;
             margin-left: 200px;
-            width: 50%;
+            width: 80%;
 }
 
 .small_tbl_cnt {

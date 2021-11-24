@@ -102,6 +102,7 @@ class Units(models.Model):
     vendor_model = models.ForeignKey(VendorModels,null=True, blank=True, on_delete=models.RESTRICT)
     console = models.ForeignKey(Consoles,null=True, blank=True, on_delete=models.RESTRICT)
     mng_ip = models.GenericIPAddressField(blank=True, null=True)
+    is_avaliable = models.BooleanField(default=False)
     sn = models.CharField(blank=True, max_length=30)
     hostname = models.CharField(blank=True, max_length=15)
     release_date = models.DateTimeField(auto_now=True)
@@ -278,7 +279,13 @@ class SearchForm(ModelForm):
         (2, 'yes'),
         (3, 'no'),
     )
+    is_avaliable_choises = (
+        (1, 'no matter'),
+        (2, 'yes'),
+        (3, 'no'),
+    )
     has_model = ChoiceField(choices=has_model_choises)
+    is_avaliable = ChoiceField(choices=is_avaliable_choises)
 
     model = Units
 

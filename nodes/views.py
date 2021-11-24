@@ -115,6 +115,15 @@ def search(request):
                     continue
                 else:
                     continue
+            if key == 'is_avaliable':
+                if request.POST['is_avaliable'] == '2':
+                    qs = qs.filter(is_avaliable=True)
+                    continue
+                elif request.POST['has_model'] == '3':
+                    qs = qs.filter(is_avaliable=True)
+                    continue
+                else:
+                    continue
             if val:
                 qs = qs.filter(**{ key:val })
         print(request.POST)
