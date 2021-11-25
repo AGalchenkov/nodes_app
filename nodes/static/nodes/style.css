@@ -85,7 +85,7 @@ thead tr:first-child td:nth-child(3) {
 }
 
 thead tr:first-child td:nth-child(4) {
-            width: 6%
+            width: 7%
 }
 
 thead tr:first-child td:nth-child(5) {
@@ -93,7 +93,7 @@ thead tr:first-child td:nth-child(5) {
 }
 
 thead tr:first-child td:last-child {
-            width: 51%
+            width: 50%
 }
 
 thead tr:first-child td:last-child {
@@ -111,6 +111,10 @@ tbody tr:hover td:nth-child(2).rack_tbl {
 			border: 2px solid rgba(34, 82, 155, 0.98);
 			color: white;
 			cursor: pointer;
+}
+
+tbody tr:hover td:nth-child(2).rack_tbl.with_model {
+            tbody tr:hover td:nth-child(2).rack_tbl
 }
 
 tbody tr:hover td:nth-child(2).unit_tbl {
@@ -379,6 +383,10 @@ input[type=submit]:hover {
 
 .with_model {
     border: 2px solid #777 !important;
+}
+
+.with_model:hover {
+    border: 2px solid rgba(34, 82, 155, 0.98) !important;
 }
 
 .search_menu {
