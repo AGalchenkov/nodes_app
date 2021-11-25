@@ -277,6 +277,10 @@ a {
             height: 70%;
 }
 
+.hght_60_prc {
+            height: 60%;
+}
+
 .tbl_header {
             color: gray;
          //   margin-bottom: 50px;
@@ -448,6 +452,7 @@ input[type=submit]:hover {
 }
 
 .frm_unit_dtl > p {
-    width: 650px;
+    width: 600px;
     float: left;
+    margin: 5px;
 }
