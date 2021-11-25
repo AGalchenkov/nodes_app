@@ -8,7 +8,7 @@ table {
 			width:100%;
 		//	border-collapse: collapse;
 			border-collapse: separate;
-			border-spacing: 10px;
+		//	border-spacing: 10px;
 			background-color:white;
 			border-radius: 20px;
 			box-shadow: 0 0 15px #d7d7d7;
@@ -16,16 +16,17 @@ table {
 			padding-left: 30px;
 			padding-right: 30px;
 			margin-bottom: 50px;
+			font-size: 13px;
 }
 
 tr {
-    height: 41px;
+    height: 15px;
 }
 
 td {
 			text-align: center;
-			border-top: 6px solid white;
-			border-bottom: 6px solid white;
+		//	border-top: 6px solid white;
+		//	border-bottom: 6px solid white;
 			white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -64,7 +65,7 @@ thead tr:first-child td{
 			border: none;
 			padding: 10px;
 			padding-bottom: 15px;
-			font-size: 23px;
+			font-size: 17px;
 			font-weight: bold;
 			width: 20%;
 }
@@ -83,8 +84,16 @@ thead tr:first-child td:nth-child(3) {
             width: 6%
 }
 
+thead tr:first-child td:nth-child(4) {
+            width: 6%
+}
+
+thead tr:first-child td:nth-child(5) {
+            width: 12%
+}
+
 thead tr:first-child td:last-child {
-            width: 49%
+            width: 51%
 }
 
 thead tr:first-child td:last-child {
@@ -170,8 +179,8 @@ tbody td.bg_green:hover {
 .red_status {
         background-color: #f05555;
         display: inline-block;
-        width: 18px;
-        height: 18px;
+        width: 12px;
+        height: 12px;
         border-radius: 50%;
         box-sizing: border-box;
 }
@@ -179,8 +188,8 @@ tbody td.bg_green:hover {
 .green_status {
         background-color: #26f93d;
         display: inline-block;
-        width: 18px;
-        height: 18px;
+        width: 12px;
+        height: 12px;
         border-radius: 50%;
         box-sizing: border-box;
 
@@ -189,8 +198,8 @@ tbody td.bg_green:hover {
 .none_status {
         background-color: white;
         display: inline-block;
-        width: 18px;
-        height: 18px;
+        width: 12px;
+        height: 12px;
         border-radius: 50%;
         border: 3px solid #dfdddd;
         box-sizing: border-box;
@@ -243,8 +252,7 @@ a {
 }
 
 .node_tbl_cnt {
-            margin-top: 30px;
-            margin-left: 200px;
+            margin: 30px auto;
             width: 78%;
 }
 
@@ -255,15 +263,19 @@ a {
 }
 
 .small_tbl_cnt_search {
-            margin-top: 30px;
+          //  margin-top: 30px;
             margin-left: 80px;
             margin-right: 100px;
             width: 45%;
 }
 
+.hght_70_prc {
+            height: 70%;
+}
+
 .tbl_header {
             color: gray;
-            margin-bottom: 50px;
+         //   margin-bottom: 50px;
             text-align: center;
 }
 
@@ -295,7 +307,7 @@ label {
 input, textarea, select {
     border: 1px solid #cecdcd;
     border-radius: 10px;
-    padding: 10px;
+    padding: 7px;
 }
 
 input[type=submit] {
@@ -303,7 +315,7 @@ input[type=submit] {
     border:none;
     font-size: 1.25em;
     box-shadow: 0 0 15px #d7d7d7;
-    padding: 15px;
+    padding: 10px;
     border-radius: 15px;
     margin-bottom: 50px;
 }
@@ -329,7 +341,7 @@ input[type=submit]:hover {
 .in_used {
     background-color: green;
     color: white;
-    padding: 5px;
+    padding: 3px;
     border-radius: 8px;
 }
 
@@ -392,7 +404,7 @@ input[type=submit]:hover {
 .not_active {
     background-color: white;
     color: gray;
-    border: 3px dotted #c1c1c1;
+    border: 2px dotted #c1c1c1;
     border-radius: 10px;
 }
 
@@ -404,6 +416,10 @@ input[type=submit]:hover {
 
 .inl_blk {
     display: inline-block;
+}
+
+.fnt_sz_14 {
+    font-size: 14px;
 }
 
 .search {
@@ -421,4 +437,9 @@ input[type=submit]:hover {
 
 .hght_100_prc {
     height: 100%;
+}
+
+.frm_unit_dtl > p {
+    width: 650px;
+    float: left;
 }

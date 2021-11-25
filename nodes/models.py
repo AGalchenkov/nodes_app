@@ -6,6 +6,8 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 import time, datetime
 from django.utils.timezone import now
 
+from ping3 import ping
+
 class Customers(models.Model):
     customer = models.CharField(unique=True, max_length=50)
     def __str__(self):
@@ -199,6 +201,8 @@ class UnitForm(ModelForm):
 
     def clean(self):
         print(f'########## CHANGED:   {self.changed_data}')
+        print('SELF FORMS::::')
+        print(self.instance.is_avaliable)
         other_unit_used_list = []
         user = self.request.user
         cleaned_data = super().clean()
@@ -209,6 +213,15 @@ class UnitForm(ModelForm):
             cleaned_data['comment_pub_date'] = None
         if comment in self.changed_data:
             cleaned_data['comment'] = Units.objects.get(id=comment).comment
+        if 'mng_ip' in self.changed_data:
+            mng_ip = cleaned_data.get('mng_ip')
+            try:
+                if ping(mng_ip, timeout=0.5):
+                    self.instance.is_avaliable = True
+                else:
+                    self.instance.is_avaliable = False
+            except OSError:
+                self.instance.is_avaliable = False
         if not modified_by:
             cleaned_data['modified_by'] = None
         if self.has_changed():

@@ -100,10 +100,10 @@ def search(request):
         for key, val in request.POST.items():
             if key == 'csrfmiddlewaretoken':
                 continue
-            if key == 'comment':
+            if key == 'comment' and val != '':
                 qs = qs.filter(comment__text__icontains=val)
                 continue
-            if key == 'hostname':
+            if key == 'hostname' and val != '':
                 qs = qs.filter(hostname__icontains=val)
                 continue
             if key == 'has_model':
@@ -117,10 +117,10 @@ def search(request):
                     continue
             if key == 'is_avaliable':
                 if request.POST['is_avaliable'] == '2':
-                    qs = qs.filter(is_avaliable=True)
+                    qs = qs.filter(is_avaliable=True).filter(model__isnull=False).filter(mng_ip__isnull=False)
                     continue
-                elif request.POST['has_model'] == '3':
-                    qs = qs.filter(is_avaliable=True)
+                elif request.POST['is_avaliable'] == '3':
+                    qs = qs.filter(is_avaliable=False).filter(model__isnull=False).filter(mng_ip__isnull=False)
                     continue
                 else:
                     continue
@@ -144,6 +144,7 @@ def search(request):
             'hostname': hostname,
             'has_model': request.POST['has_model'],
             'comment': request.POST['comment'],
+            'is_avaliable': request.POST['is_avaliable'],
         })
 
     context = {

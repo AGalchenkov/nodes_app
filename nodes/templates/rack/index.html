@@ -8,13 +8,14 @@
 <script type="text/javascript" src="{% static 'nodes/js/jquery-3.6.0.min.js' %}"></script>
 <a href="{% url 'nodes:rack_list' %}"><div class="left_top_fixed">Rack List</div></a>
 <div class="node_tbl_cnt">
-    <h1 class="tbl_header">{{ location }}</h1>
+    <h2 class="tbl_header">{{ location }}</h2>
     <table class="table">
 	    <thead>
 		    <tr>
 			    <td class="rack_tbl">Unit</td>
 			    <td>Node</td>
                 <td>Status</td>
+                <td>Mng ip</td>
 			    <td>Owner</td>
                 <td>Comment</td>
 		    </tr>
@@ -56,10 +57,12 @@
                                 <div class="red_status"></div>
                             </td>
                         {% endif %}
+                        <td>{{item.mng_ip}}</td>
                     {% else %}
                         <td>
                             <div class="none_status"></div>
                         </td>
+                        <td></td>
                     {% endif %}
                     {% if item.owner == None %}
                         <td></td>

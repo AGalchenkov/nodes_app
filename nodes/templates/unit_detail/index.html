@@ -8,10 +8,10 @@
 <script type="text/javascript" src="{% static 'nodes/js/jquery-3.6.0.min.js' %}"></script>
 
 <a href="{% url 'nodes:rack' rack_id %}"><div class="left_top_fixed">Rack</div></a>
-<div class="small_tbl_cnt">
+<div class="node_tbl_cnt">
     <h1 class="tbl_header">U{{ unit_num }}</h1>
-    <div class="unit_dtl_main_conteiner">
-        <form action="{% url 'nodes:unit_detail' rack_id unit_num %}" method="post">
+    <div class="unit_dtl_main_conteiner hght_70_prc">
+        <form class="frm_unit_dtl fnt_sz_14" action="{% url 'nodes:unit_detail' rack_id unit_num %}" method="post">
             {% csrf_token %}
             {{ form.as_p }}
     </div>

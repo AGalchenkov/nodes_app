@@ -10,9 +10,9 @@
 <a href="{% url 'nodes:rack_list' %}"><div class="left_top_fixed">Rack List</div></a>
 <div class="search">
 <div class="small_tbl_cnt_search">
-    <h1 class="tbl_header">Search</h1>
+    <h2 class="tbl_header">Search</h2>
     <div class="unit_dtl_main_conteiner">
-        <form action="{% url 'nodes:search'%}" method="post">
+        <form class="fnt_sz_14" action="{% url 'nodes:search'%}" method="post">
             {% csrf_token %}
             {{ form.as_p }}
     </div>
@@ -20,10 +20,10 @@
 </form>
 </div>
 <div class="small_tbl_cnt_search">
-    <h1 class="tbl_header">Result</h1>
+    <h2 class="tbl_header">Result</h2>
     <div class="unit_dtl_main_conteiner">
         {% if request.method == 'POST' %}
-            <h1 class="tbl_header">Count {{ qs.count }}</h1>
+            <h2 class="tbl_header">Count {{ qs.count }}</h2>
         {% endif %}
         <ul>
             {% for q in qs %}
