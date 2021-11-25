@@ -412,3 +412,9 @@ input[type=submit]:hover {
     width: 90%;
     margin: 0 auto;
 }
+
+.flx_cntr {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
