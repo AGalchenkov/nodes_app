@@ -263,7 +263,7 @@ class UnitForm(ModelForm):
     class Meta:
         model = Units
         fields = '__all__'
-        exclude = ['used_by_unit', 'comment']
+        exclude = ['used_by_unit', 'comment', 'is_avaliable']
 
 class CommentForm(ModelForm):
     class Meta:

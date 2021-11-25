@@ -14,7 +14,7 @@
 		    <tr>
 			    <td class="rack_tbl">Unit</td>
 			    <td>Node</td>
-                <td>State</td>
+                <td>Status</td>
 			    <td>Owner</td>
                 <td>Comment</td>
 		    </tr>
@@ -48,12 +48,18 @@
                     {% endif%}
                     {% if item.mng_ip %}
                         {% if item.is_avaliable %}
-                            <td class="bg_green"></td>
+                            <td>
+                                <div class="green_status"></div>
+                            </td>
                         {% else %}
-                            <td class="bg_red"></td>
+                            <td>
+                                <div class="red_status"></div>
+                            </td>
                         {% endif %}
                     {% else %}
-                        <td class="bg_gray"></td>
+                        <td>
+                            <div class="none_status"></div>
+                        </td>
                     {% endif %}
                     {% if item.owner == None %}
                         <td></td>

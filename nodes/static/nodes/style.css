@@ -80,11 +80,11 @@ thead tr:first-child td:nth-child(2) {
 }
 
 thead tr:first-child td:nth-child(3) {
-            width: 5%
+            width: 6%
 }
 
 thead tr:first-child td:last-child {
-            width: 50%
+            width: 49%
 }
 
 thead tr:first-child td:last-child {
@@ -165,6 +165,35 @@ tbody td.bg_green:hover {
 .blue_desc {
         	font-weight: bold;
 			color: rgba(34, 82, 155, 0.98);
+}
+
+.red_status {
+        background-color: #f05555;
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        box-sizing: border-box;
+}
+
+.green_status {
+        background-color: #26f93d;
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        box-sizing: border-box;
+
+}
+
+.none_status {
+        background-color: white;
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 3px solid #dfdddd;
+        box-sizing: border-box;
 }
 
 ul {
@@ -301,7 +330,7 @@ input[type=submit]:hover {
     background-color: green;
     color: white;
     padding: 5px;
-    border-radius: 15px;
+    border-radius: 8px;
 }
 
 .error {
