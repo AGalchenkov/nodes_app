@@ -29,8 +29,8 @@ td {
 			white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            padding-left: 5px;
-            padding-right: 5px;
+            padding-left: 2px;
+            padding-right: 2px;
 }
 td:first-child.rack_tbl {
    		//	width: 10px;
