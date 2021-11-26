@@ -6,6 +6,8 @@ from django.forms import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import *
+from djqscsv import render_to_csv_response
+import csv
 
 class IndexView(generic.ListView):
     model = Racks
@@ -94,7 +96,8 @@ def search(request):
     form = SearchForm(instance=Units)
 
     if request.method != 'POST':
-        form = SearchForm(instance=Units, initial={'sn': '', 'comment': '', 'hostname': '', 'mng_ip': ''})
+        form_without_csv = SearchForm(instance=Units, initial={'sn': '', 'comment': '', 'hostname': '', 'mng_ip': ''})
+        form_csv = None
     else:
         qs = Units.objects.all()
         for key, val in request.POST.items():
@@ -132,7 +135,7 @@ def search(request):
         hostname = request.POST['hostname'] if request.POST['hostname'] else ''
 
         print(f"##################### HAS_MODEL:      {request.POST['has_model']}")
-        form = SearchForm(instance=Units, initial={
+        form_without_csv = SearchForm(instance=Units, initial={
             'owner': request.POST['owner'],
             'rack': request.POST['rack'],
             'model': request.POST['model'],
@@ -147,8 +150,24 @@ def search(request):
             'is_avaliable': request.POST['is_avaliable'],
         })
 
+        form_csv = CSVForm(instance=Units, initial={
+            'owner': request.POST['owner'],
+            'rack': request.POST['rack'],
+            'model': request.POST['model'],
+            'vendor': request.POST['vendor'],
+            'power': request.POST['power'],
+            'vendor_model': request.POST['vendor_model'],
+            'sn': sn,
+            'mng_ip': mng_ip,
+            'hostname': hostname,
+            'has_model': request.POST['has_model'],
+            'comment': request.POST['comment'],
+            'is_avaliable': request.POST['is_avaliable'],
+            'csv': True,
+        })
     context = {
-        'form': form,
+        'form_without_csv': form_without_csv,
+        'form_csv': form_csv,
         'qs': qs,
         'request': request,
     }
@@ -172,3 +191,48 @@ def unit_create(request, rack_id, unit_num):
     }
     return render(request, 'unit_create/index.html', context)
 
+def csv_view(request):
+    print('######## POST:')
+    print(request.method)
+
+    qs = Units.objects.all()
+    for key, val in request.POST.items():
+        if key == 'csrfmiddlewaretoken':
+            continue
+        if key == 'comment' and val != '':
+            qs = qs.filter(comment__text__icontains=val)
+            continue
+        if key == 'hostname' and val != '':
+            qs = qs.filter(hostname__icontains=val)
+            continue
+        if key == 'has_model':
+            if request.POST['has_model'] == '2':
+                qs = qs.filter(model__isnull=False)
+                continue
+            elif request.POST['has_model'] == '3':
+                qs = qs.filter(model__isnull=True)
+                continue
+            else:
+                continue
+        if key == 'is_avaliable':
+            if request.POST['is_avaliable'] == '2':
+                qs = qs.filter(is_avaliable=True).filter(model__isnull=False).filter(mng_ip__isnull=False)
+                continue
+            elif request.POST['is_avaliable'] == '3':
+                qs = qs.filter(is_avaliable=False).filter(model__isnull=False).filter(mng_ip__isnull=False)
+                continue
+            else:
+                continue
+        if val:
+            qs = qs.filter(**{key: val})
+    opts = qs.model._meta
+    model = qs.model
+    #response = HttpResponse(mimetype='text/csv')
+    #response['Content-Disposition'] = 'attachment;filename=export.csv'
+    #writer = csv.writer(response)
+    #field_names = [field.name for field in opts.fields]
+    #writer.writerow(field_names)
+    #for obj in qs:
+    #    writer.writerow([getattr(obj, field) for field in field_names])
+    #return response
+    return render_to_csv_response(qs)

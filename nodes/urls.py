@@ -11,4 +11,5 @@ urlpatterns = [
     path('rack/<int:rack_id>/unit_detail/<int:unit_num>', views.unit_detail, name='unit_detail'),
     path('rack/<int:rack_id>/unit_creat/<int:unit_num>', views.unit_create, name='unit_create'),
     path('search/', views.search, name='search'),
+    path('csv_view/', views.csv_view, name='csv_view')
 ]

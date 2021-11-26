@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.forms import ModelForm, Textarea, CharField, ChoiceField, Field, BooleanField
+from django.forms import ModelForm, Textarea, CharField, ChoiceField, Field, BooleanField, HiddenInput
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 import time, datetime
@@ -309,6 +309,31 @@ class SearchForm(ModelForm):
     class Meta:
         model = Units
         exclude = ['used_by_unit', 'in_use', 'unit_num', 'console', 'modified', 'modified_by']
+
+class CSVForm(ModelForm):
+
+    has_model_choises = (
+        (1, 'no matter'),
+        (2, 'yes'),
+        (3, 'no'),
+    )
+    is_avaliable_choises = (
+        (1, 'no matter'),
+        (2, 'yes'),
+        (3, 'no'),
+    )
+
+    model = Units
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+
+    class Meta:
+        model = Units
+        exclude = ['used_by_unit', 'in_use', 'unit_num', 'console', 'modified', 'modified_by']
+
+
 
 class UnitCreateForm(ModelForm):
     comment = CharField(widget=Textarea(attrs={'cols': 40, 'rows': 3}), required=False)
