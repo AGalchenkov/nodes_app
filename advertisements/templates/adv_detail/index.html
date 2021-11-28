@@ -1,10 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "advertisements/base.html" %}
+
+{% block content %}
+
+{% load static %}
+
+<a href="{% url 'adv:advs' %}"><div class="left_top_fixed">Advs</div></a>
+
+    <div class="main_conteiner stndr_div">
+        <div class="stndr_brdr_1px flx hght_250px">
+            <div class="text_scroll">
+                {{adv.text|safe}}
+            </div>
+        </div>
+        {% if adv.image %}
+            {% if adv.image.height > 900 or adv.image.width > 1440 %}
+                <img src="{{ adv.image.url }}" width="1440" height="900">
+            {% else %}
+                <img src="{{ adv.image.url }}">
+            {% endif %}
+        {% endif %}
+        <p class="athr_sgn">
+                {% for tag in adv.tags.all %}
+                    #{{tag}}
+                {% endfor %}
+        </p>
+        <p class="athr_sgn">
+            {% if adv.expired_date %}
+                expired: {{adv.expired_date}}
+            {% endif %}
+        </p>
+        <span class="athr_sgn">@{{adv.author}}</span>
+    </div>
+
+
+{% endblock content %}

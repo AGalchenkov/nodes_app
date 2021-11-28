@@ -4,6 +4,7 @@ from django.forms import ModelForm, Textarea, CharField, ChoiceField, Field, Boo
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 import time, datetime
+import ipaddress
 from django.utils.timezone import now
 
 from ping3 import ping
@@ -220,7 +221,7 @@ class UnitForm(ModelForm):
                     self.instance.is_avaliable = True
                 else:
                     self.instance.is_avaliable = False
-            except OSError:
+            except (OSError, TypeError):
                 self.instance.is_avaliable = False
         if not modified_by:
             cleaned_data['modified_by'] = None

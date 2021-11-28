@@ -1,10 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "advertisements/base.html" %}
+
+{% block content %}
+
+{% load static %}
+
+<div class="small_tbl_cnt_search">
+    <div class="unit_dtl_main_conteiner">
+            <form id="adv_create" class="fnt_sz_14" action="{% url 'adv:create_adv'%}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+        </form>
+    </div>
+    <input type="Submit" value="Create" form="adv_create">
+</div>
+
+<script>
+      $(function () {
+        $("#id_expired_date").datetimepicker({
+            format: 'd/m/Y H:i',
+        });
+      });
+    </script>
+
+{% endblock content %}

@@ -211,6 +211,7 @@ tbody td.bg_green:hover {
 
 ul {
             list-style: none;
+            padding-left: 0px;
 }
 
 .rack_list {
@@ -233,7 +234,7 @@ li.rack_list {
             font-size: 1.25em;
             background-color: white;
             list-style: none;
-            margin: 10px 10px;
+            margin: 10px 5px;
             color: #484848;
 }
 
@@ -316,8 +317,15 @@ input, textarea, select {
     border: 1px solid #cecdcd;
     border-radius: 10px;
     padding: 7px;
-    color: #484848;
+ //   color: #484848;
 }
+
+input[disabled] {
+    color: #6a6a6a;
+    font-style: oblique;
+
+}
+
 
 input[type=submit] {
     background-color: white;
@@ -327,6 +335,7 @@ input[type=submit] {
     padding: 10px;
     border-radius: 15px;
   //  margin-bottom: 50px;
+    color: #484848;
 }
 
 .mrg_btn_50 {
@@ -354,7 +363,7 @@ input[type=submit]:hover {
 .in_used {
     background-color: green;
     color: white;
-    padding: 3px;
+    padding: 2px;
     border-radius: 8px;
 }
 
@@ -460,4 +469,91 @@ input[type=submit]:hover {
     width: 600px;
     float: left;
     margin: 5px;
+}
+
+.single_adv {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 0 15px #d7d7d7;
+    margin-bottom: 40px;
+    padding: 30px;
+    width: 32%;
+    border: 3px solid transparent;
+    height: 220px;
+}
+
+.single_adv:hover {
+    border: 3px solid gray;
+    cursor: pointer;
+    box-shadow: 0 0 20px #9f9d9d;
+    scale: 1.02;
+    transition: .5s;
+}
+
+.single_adv span.adv_text {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.cnt_adv_text {
+    height: 100px;
+}
+
+.dsp_flx_spc {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+.athr_sgn {
+    font-style: oblique;
+    color: #797878;
+}
+
+.flx_3_clm {
+    flex: 0 0 33%;
+}
+
+.main_conteiner {
+    margin: 100px 175px;
+}
+
+.stndr_div {
+    background-color: white;
+    border-radius: 15px;
+    padding: 50px;
+    box-shadow: 0 0 15px #d7d7d7;
+}
+
+.flx {
+    display: flex;
+}
+
+.stndr_brdr_1px {
+    border: 1px solid #bdb9b9;
+    border-radius: 15px;
+}
+
+.text_scroll {
+    overflow-y: auto;
+    margin-left: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-right: 5px;
+    padding-right: 15px;
+}
+
+.hght_250px {
+    height: 250px;
+}
+
+img {
+    margin-top:30px;
+    margin-bottom: 30px;
+    border-radius: 15px;
+}
+
+.mrgn_tp_50px {
+    margin-top: 50px;
 }

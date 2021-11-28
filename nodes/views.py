@@ -21,8 +21,6 @@ class RackListView(generic.ListView):
 def index(request):
     return HttpResponse("THIS IS NODES APP!")
 
-def base(request):
-    return render(request, 'nodes/base.html')
 
 @login_required
 def rack_list(request):
@@ -92,9 +90,7 @@ def unit_detail(request, rack_id, unit_num):
 @login_required
 def search(request):
     qs = {}
-
     form = SearchForm(instance=Units)
-
     if request.method != 'POST':
         form_without_csv = SearchForm(instance=Units, initial={'sn': '', 'comment': '', 'hostname': '', 'mng_ip': ''})
         form_csv = None
