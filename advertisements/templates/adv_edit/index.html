@@ -5,13 +5,19 @@
 
 {% load static %}
 
-<div class="small_tbl_cnt_search">
+<a href="{% url 'adv:advs' %}"><div class="left_top_fixed">Advs</div></a>
+
+<div class="node_tbl_cnt">
+    <h1 class="tbl_header">Edit adv</h1>
     <div class="unit_dtl_main_conteiner">
             <form id="adv_edit" class="fnt_sz_14" action="{% url 'adv:adv_edit' adv.id%}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.as_p }}
         </form>
-        <div id="h1">Header</div>
+        <div class="add_html_tag inl_blk" id="h1">header</div>
+        <div class="add_html_tag inl_blk" id="b">bold</div>
+        <div class="add_html_tag inl_blk" id="a">link</div>
+        <div class="add_html_tag inl_blk" id="br">\r\n</div>
     </div>
     <input type="Submit" value="Edit" form="adv_edit">
 </div>
@@ -23,7 +29,20 @@
         });
       });
       $('#h1').click(function () {
-          $('#id_text').append('TRA_TA_TA_TA!@##$%^&*')
+          var curr_val = $('#id_text').val()
+          $('#id_text').val(curr_val + '<h1></h1>')
+      })
+      $('#b').click(function () {
+          var curr_val = $('#id_text').val()
+          $('#id_text').val(curr_val + '<b></b>')
+      })
+      $('#a').click(function () {
+          var curr_val = $('#id_text').val()
+          $('#id_text').val(curr_val + '<a href=""></a>')
+      })
+      $('#br').click(function () {
+          var curr_val = $('#id_text').val()
+          $('#id_text').val(curr_val + '<br>')
       })
 </script>
 

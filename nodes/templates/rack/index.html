@@ -17,6 +17,8 @@
                 <td>Status</td>
                 <td>Mng ip</td>
 			    <td>Owner</td>
+                <td>Appliance</td>
+                <td>Inf</td>
                 <td>Comment</td>
 		    </tr>
 	    </thead>
@@ -68,6 +70,17 @@
                         <td></td>
                     {% else %}
                         <td>{{item.owner}}</td>
+                    {% endif %}
+                    {% if item.appliance == None %}
+                        <td></td>
+                    {% else %}
+                        <td>{{item.appliance}}</td>
+                    {% endif %}
+
+                    {% if item.model %}
+                        <td id="{{item.unit_num}}"><span class="inf_btn">i</span></td>
+                    {% else %}
+                        <td></td>
                     {% endif %}
                     {% if item.comment == None %}
                         <td class="comment"></td>

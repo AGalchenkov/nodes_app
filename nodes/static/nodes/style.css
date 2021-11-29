@@ -74,27 +74,35 @@ thead tr:first-child td{
 thead tr:first-child td:first-child {
 			border-bottom-left-radius: 15px;
 			border-top-left-radius: 15px;
-			width:5%;
+			width:3%;
 }
 
 thead tr:first-child td:nth-child(2) {
-            width: 20%
-}
-
-thead tr:first-child td:nth-child(3) {
-            width: 6%
-}
-
-thead tr:first-child td:nth-child(4) {
-            width: 7%
-}
-
-thead tr:first-child td:nth-child(5) {
             width: 12%
 }
 
+thead tr:first-child td:nth-child(3) {
+            width: 5%
+}
+
+thead tr:first-child td:nth-child(4) {
+            width: 8%
+}
+
+thead tr:first-child td:nth-child(5) {
+            width: 8%
+}
+
+thead tr:first-child td:nth-child(6) {
+            width: 15%
+}
+
+thead tr:first-child td:nth-child(7) {
+            width: 2%
+}
+
 thead tr:first-child td:last-child {
-            width: 50%
+            width: 47%
 }
 
 thead tr:first-child td:last-child {
@@ -538,10 +546,10 @@ input[type=submit]:hover {
 
 .text_scroll {
     overflow-y: auto;
-    margin-left: 20px;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    margin-right: 5px;
+ //   margin-left: 20px;
+ //   margin-top: 20px;
+ //   margin-bottom: 20px;
+ //   margin-right: 5px;
     padding-right: 15px;
 }
 
@@ -577,8 +585,8 @@ ul#id_tags > li {
     font-weight: bold;
     position: fixed;
     top: 100px;
-    left: 90px;
-    width: 40px;
+    left: 83px;
+    width: 47px;
 }
 
 .adv_edit:hover {
@@ -595,12 +603,12 @@ ul#id_tags > li {
     font-weight: bold;
     position: fixed;
     top: 175px;
-    left: 90px;
-    width: 40px;
+    left: 83px;
+    width: 47px;
 }
 
 .adv_del:hover {
-    background-color: #ff4a4a;
+    background-color: #ec1212;
 }
 
 br ~ input#id_image {
@@ -614,4 +622,32 @@ br ~ input#id_image {
 
 .txt_cntr {
     text-align: center;
+}
+
+.add_html_tag {
+    background-color: #8c8c8c;
+    padding: 3px;
+    color: white;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.add_html_tag:hover {
+    cursor: pointer;
+    background-color: gray;
+}
+
+.inf_btn {
+    color: white;
+    background-color: #b3b3b3;
+    border-radius: 50%;
+    font-weight: bold;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.inf_btn:hover {
+    cursor: pointer;
+    background-color: rgb(34, 82, 155);
+    font-weight: bold;
 }

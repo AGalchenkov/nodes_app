@@ -88,6 +88,21 @@ class Comments(models.Model):
             self.pub_date = now().replace(microsecond=0)
         return super(Comments, self).save(*args, **kwargs)
 
+class Appliances(models.Model):
+    appliance = models.CharField(unique=True, max_length=30)
+    ram = models.IntegerField(null=True, blank=True,
+        validators=[
+            MinValueValidator(1, message='negative unit number'),
+            MaxValueValidator(4096, message='to much unit number'),
+        ]
+    )
+    ipmi = models.BooleanField(default=True)
+
+
+    def __str__(self):
+        return self.appliance
+
+
 class Units(models.Model):
     in_use = models.BooleanField(default=False)
     used_by_unit = models.CharField(blank=True, default='', max_length=3)
@@ -105,6 +120,7 @@ class Units(models.Model):
     vendor_model = models.ForeignKey(VendorModels,null=True, blank=True, on_delete=models.RESTRICT)
     console = models.ForeignKey(Consoles,null=True, blank=True, on_delete=models.RESTRICT)
     mng_ip = models.GenericIPAddressField(blank=True, null=True)
+    appliance = models.ForeignKey(Appliances, null=True, blank=True, default=None,  on_delete=models.RESTRICT)
     is_avaliable = models.BooleanField(default=False)
     sn = models.CharField(blank=True, max_length=30)
     hostname = models.CharField(blank=True, max_length=15)

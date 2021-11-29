@@ -86,3 +86,9 @@ def adv_edit(request, adv_id):
         'adv': adv,
     }
     return render(request, 'adv_edit/index.html', context)
+
+@login_required
+def adv_del(request, adv_id):
+    adv = Advertisments.objects.get(id=adv_id)
+    adv.delete()
+    return HttpResponseRedirect(reverse('adv:advs'))
