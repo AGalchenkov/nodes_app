@@ -34,7 +34,7 @@ ALLOWED_HOSTS = [
     '10.212.130.57',
 ]
 
-MEDIA_URL = '/media/'
+MEDIA_URL = ''
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Application definition
@@ -142,5 +142,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #MY SETTINGS
 
-LOGIN_URL = '/users/login'
-LOGOUT_REDIRECT_URL = '/users/login'
+LOGIN_URL = '/users/login/'
+LOGOUT_REDIRECT_URL = '/users/login/'

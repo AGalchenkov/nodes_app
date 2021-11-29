@@ -1,0 +1,30 @@
+
+{% extends "advertisements/base.html" %}
+
+{% block content %}
+
+{% load static %}
+
+<div class="small_tbl_cnt_search">
+    <div class="unit_dtl_main_conteiner">
+            <form id="adv_edit" class="fnt_sz_14" action="{% url 'adv:adv_edit' adv.id%}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+        </form>
+        <div id="h1">Header</div>
+    </div>
+    <input type="Submit" value="Edit" form="adv_edit">
+</div>
+
+<script>
+      $(function () {
+        $("#id_expired_date").datetimepicker({
+            format: 'd/m/Y H:i',
+        });
+      });
+      $('#h1').click(function () {
+          $('#id_text').append('TRA_TA_TA_TA!@##$%^&*')
+      })
+</script>
+
+{% endblock content %}

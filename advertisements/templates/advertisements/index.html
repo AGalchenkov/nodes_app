@@ -4,6 +4,9 @@
 
 {% load static %}
 
+<a href="{% url 'nodes:root' %}"><div class="left_top_fixed"> ~ </div></a>
+<a href="{% url 'adv:create_adv' %}"><div class="search_menu">Adv create</div></a>
+
 <h1 class="tbl_header">Advertisements</h1>
 <div class="dsp_flx_spc mrgn_tp_50px">
   {% for adv in advs %}
@@ -13,6 +16,11 @@
                 <span class="adv_text">{{adv.text}}</span>
             </div>
         <br>
+        {% if adv.image %}
+            <p class="athr_sgn">
+                + images...
+            </p>
+        {% endif %}
         <p class="athr_sgn">
             {% for tag in adv.tags.all %}
                 #{{tag}}
@@ -24,16 +32,21 @@
             {% endif %}
         </p>
         <span class="athr_sgn">@{{adv.author}}</span>
-  </div>
+        </div>
     </a>
   {% endfor %}
 </div>
 
+
 <script>
     $( document ).ready(function() {
-        var adv_text = $(".single_adv p.adv_text")
-        $clamp(adv_text, {clamp: 3})
-    });
+        $('.adv_edit').click(function(){
+            var elemId = $(this).attr('id');
+            var url = "{% url 'adv:adv_edit' 1 %}"
+            url = url.replace('1', elemId);
+            window.location.href=url;
+        });
+    })
 </script>
 
 {% endblock content %}

@@ -1,0 +1,22 @@
+{% extends "advertisements/base.html" %}
+
+{% block content %}
+
+{% load static %}
+
+<h1 class="tbl_header">Root</h1>
+<div class="dsp_flx_spc mrgn_tp_50px">
+
+    <a class="single_adv flx_3_clm txt_cntr" href="{% url 'adv:advs' %}">
+        <h1>
+            Advertisements
+        </h1>
+    </a>
+    <a class="single_adv flx_3_clm txt_cntr" href="{% url 'nodes:rack_list' %}">
+        <h1>
+            Nodes
+        </h1>
+    </a>
+</div>
+
+{% endblock content %}

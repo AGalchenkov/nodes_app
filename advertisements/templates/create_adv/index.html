@@ -4,14 +4,18 @@
 
 {% load static %}
 
-<div class="small_tbl_cnt_search">
-    <div class="unit_dtl_main_conteiner">
+<a href="{% url 'adv:advs' %}"><div class="left_top_fixed">Advs</div></a>
+
+<div class="node_tbl_cnt">
+    <h1 class="tbl_header">Create adv</h1>
+    <div class="unit_dtl_main_conteiner hght_60_prc">
             <form id="adv_create" class="fnt_sz_14" action="{% url 'adv:create_adv'%}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.as_p }}
         </form>
     </div>
     <input type="Submit" value="Create" form="adv_create">
+    </div>
 </div>
 
 <script>

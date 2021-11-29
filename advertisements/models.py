@@ -31,7 +31,7 @@ class CreateAdvertisment(ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-     #   self.instance.author = self.request.user
+        self.instance.author = self.request.user
         return cleaned_data
 
     class Meta:

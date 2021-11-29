@@ -2,6 +2,7 @@ body {
 			font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
 		//	margin: 200px 200px;
 			background-color:#f7f7f7;
+			margin: 0px;
 }
 table {
             table-layout: fixed;
@@ -251,7 +252,7 @@ li.rack_list:hover a {
 a {
             text-decoration: none;
             color: #484848;
-            display: block;
+      //      display: block;
             overflow: hidden;
             text-overflow: ellipsis;
 }
@@ -479,7 +480,7 @@ input[type=submit]:hover {
     padding: 30px;
     width: 32%;
     border: 3px solid transparent;
-    height: 220px;
+//    height: 220px;
 }
 
 .single_adv:hover {
@@ -556,4 +557,61 @@ img {
 
 .mrgn_tp_50px {
     margin-top: 50px;
+}
+
+ul#id_tags > li {
+    margin-left: 150px;
+}
+
+.text_scroll > img {
+    display: block;
+}
+
+.adv_edit {
+    background-color: #4d8fe3;
+    color: white;
+    padding: 15px;
+    border-radius: 15px;
+    display: block;
+    text-align: center;
+    font-weight: bold;
+    position: fixed;
+    top: 100px;
+    left: 90px;
+    width: 40px;
+}
+
+.adv_edit:hover {
+    background-color: #005ace;
+}
+
+.adv_del {
+    background-color: #e66d6d;
+    color: white;
+    padding: 15px;
+    border-radius: 15px;
+    display: block;
+    text-align: center;
+    font-weight: bold;
+    position: fixed;
+    top: 175px;
+    left: 90px;
+    width: 40px;
+}
+
+.adv_del:hover {
+    background-color: #ff4a4a;
+}
+
+br ~ input#id_image {
+    margin-left: 98px;
+}
+
+.lnk_hl > a {
+    font-weight: bold;
+    color: blue;
+}
+
+.txt_cntr {
+    text-align: center;
 }

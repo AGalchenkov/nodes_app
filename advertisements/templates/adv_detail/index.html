@@ -6,9 +6,13 @@
 
 <a href="{% url 'adv:advs' %}"><div class="left_top_fixed">Advs</div></a>
 
+    {% if request.user ==  adv.author%}
+        <a href="{% url 'adv:adv_edit' adv.id %}"><div id="{{adv.id}}" class="adv_edit">Edit</div></a>
+        <a><div id="{{adv.id}}" class="adv_del">Delet</div></a>
+    {% endif %}
     <div class="main_conteiner stndr_div">
-        <div class="stndr_brdr_1px flx hght_250px">
-            <div class="text_scroll">
+        <div class="flx">
+            <div class="text_scroll lnk_hl">
                 {{adv.text|safe}}
             </div>
         </div>

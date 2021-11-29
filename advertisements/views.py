@@ -4,26 +4,32 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.db.models import ImageField
+from django.contrib.auth.decorators import login_required
 
 import os
 
 
 # Create your views here.
 
+@login_required
 def create_adv(request):
     adv = Advertisments.objects.all()
     if request.method != 'POST':
         create_adv_form = CreateAdvertisment(instance=None, initial={'text': '', 'expired_date': None})
     else:
-        file = request.FILES['image']
-        location = str(settings.MEDIA_ROOT) + '/adv_images'
-        url = str(settings.MEDIA_URL) + 'adv_images/'
-        print(f'URL ::: {url}    ;  LOCATION  :::  {location}')
-        fs = FileSystemStorage(location=location, base_url=url)
-        filename = fs.save(file.name, file, base_url=url)
-        print(f'URL     ::::::;    {fs.url(filename)}')
-        create_adv_form = CreateAdvertisment(request=request, instance=None, data=request.POST, initial={'author_id': request.user.id, 'image': filename})
-        #create_adv_form = CreateAdvertisment(request.POST, request.FILES)
+        if request.FILES:
+            file = request.FILES['image']
+            fs = FileSystemStorage()
+            filename = fs.save('adv_app###'+file.name, file)
+            create_adv_form = CreateAdvertisment(
+                request=request, instance=None, data=request.POST,
+                initial={'author_id': request.user.id, 'image': filename}
+            )
+        else:
+            create_adv_form = CreateAdvertisment(
+                request=request, instance=None, data=request.POST,
+                initial={'author_id': request.user.id}
+            )
         if create_adv_form.is_valid():
             create_adv_form.save()
             return HttpResponseRedirect(reverse('adv:advs'))
@@ -34,6 +40,7 @@ def create_adv(request):
 
     return render(request, 'create_adv/index.html', context)
 
+@login_required
 def advs(request):
     advs = Advertisments.objects.all()
     advs = reversed(advs)
@@ -44,6 +51,7 @@ def advs(request):
 
     return render(request, 'advertisements/index.html', context)
 
+@login_required
 def adv_detail(request, adv_id):
     adv = Advertisments.objects.get(id=adv_id)
     context = {
@@ -51,3 +59,30 @@ def adv_detail(request, adv_id):
     }
 
     return render(request, 'adv_detail/index.html', context)
+
+@login_required
+def adv_edit(request, adv_id):
+    adv = Advertisments.objects.get(id=adv_id)
+    if request.method != 'POST':
+        edit_adv_form = CreateAdvertisment(instance=adv, initial={'text': adv.text})
+    else:
+        if request.FILES:
+            file = request.FILES['image']
+            fs = FileSystemStorage()
+            filename = fs.save('adv_app###'+file.name, file)
+            edit_adv_form = CreateAdvertisment(
+                request=request, instance=adv, data=request.POST,
+                initial={'author_id': request.user.id, 'image': filename}
+            )
+        else:
+            edit_adv_form = CreateAdvertisment(
+                request=request, instance=adv, data=request.POST, initial={'author_id': request.user.id}
+            )
+        if edit_adv_form.is_valid():
+            edit_adv_form.save()
+            return HttpResponseRedirect(reverse('adv:advs'))
+    context = {
+        'form': edit_adv_form,
+        'adv': adv,
+    }
+    return render(request, 'adv_edit/index.html', context)

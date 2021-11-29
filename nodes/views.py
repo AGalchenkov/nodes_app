@@ -11,7 +11,7 @@ import csv
 
 class IndexView(generic.ListView):
     model = Racks
-    template_name = 'nodes/index.html'
+    template_name = 'root/index.html'
 
 class RackListView(generic.ListView):
     model = Racks
