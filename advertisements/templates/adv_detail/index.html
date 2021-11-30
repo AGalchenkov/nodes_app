@@ -6,11 +6,12 @@
 
 <a href="{% url 'adv:advs' %}"><div class="left_top_fixed">Advs</div></a>
 
+    <div class="pstn_adv_btn">
     {% if request.user ==  adv.author%}
-        <a href="{% url 'adv:adv_edit' adv.id %}"><div id="{{adv.id}}" class="adv_edit">Edit</div></a>
-      <!--  <a href="{% url 'adv:adv_del' adv.id %}"><div id="{{adv.id}}" class="adv_del">Delete</div></a>  -->
-        <a><div id="del_btn" class="adv_del">Delete</div></a>
+        <a href="{% url 'adv:adv_edit' adv.id %}"><div id="{{adv.id}}" class="edit_blue_btn">Edit</div></a>
+        <a><div id="del_btn" class="edit_red_btn">Delete</div></a>
     {% endif %}
+    </div>
     <div class="main_conteiner stndr_div">
         <div class="flx">
             <div class="text_scroll lnk_hl">

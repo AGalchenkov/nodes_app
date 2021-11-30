@@ -4,7 +4,7 @@
 
 {% load static %}
 
-<a href="{% url 'nodes:root' %}"><div class="left_top_fixed"> ~ </div></a>
+<a href="{% url 'nodes:root' %}"><div class="left_top_fixed">Root</div></a>
 <a href="{% url 'adv:create_adv' %}"><div class="search_menu">Adv create</div></a>
 
 <h1 class="tbl_header">Advertisements</h1>
@@ -13,7 +13,7 @@
     <a class="single_adv flx_3_clm" href="{% url 'adv:adv_detail' adv.id %}">
         <div>
             <div class="cnt_adv_text">
-                <span class="adv_text">{{adv.text}}</span>
+                <span class="adv_text">{{adv.text|striptags}}</span>
             </div>
         <br>
         {% if adv.image %}

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.forms import ModelForm, Textarea, DateTimeInput, DateTimeField, DateField, DateInput, CharField, ChoiceField, Field, BooleanField, HiddenInput, ModelMultipleChoiceField, CheckboxSelectMultiple
+from bootstrap_modal_forms.forms import BSModalModelForm
 
 class Tags(models.Model):
     tag = models.CharField(max_length=20)
@@ -19,7 +20,7 @@ class Advertisments(models.Model):
         return f'{self.text[0:40]}...'
 
 class CreateAdvertisment(ModelForm):
-    text = CharField(widget=Textarea(attrs={'cols': 40, 'rows': 3}))
+    text = CharField(widget=Textarea(attrs={'cols': 100, 'rows': 15}))
     tags = ModelMultipleChoiceField(queryset=Tags.objects.all(), widget=CheckboxSelectMultiple, required=False)
     expired_date = DateTimeField(input_formats=['%d/%m/%Y %H:%M'], required=False)
     model = Advertisments

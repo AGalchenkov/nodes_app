@@ -4,12 +4,20 @@
 
 {% load static %}
 
+
+
+<!-- <script src="/static/bsmodals/bsmodals.js"></script>  -->
+<!-- <script type="text/javascript" src="{% static 'js/bootstrap.js' %}"></script>  -->
+<script type="text/javascript" src="{% static 'js/jquery-3.6.0.js' %}"></script>
+<!--  <script src="{% static 'js/jquery.bootstrap.modal.forms.js' %}"></script>  -->
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
 <link rel="stylesheet" type="text/css" href="{% static 'nodes/style.css' %}">
-<script type="text/javascript" src="{% static 'nodes/js/jquery-3.6.0.min.js' %}"></script>
 <a href="{% url 'nodes:rack_list' %}"><div class="left_top_fixed">Rack List</div></a>
 <div class="node_tbl_cnt">
     <h2 class="tbl_header">{{ location }}</h2>
-    <table class="table">
+    <table class="nbs_table">
 	    <thead>
 		    <tr>
 			    <td class="rack_tbl">Unit</td>
@@ -78,7 +86,7 @@
                     {% endif %}
 
                     {% if item.model %}
-                        <td id="{{item.unit_num}}"><span class="inf_btn">i</span></td>
+                        <td class="unit_detail_modal" data-toggle="modal" data-target="#create-modal" value="{{item.unit_num}}"><span class="inf_btn" >i</span></td>
                     {% else %}
                         <td></td>
                     {% endif %}
@@ -92,5 +100,27 @@
         </tbody>
     </table>
 </div>
+
+<div class="modal" id="create-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal_div">
+    <div class="modal-content brd_none">
+        PRIVET!
+    </div>
+  </div>
+</div>
+
+
+<!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>   -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<script>
+$('#create-modal').on('shown.bs.modal', function (e) {
+    url = "{% url 'nodes:bs_unit_detail' rack_id 48 %}"
+    url = url.replace('48', $(e.relatedTarget).attr('value'))
+    $('#create-modal .modal-content').load(url)
+})
+</script>
+
 
 {% endblock content %}

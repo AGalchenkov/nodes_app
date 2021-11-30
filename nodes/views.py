@@ -8,6 +8,9 @@ from django.contrib.auth.models import User
 from .models import *
 from djqscsv import render_to_csv_response
 import csv
+from django.contrib import messages
+from bootstrap_modal_forms.generic import BSModalReadView
+from django.http import JsonResponse
 
 class IndexView(generic.ListView):
     model = Racks
@@ -232,3 +235,22 @@ def csv_view(request):
     #    writer.writerow([getattr(obj, field) for field in field_names])
     #return response
     return render_to_csv_response(qs)
+
+def BsUnitDetail(request, rack_id, unit_num):
+    unit = Units.objects.get(rack_id=rack_id, unit_num=unit_num)
+    ram = unit.appliance.ram if unit.appliance else None
+    unit_form = BsUnitForm(instance=unit, initial={
+        'comment': unit.comment,
+        'model': unit.model,
+        'vendor': unit.vendor,
+        'power': unit.power,
+        'vendor_model': unit.vendor_model,
+        'appliance': unit.appliance,
+        'ram': ram,
+    })
+    context = {
+        'unit_form': unit_form,
+        'unit_num': unit_num,
+        'rack_id': rack_id,
+    }
+    return render(request, 'nodes/bs_unit_detail.html', context)

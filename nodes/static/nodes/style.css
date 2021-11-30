@@ -4,12 +4,12 @@ body {
 			background-color:#f7f7f7;
 			margin: 0px;
 }
-table {
+.nbs_table {
             table-layout: fixed;
 			width:100%;
-		//	border-collapse: collapse;
+			border-collapse: collapse;
 			border-collapse: separate;
-		//	border-spacing: 10px;
+			border-spacing: 10px;
 			background-color:white;
 			border-radius: 20px;
 			box-shadow: 0 0 15px #d7d7d7;
@@ -82,7 +82,7 @@ thead tr:first-child td:nth-child(2) {
 }
 
 thead tr:first-child td:nth-child(3) {
-            width: 5%
+            width: 6%
 }
 
 thead tr:first-child td:nth-child(4) {
@@ -98,11 +98,11 @@ thead tr:first-child td:nth-child(6) {
 }
 
 thead tr:first-child td:nth-child(7) {
-            width: 2%
+            width: 3%
 }
 
 thead tr:first-child td:last-child {
-            width: 47%
+            width: 45%
 }
 
 thead tr:first-child td:last-child {
@@ -123,7 +123,10 @@ tbody tr:hover td:nth-child(2).rack_tbl {
 }
 
 tbody tr:hover td:nth-child(2).rack_tbl.with_model {
-            tbody tr:hover td:nth-child(2).rack_tbl
+            background-color: rgba(34, 82, 155, 0.98);
+			border: 2px solid rgba(34, 82, 155, 0.98) !important;
+			color: white;
+			cursor: pointer;
 }
 
 tbody tr:hover td:nth-child(2).unit_tbl {
@@ -575,7 +578,7 @@ ul#id_tags > li {
     display: block;
 }
 
-.adv_edit {
+.edit_blue_btn {
     background-color: #4d8fe3;
     color: white;
     padding: 15px;
@@ -583,17 +586,29 @@ ul#id_tags > li {
     display: block;
     text-align: center;
     font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.pstn_adv_btn {
     position: fixed;
     top: 100px;
     left: 83px;
-    width: 47px;
+    width: 77px;
 }
 
-.adv_edit:hover {
+.pstn_bs_mdl_unit_btn {
+    position: fixed;
+    top: 0px;
+    left: -100px;
+    width: 77px;
+}
+
+.edit_blue_btn:hover {
     background-color: #005ace;
+    cursor: pointer;
 }
 
-.adv_del {
+.edit_red_btn {
     background-color: #e66d6d;
     color: white;
     padding: 15px;
@@ -601,14 +616,12 @@ ul#id_tags > li {
     display: block;
     text-align: center;
     font-weight: bold;
-    position: fixed;
-    top: 175px;
-    left: 83px;
-    width: 47px;
+    margin-bottom: 20px;
 }
 
-.adv_del:hover {
+.edit_red_btn:hover {
     background-color: #ec1212;
+    cursor: pointer;
 }
 
 br ~ input#id_image {
@@ -626,15 +639,20 @@ br ~ input#id_image {
 
 .add_html_tag {
     background-color: #8c8c8c;
-    padding: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 2px;
+    padding-top: 2px;
     color: white;
     border-radius: 5px;
     font-weight: bold;
+    margin-right: 5px;
+    transition: .5s;
 }
 
 .add_html_tag:hover {
     cursor: pointer;
-    background-color: gray;
+    background-color: rgb(34, 82, 155);
 }
 
 .inf_btn {
@@ -650,4 +668,14 @@ br ~ input#id_image {
     cursor: pointer;
     background-color: rgb(34, 82, 155);
     font-weight: bold;
+}
+
+.brd_none {
+    border: none !important;
+}
+
+.modal_div {
+    background-color: white;
+    border-radius: 15px;
+    padding: 50px;
 }

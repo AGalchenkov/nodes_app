@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'nodes.apps.NodesConfig',
     'users',
     'advertisements',
+    'bootstrap_modal_forms',
     #default
     'django.contrib.admin',
     'django.contrib.auth',

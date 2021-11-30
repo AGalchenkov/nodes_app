@@ -1,0 +1,28 @@
+<div class="modal fade" id="{{dialog_id}}" tabindex="-1" role="dialog"
+    {% if no_click_off %} data-backdrop="static" {% endif %}
+    aria-labelledby="{{dialog_id}}-title" aria-hidden="true">
+  <div class="modal-dialog {% if not not_centered %}modal-dialog-centered{% endif %} {% if modal_size %}{{modal_size}}{% endif %}" 
+      role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 id="{{dialog_id}}-title">{{title}}</h5>
+      </div>
+
+      <div class="modal-body">
+        {% block body %}
+        {% endblock body %}
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" data-dismiss="modal"
+          class="btn {% if cancel_button_style %}{{cancel_button_style}}{% else %}btn-secondary{% endif %}" 
+            >{% if cancel_button_text %}{{cancel_button_text}}{% else %}Cancel{% endif %}</button>
+        <button id="{{dialog_id}}-submit" type="submit" 
+          class="btn {% if submit_button_style %}{{submit_button_style}}{% else %}btn-primary{% endif %}" 
+            >{% if submit_button_text %}{{submit_button_text}}{% else %}Submit{% endif %}</button>
+      </div>
+
+    </div>
+  </div>
+</div>

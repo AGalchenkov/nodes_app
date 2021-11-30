@@ -6,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 import time, datetime
 import ipaddress
 from django.utils.timezone import now
+from bootstrap_modal_forms.forms import BSModalModelForm
 
 from ping3 import ping
 
@@ -89,14 +90,14 @@ class Comments(models.Model):
         return super(Comments, self).save(*args, **kwargs)
 
 class Appliances(models.Model):
-    appliance = models.CharField(unique=True, max_length=30)
+    appliance = models.CharField(unique=True, max_length=60)
     ram = models.IntegerField(null=True, blank=True,
         validators=[
             MinValueValidator(1, message='negative unit number'),
             MaxValueValidator(4096, message='to much unit number'),
         ]
     )
-    ipmi = models.BooleanField(default=True)
+    ipmi = models.BooleanField(default=False)
 
 
     def __str__(self):
@@ -160,11 +161,21 @@ class UnitForm(ModelForm):
     comment_author = CharField(disabled=True, required=False)
     comment_pub_date = CharField(disabled=True, required=False)
     modified_by = CharField(disabled=True, required=False)
+    ram = CharField(required=False, disabled=True)
+    field_order = [
+        'in_use', 'owner', 'rack', 'unit_num', 'model', 'vendor', 'power', 'vendor_model',
+        'console', 'mng_ip', 'appliance', 'sn', 'ram', 'hostname', 'modified', 'modified_by', 'comment',
+        'comment_author', 'comment_pub_date',
+    ]
     model = Units
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
         self.initial['rack'] = kwargs['instance'].rack
+        try:
+            self.initial['ram'] = kwargs['instance'].appliance.ram
+        except AttributeError:
+            self.initial['ram'] = None
         try:
             self.initial['comment_author'] = kwargs['instance'].comment.author
             self.initial['comment_pub_date'] = kwargs['instance'].comment.pub_date
@@ -369,3 +380,17 @@ class UnitCreateForm(ModelForm):
         fields = '__all__'
         exclude = ['used_by_other_unit']
 
+class BsUnitForm(BSModalModelForm):
+    comment = CharField(widget=Textarea(attrs={'cols': 40, 'rows': 3}), required=False, disabled=True)
+    sn = Field(disabled=True)
+    appliance = Field(disabled=True)
+    power = Field(disabled=True)
+    vendor = Field(disabled=True)
+    model = Field(disabled=True)
+    vendor_model = Field(disabled=True)
+    ram = Field(disabled=True)
+    field_order = ['model', 'vendor', 'vendor_model', 'power', 'appliance', 'ram', 'sn', 'comment']
+    class Meta:
+        model = Units
+        fields ='__all__'
+        exclude = ['rack', 'used_by_unit', 'owner', 'is_avaliable', 'hostname', 'mng_ip', 'in_use', 'unit_num', 'console', 'modified', 'modified_by']
