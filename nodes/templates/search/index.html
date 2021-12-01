@@ -24,11 +24,13 @@
     <h2 class="tbl_header">Result</h2>
     <div class="unit_dtl_main_conteiner">
         {% if request.method == 'POST' %}
-            <form id="form_csv" class="fnt_sz_14" action="{% url 'nodes:csv_view'%}" method="post" hidden>
-            {% csrf_token %}
-            {{ form_csv.as_p }}
-            </form>
-            <input type="Submit" value="Export to CSV" form="form_csv">
+            {% if qs.count %}
+                <form id="form_csv" class="fnt_sz_14" action="{% url 'nodes:csv_view'%}" method="post" hidden>
+                    {% csrf_token %}
+                    {{ form_csv.as_p }}
+                </form>
+                <input type="Submit" value="Export to CSV" form="form_csv">
+            {% endif %}
             <h2 class="tbl_header">Count {{ qs.count }}</h2>
         {% endif %}
         <ul>

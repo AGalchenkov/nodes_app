@@ -3,10 +3,9 @@ from django.contrib.auth.models import User
 from django.forms import ModelForm, Textarea, CharField, ChoiceField, Field, BooleanField, HiddenInput
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
-import time, datetime
-import ipaddress
 from django.utils.timezone import now
 from bootstrap_modal_forms.forms import BSModalModelForm
+from functions.ping import *
 
 from ping3 import ping
 
@@ -249,7 +248,7 @@ class UnitForm(ModelForm):
         if 'mng_ip' in self.changed_data:
             mng_ip = cleaned_data.get('mng_ip')
             try:
-                if ping(mng_ip, timeout=0.5):
+                if ping(mng_ip):
                     self.instance.is_avaliable = True
                 else:
                     self.instance.is_avaliable = False
@@ -353,31 +352,6 @@ class SearchForm(ModelForm):
     class Meta:
         model = Units
         exclude = ['used_by_unit', 'in_use', 'unit_num', 'console', 'modified', 'modified_by']
-
-class CSVForm(ModelForm):
-
-    has_model_choises = (
-        (1, 'no matter'),
-        (2, 'yes'),
-        (3, 'no'),
-    )
-    is_avaliable_choises = (
-        (1, 'no matter'),
-        (2, 'yes'),
-        (3, 'no'),
-    )
-
-    model = Units
-
-    def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request', None)
-        super().__init__(*args, **kwargs)
-
-    class Meta:
-        model = Units
-        exclude = ['used_by_unit', 'in_use', 'unit_num', 'console', 'modified', 'modified_by']
-
-
 
 class UnitCreateForm(ModelForm):
     comment = CharField(widget=Textarea(attrs={'cols': 40, 'rows': 3}), required=False)

@@ -683,3 +683,13 @@ br ~ input#id_image {
     padding: 50px;
     min-height: 600px;
 }
+
+.full-notify {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 5000;
+}
+
+

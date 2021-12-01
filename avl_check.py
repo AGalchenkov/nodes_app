@@ -1,9 +1,10 @@
 from nodes.models import *
-from ping3 import ping, verbose_ping
+import os
 
 u = Units.objects.filter(mng_ip__isnull=False)
 for item in u:
-    if ping(item.mng_ip, timeout=0.5):
+    resp = os.system(f'ping -c 1 -w 1 {item.mng_ip}')
+    if not resp:
         item.is_avaliable = True
         item.save()
     else:

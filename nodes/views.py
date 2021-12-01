@@ -82,7 +82,7 @@ def unit_detail(request, rack_id, unit_num):
             #    unit_form = UnitForm(request=request, instance=unit, data=request.POST)
         if unit_form.is_valid():
             unit_form.save()
-            messages.success(request, 'Submit DONE!')
+            messages.success(request, 'DONE!')
             return HttpResponseRedirect(reverse('nodes:unit_detail', args=[rack_id, unit_num]))
     context = {
         'unit': unit,
@@ -136,7 +136,6 @@ def search(request):
         mng_ip = request.POST['mng_ip'] if request.POST['mng_ip'] else ''
         hostname = request.POST['hostname'] if request.POST['hostname'] else ''
 
-        print(f"##################### HAS_MODEL:      {request.POST['has_model']}")
         form_without_csv = SearchForm(instance=Units, initial={
             'owner': request.POST['owner'],
             'rack': request.POST['rack'],
@@ -152,7 +151,7 @@ def search(request):
             'is_avaliable': request.POST['is_avaliable'],
         })
 
-        form_csv = CSVForm(instance=Units, initial={
+        form_csv = SearchForm(instance=Units, initial={
             'owner': request.POST['owner'],
             'rack': request.POST['rack'],
             'model': request.POST['model'],
@@ -165,7 +164,7 @@ def search(request):
             'has_model': request.POST['has_model'],
             'comment': request.POST['comment'],
             'is_avaliable': request.POST['is_avaliable'],
-            'csv': True,
+        #    'csv': True,
         })
     context = {
         'form_without_csv': form_without_csv,
@@ -194,9 +193,6 @@ def unit_create(request, rack_id, unit_num):
     return render(request, 'unit_create/index.html', context)
 
 def csv_view(request):
-    print('######## POST:')
-    print(request.method)
-
     qs = Units.objects.all()
     for key, val in request.POST.items():
         if key == 'csrfmiddlewaretoken':
@@ -229,15 +225,15 @@ def csv_view(request):
             qs = qs.filter(**{key: val})
     opts = qs.model._meta
     model = qs.model
-    #response = HttpResponse(mimetype='text/csv')
-    #response['Content-Disposition'] = 'attachment;filename=export.csv'
-    #writer = csv.writer(response)
-    #field_names = [field.name for field in opts.fields]
-    #writer.writerow(field_names)
-    #for obj in qs:
-    #    writer.writerow([getattr(obj, field) for field in field_names])
-    #return response
-    return render_to_csv_response(qs)
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment;filename=export.csv'
+    writer = csv.writer(response)
+    field_names = [field.name for field in opts.fields]
+    writer.writerow(field_names)
+    for obj in qs:
+        writer.writerow([getattr(obj, field) for field in field_names])
+    return response
+    #return render_to_csv_response(qs)
 
 def BsUnitDetail(request, rack_id, unit_num):
     unit = Units.objects.get(rack_id=rack_id, unit_num=unit_num)
