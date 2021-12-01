@@ -5,12 +5,14 @@ from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.db.models import ImageField
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import permission_required
 
 import os
 
 
 # Create your views here.
 
+@permission_required('advertisements.can_create_adv', raise_exception=True)
 @login_required
 def create_adv(request):
     adv = Advertisments.objects.all()
