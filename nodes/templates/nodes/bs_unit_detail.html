@@ -1,5 +1,7 @@
 <div class="pstn_bs_mdl_unit_btn">
-    <a href="{% url 'nodes:unit_detail' rack_id unit_num %}"><div class="edit_blue_btn">Edit</div></a>
+    {% if perms.nodes.can_edit_unit %}
+        <a href="{% url 'nodes:unit_detail' rack_id unit_num %}"><div class="edit_blue_btn">Edit</div></a>
+    {% endif %}
 </div>
 <h2>U{{unit_num}}</h2>
 <form class="frm_unit_dtl fnt_sz_14" action="{% url 'nodes:unit_detail' 1 1 %}" method="post">

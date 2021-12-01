@@ -16,7 +16,7 @@
 <link rel="stylesheet" type="text/css" href="{% static 'nodes/style.css' %}">
 <a href="{% url 'nodes:rack_list' %}"><div class="left_top_fixed">Rack List</div></a>
 <div class="node_tbl_cnt">
-    <h2 class="tbl_header">{{ location }}</h2>
+    <div class="tbl_header">{{ location }}</div>
     <table class="nbs_table">
 	    <thead>
 		    <tr>
@@ -104,7 +104,6 @@
 <div class="modal" id="create-modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-lg modal_div">
     <div class="modal-content brd_none">
-        PRIVET!
     </div>
   </div>
 </div>
@@ -115,10 +114,15 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
 <script>
+
 $('#create-modal').on('shown.bs.modal', function (e) {
     url = "{% url 'nodes:bs_unit_detail' rack_id 48 %}"
     url = url.replace('48', $(e.relatedTarget).attr('value'))
     $('#create-modal .modal-content').load(url)
+})
+
+$('#create-modal').on('hidden.bs.modal', function (e) {
+    $('#create-modal .modal-content').empty()
 })
 </script>
 

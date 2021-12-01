@@ -8,7 +8,7 @@
 
 <a href="{% url 'nodes:root' %}"><div class="left_top_fixed">Root</div></a>
 <div class="small_tbl_cnt">
-    <h1 class="tbl_header">Rack List</h1>
+    <div class="tbl_header">Rack List</div>
     <ul>
     {% for r in r_list %}
         <a href="{% url 'nodes:rack' r.id %}"><li class="rack_list">{{ r }}</li></a>

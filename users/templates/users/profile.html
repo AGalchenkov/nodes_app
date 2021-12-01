@@ -25,6 +25,14 @@
                 <a href="{% url 'users:logout' %}"><li class="rack_list">Log Out</li></a>
         </ul>
     </div>
+    <h1 class="tbl_header">Permissions</h1>
+    <div class="unit_dtl_main_conteiner">
+        <ul>
+            {% for perm in permissions %}
+                <li class="rack_list">{{ perm }}</li>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
 
 {% endblock content %}

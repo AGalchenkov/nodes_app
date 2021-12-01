@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import *
 from djqscsv import render_to_csv_response
+from django.contrib.auth.decorators import permission_required
 import csv
 from django.contrib import messages
 from bootstrap_modal_forms.generic import BSModalReadView
@@ -50,6 +51,7 @@ def rack(request, rack_id):
     }
     return render(request, 'rack/index.html', context)
 
+@permission_required('nodes.can_view_unit')
 @login_required
 def unit_detail(request, rack_id, unit_num):
     if Units.objects.get(rack_id=rack_id, unit_num=unit_num).used_by_unit:
@@ -80,7 +82,8 @@ def unit_detail(request, rack_id, unit_num):
             #    unit_form = UnitForm(request=request, instance=unit, data=request.POST)
         if unit_form.is_valid():
             unit_form.save()
-            return HttpResponseRedirect(reverse('nodes:rack', args=[rack_id]))
+            messages.success(request, 'Submit DONE!')
+            return HttpResponseRedirect(reverse('nodes:unit_detail', args=[rack_id, unit_num]))
     context = {
         'unit': unit,
         'rack_id': rack_id,

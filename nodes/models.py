@@ -133,6 +133,11 @@ class Units(models.Model):
 
     class Meta:
         unique_together = ['rack_id', 'unit_num']
+        permissions = (
+            ('can_edit_unit', 'edit unit'),
+            ('can_view_unit', 'view unit'),
+            ('can_set_owner', 'owner unit'),
+        )
 
     def __str__(self):
         return f'{self.rack.location}_{self.rack.rack_id}#{self.model}#{self.unit_num}U'
@@ -259,6 +264,7 @@ class UnitForm(ModelForm):
             cleaned_data['modified_by'] = User.objects.get(id=modified_by)
         in_use = cleaned_data.get('in_use')
         owner = cleaned_data.get('owner')
+
         sn = cleaned_data.get('sn')
         unit_num = cleaned_data.get('unit_num')
         rack = cleaned_data.get('rack')
@@ -298,6 +304,16 @@ class UnitForm(ModelForm):
                     self.add_fatboy(unit_num, model, rack)
                 elif model.units_takes == 1 and old_model_units_takes > 1 or model == None and old_model_units_takes > 1:
                     self.remove_fatboy(unit_num, old_model, rack)
+
+        if self.has_changed():
+            if not user.has_perm('nodes.can_edit_unit'):
+                raise ValidationError('You dont have permisson to change unit!')
+            if 'owner' in self.changed_data and not user.has_perm('nodes.can_set_owner'):
+                raise ValidationError('You dont have permission to set unit owner!')
+            cleaned_data['modified_by'] = user
+            cleaned_data['modified'] = now().replace(microsecond=0)
+        else:
+            cleaned_data['modified_by'] = User.objects.get(id=modified_by)
 
         return self.cleaned_data
 

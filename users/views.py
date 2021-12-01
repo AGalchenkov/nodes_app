@@ -5,6 +5,7 @@ from django.views import generic
 from django.forms import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.auth.models import Permission
 from nodes.models import *
 
 #@login_required
@@ -24,5 +25,6 @@ def profile(request):
         'user': request.user,
         'user_units': user_units,
         'unit_link_list': unit_link_list,
+        'permissions': Permission.objects.filter(group__user=request.user)
     }
     return render(request, 'users/profile.html', context)
