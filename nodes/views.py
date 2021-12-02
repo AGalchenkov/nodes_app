@@ -131,7 +131,6 @@ def search(request):
                     continue
             if val:
                 qs = qs.filter(**{ key:val })
-        print(request.POST)
         sn = request.POST['sn'] if request.POST['sn'] else ''
         mng_ip = request.POST['mng_ip'] if request.POST['mng_ip'] else ''
         hostname = request.POST['hostname'] if request.POST['hostname'] else ''
@@ -191,6 +190,27 @@ def unit_create(request, rack_id, unit_num):
         'unit_num': unit_num
     }
     return render(request, 'unit_create/index.html', context)
+
+def create_rack(request):
+
+    if request.method != 'POST':
+        form = RackCreateForm(instance=Racks)
+    else:
+        form = RackCreateForm(instance=None, data=request.POST)
+        if form.is_valid():
+            rack = form.save(commit=False)
+            rack.save()
+            units_num = request.POST.get('units_num')
+            for i in range(1, int(units_num)+1):
+                Units(rack=rack, unit_num=i).save()
+            messages.success(request, 'DONE!')
+            return HttpResponseRedirect(reverse('nodes:rack_list'))
+
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'create_rack/index.html', context)
 
 def csv_view(request):
     qs = Units.objects.all()
@@ -253,3 +273,8 @@ def BsUnitDetail(request, rack_id, unit_num):
         'rack_id': rack_id,
     }
     return render(request, 'nodes/bs_unit_detail.html', context)
+
+def delet_rack(request, rack_id):
+    Racks.objects.get(id=rack_id).delete()
+    messages.success(request, 'DONE!')
+    return HttpResponseRedirect(reverse('nodes:rack_list'))

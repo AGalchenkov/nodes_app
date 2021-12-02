@@ -1,16 +1,13 @@
-{% extends "advertisements/base.html" %}
+{% extends "nodes/base.html" %}
 
 {% block content %}
 
 {% load static %}
 
-<a href="{% url 'nodes:root' %}"><div class="left_top_fixed">Root</div></a>
-<a href="{% url 'adv:create_adv' %}"><div class="search_menu">Adv create</div></a>
-
 <h1 class="tbl_header">Advertisements</h1>
 <div class="dsp_flx_spc mrgn_tp_50px">
   {% for adv in advs %}
-    <a class="single_adv flx_3_clm" href="{% url 'adv:adv_detail' adv.id %}">
+    <a class="single_adv flx_3_clm my_lnk" href="{% url 'adv:adv_detail' adv.id %}">
         <div>
             <div class="cnt_adv_text">
                 <span class="adv_text">{{adv.text|striptags}}</span>

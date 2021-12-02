@@ -224,6 +224,7 @@ tbody td.bg_green:hover {
 ul {
             list-style: none;
             padding-left: 0px;
+            margin: 0px;
 }
 
 .rack_list {
@@ -248,7 +249,9 @@ li.rack_list {
             list-style: none;
             margin: 10px 5px;
             color: #484848;
+            position: relative;
 }
+
 
 li.rack_list:hover {
             color: white;
@@ -260,9 +263,9 @@ li.rack_list:hover a {
             color:white;
 }
 
-a {
+a.my_lnk {
             text-decoration: none !important;
-            color: #484848;
+            color: #484848 !important;
       //      display: block;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -405,7 +408,6 @@ input[type=submit]:hover {
     position: fixed;
     top: 25px;
     right: 0px;
-    font-size: large;
     color: #484848;
 }
 
@@ -495,6 +497,7 @@ input[type=submit]:hover {
     width: 32%;
     border: 3px solid transparent;
 //    height: 220px;
+    box-sizing: content-box;
 }
 
 .single_adv:hover {
@@ -531,7 +534,7 @@ input[type=submit]:hover {
 }
 
 .main_conteiner {
-    margin: 100px 175px;
+    margin: 78px 220px;
 }
 
 .stndr_div {
@@ -589,13 +592,13 @@ ul#id_tags > li {
     display: block;
     text-align: center;
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .pstn_adv_btn {
-    position: fixed;
-    top: 100px;
-    left: 83px;
+    position: absolute;
+    top: 78px;
+    left: 120px;
     width: 77px;
 }
 
@@ -619,7 +622,7 @@ ul#id_tags > li {
     display: block;
     text-align: center;
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .edit_red_btn:hover {
@@ -635,6 +638,8 @@ br ~ input#id_image {
     font-weight: bold;
     color: blue;
 }
+
+
 
 .txt_cntr {
     text-align: center;
@@ -692,4 +697,46 @@ br ~ input#id_image {
   z-index: 5000;
 }
 
+.base_menu {
+    position: absolute;
+    top: 25px;
+    left: 0px;
+}
 
+.base_menu li {
+    padding: 15px;
+    box-shadow: 0 0 10px #d7d7d7;
+    border-bottom-right-radius: 15px;
+    border-top-right-radius: 15px;
+    background-color: white;
+    list-style: none;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.base_menu li:hover {
+    background-color: rgba(34, 82, 155, 0.98);
+    color: white;
+}
+
+.addition_menu {
+    position: absolute;
+    top: 89px;
+    right: 0px;
+}
+
+.addition_menu li {
+    padding: 15px;
+    box-shadow: 0 0 10px #d7d7d7;
+    border-bottom-left-radius: 15px;
+    border-top-left-radius: 15px;
+    background-color: white;
+    list-style: none;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.addition_menu li:hover {
+    background-color: rgba(34, 82, 155, 0.98);
+    color: white;
+}

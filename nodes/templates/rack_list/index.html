@@ -4,15 +4,23 @@
 
 {% load static %}
 
-<link rel="stylesheet" type="text/css" href="{% static 'nodes/style.css' %}">
+<div class="full-notify"></div>
 
-<a href="{% url 'nodes:root' %}"><div class="left_top_fixed">Root</div></a>
 <div class="small_tbl_cnt">
     <div class="tbl_header">Rack List</div>
     <ul>
     {% for r in r_list %}
-        <a href="{% url 'nodes:rack' r.id %}"><li class="rack_list">{{ r }}</li></a>
+        <a href="{% url 'nodes:rack' r.id %}"><li class="rack_list del">{{ r }}</li></a>
     {% endfor %}
 </ul>
 </div>
+
+{% if messages %}
+{% for message in messages %}
+    <script>
+        $N('{{message}}').setStyle('{{message.tags}}').setAge(1500).show('.full-notify');
+    </script>
+  {% endfor %}
+{% endif %}
+
 {% endblock content %}

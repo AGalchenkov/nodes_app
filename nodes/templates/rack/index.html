@@ -3,18 +3,11 @@
 {% block content %}
 
 {% load static %}
-
-
-
-<!-- <script src="/static/bsmodals/bsmodals.js"></script>  -->
-<!-- <script type="text/javascript" src="{% static 'js/bootstrap.js' %}"></script>  -->
-<script type="text/javascript" src="{% static 'js/jquery-3.6.0.js' %}"></script>
-<!--  <script src="{% static 'js/jquery.bootstrap.modal.forms.js' %}"></script>  -->
-
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-<link rel="stylesheet" type="text/css" href="{% static 'nodes/style.css' %}">
-<a href="{% url 'nodes:rack_list' %}"><div class="left_top_fixed">Rack List</div></a>
+<div class="pstn_adv_btn">
+    {% if request.user.is_staff %}
+        <a class="my_lnk" data-toggle="modal" data-target="#confirm-delete" data-href="{% url 'nodes:delete_rack' rack_id %}"><div id="del_btn" class="edit_red_btn">Delete</div></a>
+    {% endif %}
+</div>
 <div class="node_tbl_cnt">
     <div class="tbl_header">{{ location }}</div>
     <table class="nbs_table">
@@ -41,19 +34,19 @@
                     {% if item.used_by_unit %}
                         <td class="not_active">U{{item.used_by_unit}}</td>
                     {% elif item.model == None %}
-                        <td class="rack_tbl"><a class="flx_cntr hght_100_prc" href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">empty</a></td>
+                        <td class="rack_tbl"><a class="flx_cntr hght_100_prc my_lnk" href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">empty</a></td>
                     {% else %}
                         {% if item.model.units_takes > 1 %}
                             {% if item.hostname %}
-                                <td class="rack_tbl with_model"><a class="bold flx_cntr hght_100_prc" href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">{{item.model}}@{{item.hostname}} ({{item.model.units_takes}}U)</a></td>
+                                <td class="rack_tbl with_model"><a class="bold flx_cntr hght_100_prc my_lnk" href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">{{item.model}}@{{item.hostname}} ({{item.model.units_takes}}U)</a></td>
                             {% else %}
-                                <td class="rack_tbl with_model bold"><a class="bold flx_cntr hght_100_prc" href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">{{item.model}}{{item.hostname}} ({{item.model.units_takes}}U)</a></td>
+                                <td class="rack_tbl with_model bold"><a class="bold flx_cntr hght_100_prc my_lnk" href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">{{item.model}}{{item.hostname}} ({{item.model.units_takes}}U)</a></td>
                             {% endif %}
                         {% else %}
                                 {% if item.hostname %}
-                                    <td class="rack_tbl with_model"><a class="bold flx_cntr hght_100_prc" href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">{{item.model}}@{{item.hostname}}</a></td>
+                                    <td class="rack_tbl with_model"><a class="bold flx_cntr hght_100_prc my_lnk" href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">{{item.model}}@{{item.hostname}}</a></td>
                                 {% else %}
-                                    <td class="rack_tbl with_model"><a class="bold flx_cntr hght_100_prc" href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">{{item.model}}{{item.hostname}}</a></td>
+                                    <td class="rack_tbl with_model"><a class="bold flx_cntr hght_100_prc my_lnk" href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">{{item.model}}{{item.hostname}}</a></td>
                                 {% endif %}
                         {% endif %}
                     {% endif%}
@@ -108,6 +101,22 @@
   </div>
 </div>
 
+<div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+            </div>
+            <div class="modal-body">
+                Delete Rack on = {{ location }} =
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-danger btn-ok" style="color:white;">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>   -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
@@ -124,6 +133,11 @@ $('#create-modal').on('shown.bs.modal', function (e) {
 $('#create-modal').on('hidden.bs.modal', function (e) {
     $('#create-modal .modal-content').empty()
 })
+
+$('#confirm-delete').on('show.bs.modal', function(e) {
+    $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+});
+
 </script>
 
 

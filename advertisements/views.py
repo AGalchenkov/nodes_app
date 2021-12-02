@@ -6,6 +6,7 @@ from django.conf import settings
 from django.db.models import ImageField
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
+from django.contrib import messages
 
 import os
 
@@ -82,7 +83,8 @@ def adv_edit(request, adv_id):
             )
         if edit_adv_form.is_valid():
             edit_adv_form.save()
-            return HttpResponseRedirect(reverse('adv:advs'))
+            messages.success(request, 'DONE!')
+            return HttpResponseRedirect(reverse('adv:adv_detail', args=[adv_id]))
     context = {
         'form': edit_adv_form,
         'adv': adv,

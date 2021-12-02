@@ -13,4 +13,6 @@ urlpatterns = [
     path('search/', views.search, name='search'),
     path('csv_view/', views.csv_view, name='csv_view'),
     path('rack/<int:rack_id>/bs_unit_detail/<int:unit_num>', views.BsUnitDetail, name='bs_unit_detail'),
+    path('rack/create_rack', views.create_rack, name='create_rack'),
+    path('rack/delete_rack/<int:rack_id>', views.delet_rack, name='delete_rack'),
 ]

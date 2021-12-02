@@ -26,7 +26,7 @@ class Racks(models.Model):
             MinValueValidator(0),
             MaxValueValidator(1000),
         ],
-        default=999
+        default=999,
     )
     units_num = models.IntegerField(
         validators=[
@@ -34,6 +34,10 @@ class Racks(models.Model):
             MaxValueValidator(48, message='to much unit number'),
         ]
     )
+
+    class Meta:
+        unique_together = ['rack_id', 'location']
+
     def __str__(self):
         return f'{self.location}_#{self.rack_id} ({self.units_num}U)'
 
@@ -369,6 +373,12 @@ class UnitCreateForm(ModelForm):
         model = Units
         fields = '__all__'
         exclude = ['used_by_other_unit']
+
+class RackCreateForm(ModelForm):
+
+    class Meta:
+        model = Racks
+        fields = '__all__'
 
 class BsUnitForm(BSModalModelForm):
     comment = CharField(widget=Textarea(attrs={'cols': 40, 'rows': 3}), required=False, disabled=True)

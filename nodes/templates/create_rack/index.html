@@ -6,16 +6,14 @@
 
 <div class="full-notify"></div>
 <div class="node_tbl_cnt">
-    <h1 class="tbl_header">U{{ unit_num }}</h1>
-    <div class="unit_dtl_main_conteiner hght_60_prc">
-        <form class="frm_unit_dtl fnt_sz_14" action="{% url 'nodes:unit_detail' rack_id unit_num %}" method="post">
+    <h1 class="tbl_header">Create rack</h1>
+    <div class="unit_dtl_main_conteiner">
+        <form id="create_rack_form" class="fnt_sz_14" action="{% url 'nodes:create_rack' %}" method="post">
             {% csrf_token %}
             {{ form.as_p }}
-</div>
-{% if perms.nodes.can_edit_unit %}
-    <input type="submit" value="Submit">
-{% endif %}
-</form>
+        </form>
+    </div>
+    <input form="create_rack_form" type="submit" value="Submit">
 </div>
 
 {% if messages %}
