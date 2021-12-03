@@ -37,6 +37,7 @@ class Racks(models.Model):
 
     class Meta:
         unique_together = ['rack_id', 'location']
+        ordering = ['location', 'rack_id']
 
     def __str__(self):
         return f'{self.location}_#{self.rack_id} ({self.units_num}U)'

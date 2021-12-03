@@ -7,6 +7,7 @@ from django.db.models import ImageField
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
 from django.contrib import messages
+from django.utils.timezone import now
 
 import os
 
@@ -49,7 +50,8 @@ def advs(request):
     advs = reversed(advs)
 
     context = {
-        'advs': advs
+        'advs': advs,
+        'now': now().strftime('%Y-%m-%d'),
     }
 
     return render(request, 'advertisements/index.html', context)
@@ -58,7 +60,7 @@ def advs(request):
 def adv_detail(request, adv_id):
     adv = Advertisments.objects.get(id=adv_id)
     context = {
-        'adv': adv
+        'adv': adv,
     }
 
     return render(request, 'adv_detail/index.html', context)
@@ -93,6 +95,6 @@ def adv_edit(request, adv_id):
 
 @login_required
 def adv_del(request, adv_id):
-    adv = Advertisments.objects.get(id=adv_id)
-    adv.delete()
+    Advertisments.objects.get(id=adv_id).delete()
+    messages.success(request, 'DONE!')
     return HttpResponseRedirect(reverse('adv:advs'))

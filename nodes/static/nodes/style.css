@@ -405,7 +405,7 @@ input[type=submit]:hover {
     border-top-left-radius: 15px;
     border-bottom-left-radius: 15px;
     font-weight: bold;
-    position: fixed;
+    position: absolute;
     top: 25px;
     right: 0px;
     color: #484848;
@@ -739,4 +739,8 @@ br ~ input#id_image {
 .addition_menu li:hover {
     background-color: rgba(34, 82, 155, 0.98);
     color: white;
+}
+
+.today_adv {
+    border: 3px solid #0fc40f !important;
 }

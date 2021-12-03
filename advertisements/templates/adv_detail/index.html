@@ -7,7 +7,7 @@
     <div class="pstn_adv_btn">
     {% if request.user ==  adv.author or user.is_staff %}
         <a href="{% url 'adv:adv_edit' adv.id %}"><div id="{{adv.id}}" class="edit_blue_btn">Edit</div></a>
-        <a><div id="del_btn" class="edit_red_btn">Delete</div></a>
+        <a class="my_lnk" data-toggle="modal" data-target="#confirm-delete" data-href="{% url 'adv:adv_del' adv.id %}"><div id="del_btn" class="edit_red_btn">Delete</div></a>
     {% endif %}
     </div>
     <div class="main_conteiner stndr_div">
@@ -17,8 +17,8 @@
             </div>
         </div>
         {% if adv.image %}
-            {% if adv.image.height > 900 or adv.image.width > 1440 %}
-                <img src="{{ adv.image.url }}" width="1440" height="900">
+            {% if adv.image.height > 768 or adv.image.width > 1368 %}
+                <img src="{{ adv.image.url }}" width="1368" height="768">
             {% else %}
                 <img src="{{ adv.image.url }}">
             {% endif %}
@@ -33,16 +33,33 @@
                 expired: {{adv.expired_date}}
             {% endif %}
         </p>
+        <p class="athr_sgn">
+                released: {{adv.release_date}}
+            </p>
         <span class="athr_sgn">@{{adv.author}}</span>
     </div>
 
+<div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+            </div>
+            <div class="modal-body">
+                Delete Adv
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-danger btn-ok" style="color:white;">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
-    $('#del_btn').click(function() {
-        var answer = window.confirm("Sure?")
-        if (answer) {
-            window.location.replace("{% url 'adv:adv_del' adv.id %}")
-        }else {}
-    });
+          $('#confirm-delete').on('show.bs.modal', function(e) {
+            $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+          })
 </script>
 
 {% if messages %}

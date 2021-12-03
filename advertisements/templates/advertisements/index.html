@@ -7,7 +7,11 @@
 <h1 class="tbl_header">Advertisements</h1>
 <div class="dsp_flx_spc mrgn_tp_50px">
   {% for adv in advs %}
-    <a class="single_adv flx_3_clm my_lnk" href="{% url 'adv:adv_detail' adv.id %}">
+    {% if now == adv.release_date|date:'Y-m-d' %}
+        <a class="single_adv flx_3_clm my_lnk today_adv" href="{% url 'adv:adv_detail' adv.id %}">
+    {% else %}
+        <a class="single_adv flx_3_clm my_lnk" href="{% url 'adv:adv_detail' adv.id %}">
+    {% endif %}
         <div>
             <div class="cnt_adv_text">
                 <span class="adv_text">{{adv.text|striptags}}</span>
@@ -28,6 +32,9 @@
                 expired: {{adv.expired_date}}
             {% endif %}
         </p>
+            <p class="athr_sgn">
+                released: {{adv.release_date}}
+            </p>
         <span class="athr_sgn">@{{adv.author}}</span>
         </div>
     </a>

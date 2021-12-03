@@ -28,7 +28,7 @@ def index(request):
 
 @login_required
 def rack_list(request):
-    r_list = Racks.objects.all()
+    r_list = Racks.objects.all().order_by('location')
     context = {
         'r_list': r_list
     }
