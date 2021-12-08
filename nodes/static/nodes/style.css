@@ -796,3 +796,10 @@ br ~ input#id_image {
     padding-bottom: 30px;
     margin-bottom: 25px;
 }
+
+.telechat {
+    background: white;
+    padding: 10px;
+    border-radius: 15px;
+    box-shadow: 0 0 7px #cecece;
+}

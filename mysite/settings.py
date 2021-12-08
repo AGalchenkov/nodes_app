@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'users',
     'advertisements',
     'bootstrap_modal_forms',
+    'telechat',
     #default
     'django.contrib.admin',
     'django.contrib.auth',

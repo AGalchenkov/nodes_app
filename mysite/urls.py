@@ -25,6 +25,7 @@ urlpatterns = [
     path('nodes/', include('nodes.urls', namespace='nodes')),
     path('users/', include('users.urls', namespace='users')),
     path('adv/', include('advertisements.urls', namespace='adv')),
+    path('telechat/', include('telechat.urls', namespace='telechat')),
 ]
 
 urlpatterns +=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

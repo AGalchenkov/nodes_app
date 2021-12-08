@@ -1,0 +1,17 @@
+{% extends "nodes/base.html" %}
+
+{% block content %}
+
+{% load static %}
+
+
+<div class="small_tbl_cnt">
+    <div class="tbl_header">Telegram Chats List</div>
+    <ul>
+    {% for c in c_list %}
+        <a href="{% url 'telechat:chat_detail' c.id %}"><li class="rack_list del">{{ c }}</li></a>
+    {% endfor %}
+</ul>
+</div>
+
+{% endblock content %}

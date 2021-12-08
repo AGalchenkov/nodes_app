@@ -1,0 +1,12 @@
+
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'nodes/style.css' %}">
+
+<div style="margin: 100px 100px; width: 50%;">
+    <div class="tbl_header">{{chat}} (last {{limit}} messages)</div>
+    {% for m in msg %}
+        <p class="telechat">{{m|safe}}</p>
+    {% endfor %}
+</div>
+
