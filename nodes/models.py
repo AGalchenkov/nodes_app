@@ -268,7 +268,7 @@ class UnitForm(ModelForm):
             cleaned_data['modified_by'] = User.objects.get(id=modified_by)
         in_use = cleaned_data.get('in_use')
         owner = cleaned_data.get('owner')
-
+        mng_ip = cleaned_data.get('mng_ip')
         sn = cleaned_data.get('sn')
         unit_num = cleaned_data.get('unit_num')
         rack = cleaned_data.get('rack')
@@ -279,6 +279,8 @@ class UnitForm(ModelForm):
         old_model = Units.objects.get(rack=rack, unit_num=unit_num).model
         old_model_units_takes = old_model.units_takes if hasattr(old_model, 'units_takes') else 0
 
+        if mng_ip and not model:
+            raise ValidationError('set model')
         if in_use == True and owner == None:
             raise ValidationError('assigned(in use) unit must have owner')
         if model:

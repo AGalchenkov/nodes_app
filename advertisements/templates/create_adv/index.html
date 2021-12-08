@@ -7,14 +7,16 @@
 <div class="node_tbl_cnt">
     <h1 class="tbl_header">Create adv</h1>
     <div class="unit_dtl_main_conteiner">
-            <form id="adv_create" class="fnt_sz_14" action="{% url 'adv:create_adv'%}" method="post" enctype="multipart/form-data">
+            <form id="adv_create" action="{% url 'adv:create_adv'%}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.as_p }}
         </form>
-        <div class="add_html_tag inl_blk" id="h1">header</div>
-        <div class="add_html_tag inl_blk" id="b">bold</div>
-        <div class="add_html_tag inl_blk" id="a">link</div>
-        <div class="add_html_tag inl_blk" id="br">\r\n</div>
+        <div class="add_html_tag_cnt">
+            <div class="html_tag_btn inl_blk" id="h1">header</div>
+            <div class="html_tag_btn inl_blk" id="b">bold</div>
+            <div class="html_tag_btn inl_blk" id="a">link</div>
+            <div class="html_tag_btn inl_blk" id="br">\r\n</div>
+        </div>
     </div>
     <input type="Submit" value="Create" form="adv_create">
     </div>
@@ -28,15 +30,15 @@
       });
        $('#h1').click(function () {
           var curr_val = $('#id_text').val()
-          $('#id_text').val(curr_val + '<h1></h1>')
+          $('#id_text').val(curr_val + '<h1> </h1>')
       })
       $('#b').click(function () {
           var curr_val = $('#id_text').val()
-          $('#id_text').val(curr_val + '<b></b>')
+          $('#id_text').val(curr_val + '<b> </b>')
       })
       $('#a').click(function () {
           var curr_val = $('#id_text').val()
-          $('#id_text').val(curr_val + '<a href=""></a>')
+          $('#id_text').val(curr_val + '<a href=""> </a>')
       })
       $('#br').click(function () {
           var curr_val = $('#id_text').val()

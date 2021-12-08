@@ -5,7 +5,7 @@
 {% load static %}
 
 <h1 class="tbl_header">Advertisements</h1>
-<div class="dsp_flx_spc mrgn_tp_50px">
+<div class="dsp_flx_spc mrgn_tp_50px main_conteiner">
   {% for adv in advs %}
     {% if now == adv.release_date|date:'Y-m-d' %}
         <a class="single_adv flx_3_clm my_lnk today_adv" href="{% url 'adv:adv_detail' adv.id %}">
@@ -40,6 +40,38 @@
     </a>
   {% endfor %}
 </div>
+
+<!--
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Главная</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Профиль</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Контакт</button>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">aaa</div>
+  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">bbb</div>
+  <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">ccc</div>
+</div>
+
+
+
+<script>
+    $('#home').load("{% url 'nodes:rack_list' %}")
+</script>
+-->
+
+
+
+
+
+
 
 
 <script>

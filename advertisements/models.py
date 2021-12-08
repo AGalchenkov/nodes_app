@@ -23,8 +23,13 @@ class Advertisments(models.Model):
     def __str__(self):
         return f'{self.text[0:40]}...'
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.release_date = now().replace(microsecond=0)
+        return super(Advertisments, self).save(*args, **kwargs)
+
 class CreateAdvertisment(ModelForm):
-    text = CharField(widget=Textarea(attrs={'cols': 100, 'rows': 15}))
+    text = CharField(widget=Textarea(attrs={'cols': 100, 'rows': 8}))
     tags = ModelMultipleChoiceField(queryset=Tags.objects.all(), widget=CheckboxSelectMultiple, required=False)
     expired_date = DateTimeField(input_formats=['%d/%m/%Y %H:%M'], required=False)
     image = ImageField(widget=ClearableFileInput(attrs={'multiple': True}), required=False)
@@ -48,12 +53,13 @@ class CreateAdvertisment(ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         self.instance.author = self.request.user
+     #   self.instance.release_date = now().replace(microsecond=True)
         return cleaned_data
 
     class Meta:
         model = Advertisments
         fields = '__all__'
-        exclude = ['author']
+        exclude = ['author', 'release_date']
         widgets = {
             'image': ClearableFileInput(attrs={'multiple': True})
         }

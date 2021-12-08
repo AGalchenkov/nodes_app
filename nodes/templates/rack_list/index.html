@@ -4,7 +4,6 @@
 
 {% load static %}
 
-<div class="full-notify"></div>
 
 <div class="small_tbl_cnt">
     <div class="tbl_header">Rack List</div>
@@ -14,13 +13,5 @@
     {% endfor %}
 </ul>
 </div>
-
-{% if messages %}
-{% for message in messages %}
-    <script>
-        $N('{{message}}').setStyle('{{message.tags}}').setAge(1500).show('.full-notify');
-    </script>
-  {% endfor %}
-{% endif %}
 
 {% endblock content %}

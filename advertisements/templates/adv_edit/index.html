@@ -1,11 +1,9 @@
 
-{% extends "advertisements/base.html" %}
+{% extends "nodes/base.html" %}
 
 {% block content %}
 
 {% load static %}
-
-<a href="{% url 'adv:advs' %}"><div class="left_top_fixed">Advs</div></a>
 
 <div class="node_tbl_cnt">
     <h1 class="tbl_header">Edit adv</h1>
@@ -14,31 +12,85 @@
                 {% csrf_token %}
                 {{ form.as_p }}
         </form>
-        <div class="add_html_tag inl_blk" id="h1">header</div>
-        <div class="add_html_tag inl_blk" id="b">bold</div>
-        <div class="add_html_tag inl_blk" id="a">link</div>
-        <div class="add_html_tag inl_blk" id="br">\r\n</div>
+        <div class="add_html_tag_cnt">
+            <div class="html_tag_btn inl_blk" id="h1">header</div>
+            <div class="html_tag_btn inl_blk" id="b">bold</div>
+            <div class="html_tag_btn inl_blk" id="a">link</div>
+            <div class="html_tag_btn inl_blk" id="br">\r\n</div>
+        </div>
+    <ul>
+        <li class="inl_blk">
+            <input type="checkbox" class="custom-checkbox" id="header" name="header" value="header">
+            <label for="header">header</label>
+        </li>
+        <li class="inl_blk">
+            <input type="checkbox" class="custom-checkbox" id="bold" name="bold" value="bold">
+            <label for="bold">bold</label>
+        </li>
+    </ul>
     </div>
     <input type="Submit" value="Edit" form="adv_edit">
 </div>
 
 <script>
+
+function getSelectionText() {
+    if (window.getSelection) {
+        try {
+            var ta = $('textarea').get(0);
+            return ta.value.substring(ta.selectionStart, ta.selectionEnd);
+        } catch (e) {
+            console.log('Cant get selection text')
+        }
+    }
+    if (document.selection && document.selection.type != "Control") {
+        return document.selection.createRange().text;
+    }
+}
+
+        $('#id_text').mouseup(function(){
+    var selection = getSelectionText();
+    var selection_text = selection.toString();
+    $('.custom-checkbox').each(function (indx, elem) {
+        if ($(elem).is(':checked')) {
+            if ($(elem).val() == 'header') {
+                var h1 = document.createElement('H1');
+                h1.textContent = selection.toString();
+                var range = selection.getRangeAt(0);
+                range.deleteContents();
+                range.insertNode(h1);
+            }
+        }
+    })
+    });
+
+
       $(function () {
         $("#id_expired_date").datetimepicker({
             format: 'd/m/Y H:i',
         });
       });
-      $('#h1').click(function () {
+      $('#h1').click(function (e) {
           var curr_val = $('#id_text').val()
-          $('#id_text').val(curr_val + '<h1></h1>')
+          $('#id_text').val(curr_val + '<h1> </h1>')
+
+
+   //       var selection = getSelectionText();
+   //       var selection_text = selection.toString();
+   //       var h1 = document.createElement('H1');
+   //       h1.textContent = selection.toString();
+   //       var range = selection.getRangeAt(0);
+   //       range.deleteContents();
+   //       range.insertNode(h1);
+
       })
       $('#b').click(function () {
           var curr_val = $('#id_text').val()
-          $('#id_text').val(curr_val + '<b></b>')
+          $('#id_text').val(curr_val + '<b> </b>')
       })
       $('#a').click(function () {
           var curr_val = $('#id_text').val()
-          $('#id_text').val(curr_val + '<a href=""></a>')
+          $('#id_text').val(curr_val + '<a href=" "> </a>')
       })
       $('#br').click(function () {
           var curr_val = $('#id_text').val()

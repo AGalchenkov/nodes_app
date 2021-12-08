@@ -7,16 +7,15 @@
 <script type="text/javascript" src="{% static 'nodes/js/jquery-3.6.0.min.js' %}"></script>
 
 <div class="search">
-<div class="small_tbl_cnt_search">
-    <h2 class="tbl_header">Search</h2>
-    <div class="unit_dtl_main_conteiner">
-        <form class="fnt_sz_14" action="{% url 'nodes:search'%}" method="post">
-            {% csrf_token %}
-            {{ form_without_csv.as_p }}
-    </div>
-    <input type="Submit" value="Search">
+    <div class="small_tbl_cnt_search">
+        <h2 class="tbl_header">Search</h2>
+        <div class="unit_dtl_main_conteiner">
+            <form action="{% url 'nodes:search'%}" method="post">
+                {% csrf_token %}
+                {{ form_without_csv.as_p }}
+        </div>
+        <input type="Submit" value="Search">
         </form>
-</form>
 </div>
 <div class="small_tbl_cnt_search">
     <h2 class="tbl_header">Result</h2>

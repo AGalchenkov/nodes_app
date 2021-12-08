@@ -36,6 +36,7 @@ def create_adv(request):
             )
         if create_adv_form.is_valid():
             create_adv_form.save()
+            messages.success(request, 'Create DONE!')
             return HttpResponseRedirect(reverse('adv:advs'))
 
     context = {
@@ -85,7 +86,7 @@ def adv_edit(request, adv_id):
             )
         if edit_adv_form.is_valid():
             edit_adv_form.save()
-            messages.success(request, 'DONE!')
+            messages.success(request, 'Edit DONE!')
             return HttpResponseRedirect(reverse('adv:adv_detail', args=[adv_id]))
     context = {
         'form': edit_adv_form,
@@ -96,5 +97,5 @@ def adv_edit(request, adv_id):
 @login_required
 def adv_del(request, adv_id):
     Advertisments.objects.get(id=adv_id).delete()
-    messages.success(request, 'DONE!')
+    messages.success(request, 'Delete DONE!')
     return HttpResponseRedirect(reverse('adv:advs'))
