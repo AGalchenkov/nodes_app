@@ -39,7 +39,8 @@ def chat_detail(request, chat_id):
         g = lambda: random.randint(0,150)
         b = lambda: random.randint(0,150)
         color = '#%02X%02X%02X' % (r(),g(),b())
-        users[partic.id] = {'name': firstname + " " + lastname, 'color': color}
+        name = (firstname + " " + lastname).strip()
+        users[partic.id] = {'name': name, 'color': color}
     for message in client.iter_messages(chat, limit=limit):
         id = message.from_id.user_id
         try:
@@ -49,11 +50,11 @@ def chat_detail(request, chat_id):
                     med = client.download_media(message.media, str(settings.MEDIA_ROOT) + media_link)
                 w, h = get_image_dimensions(str(settings.MEDIA_ROOT) + media_link + '.jpg')
                 if h > 240:
-                    msg.append(f'<span style="color:gray; display:block">{message.date.replace(microsecond=0, tzinfo=None)}</span> <b style="color: {users[id]["color"]}">{users[id]["name"]} :: </b><img src="{media_link}.jpg" width="320" height="240">')
+                    msg.append(f'<span style="color:gray; display:block">{message.date.replace(microsecond=0, tzinfo=None)}</span><div class="telechat_username" style="color: {users[id]["color"]}">{users[id]["name"]}</div><br><img src="{media_link}.jpg" width="320" height="240">')
                 else:
-                    msg.append(f'<span style="color:gray; display:block">{message.date.replace(microsecond=0, tzinfo=None)}</span> <b style="color: {users[id]["color"]}">{users[id]["name"]} :: </b><img src="{media_link}.jpg">')
+                    msg.append(f'<span style="color:gray; display:block">{message.date.replace(microsecond=0, tzinfo=None)}</span><div class="telechat_username" style="color: {users[id]["color"]}">{users[id]["name"]}</div><br><img src="{media_link}.jpg">')
             else:
-                msg.append(f'<span style="color:gray; display:block">{message.date.replace(microsecond=0, tzinfo=None)}</span> <b style="color: {users[id]["color"]}">{users[id]["name"]} :: </b> {message.text}')
+                msg.append(f'<span style="color:gray; display:block">{message.date.replace(microsecond=0, tzinfo=None)}</span><div class="telechat_username" style="color: {users[id]["color"]}">{users[id]["name"]}</div><br>{message.text}')
         except:
             client.disconnect()
     context = {

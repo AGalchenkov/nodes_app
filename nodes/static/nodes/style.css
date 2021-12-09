@@ -595,7 +595,7 @@ input[type=submit]:hover {
 }
 
 img {
-    margin-top:30px;
+   // margin-top:30px;
   //  margin-bottom: 30px;
     border-radius: 15px;
 }
@@ -802,4 +802,12 @@ br ~ input#id_image {
     padding: 10px;
     border-radius: 15px;
     box-shadow: 0 0 7px #cecece;
+    white-space: pre-wrap;
+}
+
+.telechat_username {
+    border-radius: 5px;
+    display: inline-block;
+    font-weight: bold;
+    font-size: 1.06em;
 }
