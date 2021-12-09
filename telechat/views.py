@@ -44,15 +44,24 @@ def chat_detail(request, chat_id):
     for message in client.iter_messages(chat, limit=limit):
         id = message.from_id.user_id
         try:
+            if message.action:
+                if 'AddUser' in str(message.action):
+                    add_users = [f"<div class='telechat_username' style='color: {users[u_id]['color']}'>{users[u_id]['name']}</div>" for u_id in message.action.users]
+                    print(add_users)
+
+                    us = ", ".join(add_users)
+                    msg.append(f'<span style="color:gray; display:block">{message.date.replace(microsecond=0, tzinfo=None)}</span><div class="telechat_username" style="color: {users[id]["color"]}">{users[id]["name"]}</div> add {us}</div>')
+                    continue
             if message.media:
                 media_link = f'/telechat/{chat}/{message.id}'
                 if not default_storage.exists(str(settings.MEDIA_ROOT) + media_link + '.jpg'):
                     med = client.download_media(message.media, str(settings.MEDIA_ROOT) + media_link)
                 w, h = get_image_dimensions(str(settings.MEDIA_ROOT) + media_link + '.jpg')
                 if h > 240:
-                    msg.append(f'<span style="color:gray; display:block">{message.date.replace(microsecond=0, tzinfo=None)}</span><div class="telechat_username" style="color: {users[id]["color"]}">{users[id]["name"]}</div><br><img src="{media_link}.jpg" width="320" height="240">')
+                    msg.append(f'<span style="color:gray; display:block">{message.date.replace(microsecond=0, tzinfo=None)}</span><div class="telechat_username" style="color: {users[id]["color"]}">{users[id]["name"]}</div><br>{message.text}<br><img src="{media_link}.jpg" width="320" height="240">')
                 else:
-                    msg.append(f'<span style="color:gray; display:block">{message.date.replace(microsecond=0, tzinfo=None)}</span><div class="telechat_username" style="color: {users[id]["color"]}">{users[id]["name"]}</div><br><img src="{media_link}.jpg">')
+                    msg.append(f'<span style="color:gray; display:block">{message.date.replace(microsecond=0, tzinfo=None)}</span><div class="telechat_username" style="color: {users[id]["color"]}">{users[id]["name"]}</div><br>{message.text}<br><img src="{media_link}.jpg">')
+
             else:
                 msg.append(f'<span style="color:gray; display:block">{message.date.replace(microsecond=0, tzinfo=None)}</span><div class="telechat_username" style="color: {users[id]["color"]}">{users[id]["name"]}</div><br>{message.text}')
         except:

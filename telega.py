@@ -25,26 +25,33 @@ client.start()
 
 users = {}
 
-chats = Chat.objects.all()
-list_result = [entry.name for entry in chats]
-
-for dialog in client.iter_dialogs():
-    if re.search(r'РДП|RDP', dialog.title):
-        if not dialog.title in list_result:
-            Chat(name=dialog.title).save()
-        #participants = client.get_participants(dialog.title)
-        for partic in client.iter_participants(dialog.title):
-            lastname = partic.last_name if partic.last_name else ""
-            firstname = partic.first_name if partic.first_name else ""
-            users[partic.id] = firstname + " " + lastname
-        print("#"*(len(dialog.title) + 2))
-        print(f'#{dialog.title}#')
-        print("#"*(len(dialog.title) + 2))
-        print(f'Messages in {dialog.title}')
-        for message in client.iter_messages(dialog.title, limit=20):
-            id = message.from_id.user_id
+chats = Chat.objects.get(id=1)
+client.get_dialogs()
+#list_result = [entry.name for entry in chats]
+#list_result = [chats.name]
+#for dialog in client.iter_dialogs():
+#    if re.search(r'РДП|RDP', dialog.title):
+#       if not dialog.title in list_result:
+#            Chat(name=dialog.title).save()
+#        #participants = client.get_participants(dialog.title)
+#        for partic in client.iter_participants(dialog.title):
+#           lastname = partic.last_name if partic.last_name else ""
+#            firstname = partic.first_name if partic.first_name else ""
+#            users[partic.id] = firstname + " " + lastname
+#        print("#"*(len(dialog.title) + 2))
+#       print(f'#{dialog.title}#')
+#        print("#"*(len(dialog.title) + 2))
+#        print(f'Messages in {dialog.title}')
+       # for message in client.iter_messages(dialog.title, limit=2):
+for message in client.iter_messages(chats.name, limit=2):
+    id = message.from_id.user_id
          #   print(f'{users[id]} :: {message.text}')
-            if message.media:
-                med = client.download_media(message.media, str(settings.MEDIA_ROOT) + f'/telechat/{dialog.title}/{id}')
+    if message.action:
+        if 'AddUser' in str(message.action):
+            print('!!!')
+        print(message.action)
+        print(type(message.action))
+    if message.media:
+        med = client.download_media(message.media, str(settings.MEDIA_ROOT) + f'/telechat/{chats.name}/{id}')
                 #pass
-            print("{:25} :: {} \r\n".format(users[id], message.text))
+        print("{:25} :: {} \r\n".format(users[id], message.text))
