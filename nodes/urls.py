@@ -15,4 +15,5 @@ urlpatterns = [
     path('rack/<int:rack_id>/bs_unit_detail/<int:unit_num>', views.BsUnitDetail, name='bs_unit_detail'),
     path('rack/create_rack', views.create_rack, name='create_rack'),
     path('rack/delete_rack/<int:rack_id>', views.delet_rack, name='delete_rack'),
+    path('send_notifi/', views.send_notifi, name='send_notifi')
 ]

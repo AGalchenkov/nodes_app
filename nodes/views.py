@@ -12,6 +12,7 @@ import csv
 from django.contrib import messages
 from bootstrap_modal_forms.generic import BSModalReadView
 from django.http import JsonResponse
+from webpush import send_group_notification
 
 class IndexView(generic.ListView):
     model = Racks
@@ -42,12 +43,14 @@ def rack(request, rack_id):
     location = rack.__str__().replace('_', ' ')
     u_list = Units.objects.filter(rack=rack)
     u_list = reversed(u_list)
+    webpush = {"group": 'all' }
     context = {
         'u_list': u_list,
         'rack': rack,
         'location': location,
         'rack_id': rack_id,
         'units_used': units_used,
+        'webpush': webpush,
     }
     return render(request, 'rack/index.html', context)
 
@@ -278,3 +281,9 @@ def delet_rack(request, rack_id):
     Racks.objects.get(id=rack_id).delete()
     messages.success(request, 'DONE!')
     return HttpResponseRedirect(reverse('nodes:rack_list'))
+
+def send_notifi(request):
+    payload = {"head": "Welcome to wunderfull peace of WebPush!", "body": "There is a body of webpush message!!!!"}
+
+    send_group_notification(group_name='all', payload=payload, ttl=1000)
+    return JsonResponse(status=200, data={"message": "Web push successful"})

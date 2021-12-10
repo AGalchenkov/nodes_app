@@ -41,6 +41,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 INSTALLED_APPS = [
     #MY_APPS
+    'webpush',
     'nodes.apps.NodesConfig',
     'users',
     'advertisements',
@@ -146,3 +147,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/users/login/'
 LOGOUT_REDIRECT_URL = '/users/login/'
+
+
+WEBPUSH_SETTINGS = {
+    "VAPID_PUBLIC_KEY": "BBPoGsOzfCfZJqnwcFTzYfBbsCO_QMgfmEz5h3j2ieSHAY2VwOTeyQp5YFYafdZAFrlWOnFBMIqsmcEhR6JTqeQ",
+    "VAPID_PRIVATE_KEY": "MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgsyLZIrFZZRnwxZWYAXc5WJQ1NmE3X5mH0NNXWXz8f5GhRANCAAQT6BrDs3wn2Sap8HBU82HwW7Ajv0DIH5hM+Yd49onkhwGNlcDk3skKeWBWGn3WQBa5VjpxQTCKrJnBIUeiU6nk",
+    "VAPID_ADMIN_EMAIL": "a.galchenkov@rdp.ru"
+}
