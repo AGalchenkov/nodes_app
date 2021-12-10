@@ -25,10 +25,14 @@ client = TelegramClient('test_session', api_id, api_hash)
 @client.on(events.NewMessage())
 async def normal_handler(event):
     print(event)
-    chat_from = (await event.get_chat()) # telegram MAY not send the chat enity
-    lastname = chat_from.last_name if chat_from.last_name else ""
-    firstname = chat_from.first_name if chat_from.first_name else ""
-    chat_title = firstname + " " + lastname
+    await event.get_chat()
+    try:
+        event.chat.title
+        chat_title = event.chat.title
+    except AttributeError:
+        lastname = event.chat.last_name if event.chat.last_name else ""
+        firstname = event.chat.first_name if event.chat.first_name else ""
+        chat_title = firstname + " " + lastname
     payload = {"head": "new message", "body": f"chat : {chat_title}"}
     send_group_notification(group_name='all', payload=payload, ttl=1000)
 
