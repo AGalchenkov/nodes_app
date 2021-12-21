@@ -10,7 +10,7 @@ from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 import random
-TOKEN = "5070209083:AAG35Wb9Cfhbn3TjS5tNJ98A3Z9tOiLI-Lg"
+
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
 
