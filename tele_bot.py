@@ -13,7 +13,7 @@ from aiogram.utils import executor
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton, InputFile
 import random
 
-shta_img = InputFile('media/shta.jpg')
+
 bot_name = sys.argv[1]
 TOKEN = TelegramToken.objects.get(telegram_bot_name=bot_name).token
 bot = Bot(token=TOKEN)
@@ -203,6 +203,7 @@ async def get_text_messages(msg: types.Message):
         await  msg.answer(int)
         return
     else:
+        shta_img = InputFile('media/shta.jpg')
         await bot.send_photo(chat_id=msg.chat.id, photo=shta_img)
       #  await msg.answer()
         return
