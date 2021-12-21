@@ -1,4 +1,6 @@
 import os
+import sys
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 import django
@@ -11,6 +13,9 @@ from aiogram.utils import executor
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 import random
 
+
+bot_name = sys.argv[1]
+TOKEN = TelegramToken.objects.get(telegram_bot_name=bot_name).token
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
 

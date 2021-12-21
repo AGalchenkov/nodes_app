@@ -109,10 +109,14 @@ class Appliances(models.Model):
 
 #Little Secret
 
+class TelegramToken(models.Model):
+    telegram_bot_name = models.CharField(null=True, blank=True, max_length=100)
+    token = models.CharField(null=True, blank=True, max_length=150)
+
 class TelegramUser(models.Model):
     telegram_id = models.IntegerField(null=True, blank=True)
     telegram_name = models.CharField(unique=True, max_length=50)
-    real_name = models.CharField(max_length=50)
+    real_name = models.CharField(null=True, blank=True, max_length=50)
 
 class LittleSecret(models.Model):
     in_use = models.BooleanField(default=False)
