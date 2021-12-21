@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Models, Customers, Locations, Racks, Units, Comments, PowerSupply, Vendors, VendorModels, Consoles, Appliances
+from .models import Models, Customers, Locations, Racks, Units, Comments, PowerSupply, Vendors, VendorModels, Consoles, Appliances, LittleSecret, TelegramUser
 
 admin.site.register(Models)
 admin.site.register(Customers)
@@ -13,3 +13,5 @@ admin.site.register(Vendors)
 admin.site.register(VendorModels)
 admin.site.register(Consoles)
 admin.site.register(Appliances)
+admin.site.register(LittleSecret)
+admin.site.register(TelegramUser)

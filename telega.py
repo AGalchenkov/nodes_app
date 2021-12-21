@@ -34,7 +34,7 @@ async def normal_handler(event):
         firstname = event.chat.first_name if event.chat.first_name else ""
         chat_title = firstname + " " + lastname
     payload = {"head": "new message", "body": f"chat : {chat_title}"}
-    send_group_notification(group_name='all', payload=payload, ttl=1000)
+    send_group_notification(group_name='all', payload=payload, ttl=100)
 
 client.start()
 
@@ -43,7 +43,6 @@ client.start()
 #client.send_message('and_galchenkov', 'Hello! Talking to you from Telethon')
 
 users = {}
-
 chats = Chat.objects.get(id=1)
 client.get_dialogs()
 #list_result = [entry.name for entry in chats]

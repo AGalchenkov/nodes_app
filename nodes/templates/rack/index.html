@@ -81,7 +81,22 @@
                     {% endif %}
 
                     {% if item.model %}
-                        <td class="unit_detail_modal" data-toggle="modal" data-target="#create-modal" value="{{item.unit_num}}"><span class="inf_btn" >i</span></td>
+                        <td class="unit_detail_modal psn_rltv" data-toggle="modal" data-target="#create-modal" value="{{item.unit_num}}">
+                            <div class="inf_btn" >
+                                <span>i</span>
+                                <br><br>
+                                U{{item.unit_num}}
+                                <br><br><br>
+                                <p><label for="id_model">Model:</label> <input type="text" name="model" value="{{item.model}}" required="" disabled="" id="id_model"></p>
+                                <p><label for="id_vendor">Vendor:</label> <input type="text" name="vendor" value="{{item.vendor}}" required="" disabled="" id="id_vendor"></p>
+                                <p><label for="id_vendor_model">Vendor model:</label> <input type="text" name="vendor_model" value="{{item.vendor_model}}" required="" disabled="" id="id_vendor_model"></p>
+                                <p><label for="id_power">Power:</label> <input type="text" name="power" value="{{item.power}}" required="" disabled="" id="id_power"></p>
+                                <p><label for="id_appliance">Appliance:</label> <input type="text" name="appliance" value="{{item.appliance}}" required="" disabled="" id="id_appliance"></p>
+                                <p><label for="id_ram">Ram:</label> <input type="text" name="ram" value="{{item.ram}}" required="" disabled="" id="id_ram"></p>
+                                <p><label for="id_sn">Sn:</label> <input type="text" name="sn" value="{{item.sn}}" required="" disabled="" id="id_sn"></p>
+                                <p><label for="id_comment">Comment:</label> <textarea class="no_rsz invisible-scrollbar" name="comment"  cols="30" rows="12" disabled="" id="id_comment">{{item.comment}}</textarea></p>
+                           </div>
+                        </td>
                     {% else %}
                         <td></td>
                     {% endif %}
@@ -96,6 +111,7 @@
     </table>
     </div>
 </div>
+
 
 <div class="modal" id="create-modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-lg modal_div">
@@ -127,7 +143,39 @@
 -->
 <script>
 
-$('#create-modal').on('shown.bs.modal', function (e) {
+$( document ).ready(function() {
+
+  $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="popover"]').popover();
+    })
+
+
+    autosize();
+    function autosize(){
+        var text = $('.autosize');
+
+        text.each(function(){
+            $(this).attr('rows',1);
+            resize($(this));
+        });
+
+        text.on('input', function(){
+            resize($(this));
+        });
+
+        function resize ($text) {
+            $text.css('height', 'auto');
+            $text.css('height', $text[0].scrollHeight+'px');
+        }
+    }
+
+});
+
+
+
+
+$('#create-modal').on('show.bs.modal', function (e) {
     url = "{% url 'nodes:bs_unit_detail' rack_id 48 %}"
     url = url.replace('48', $(e.relatedTarget).attr('value'))
     $('#create-modal .modal-content').load(url)
@@ -140,6 +188,10 @@ $('#create-modal').on('hidden.bs.modal', function (e) {
 $('#confirm-delete').on('show.bs.modal', function(e) {
     $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
 });
+
+$('#mypop').on('shown.bs.popover', function (e) {
+    alert('ffff')
+})
 
 </script>
 

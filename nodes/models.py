@@ -107,6 +107,19 @@ class Appliances(models.Model):
     def __str__(self):
         return self.appliance
 
+#Little Secret
+
+class TelegramUser(models.Model):
+    telegram_id = models.IntegerField(null=True, blank=True)
+    telegram_name = models.CharField(unique=True, max_length=50)
+    real_name = models.CharField(max_length=50)
+
+class LittleSecret(models.Model):
+    in_use = models.BooleanField(default=False)
+    owner = models.ForeignKey(TelegramUser, null=True, blank=True, default=None, related_name='ls_owner', on_delete=models.SET_DEFAULT)
+
+    def __str__(self):
+        return f'LittleSecret Node #{self.id}'
 
 class Units(models.Model):
     in_use = models.BooleanField(default=False)

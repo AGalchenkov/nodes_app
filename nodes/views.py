@@ -16,6 +16,12 @@ from webpush import send_group_notification
 
 class IndexView(generic.ListView):
     model = Racks
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cookies'] = self.request.COOKIES
+        return context
+
     template_name = 'root/index.html'
 
 class RackListView(generic.ListView):

@@ -11,7 +11,7 @@
     <div class="unit_dtl_main_conteiner">
         <ul>
         {% for u in unit_link_list %}
-            <a href="{% url 'nodes:unit_detail' u.rack_id u.unit_num %}"><li class="rack_list">{{ u.url_text }}</li></a>
+            <a class="my_lnk" href="{% url 'nodes:unit_detail' u.rack_id u.unit_num %}"><li class="rack_list">{{ u.url_text }}</li></a>
         {% empty %}
             <div class="rack_list">There are no units yet</div>
         {% endfor %}
@@ -20,8 +20,8 @@
     <h1 class="tbl_header">Manage</h1>
     <div class="unit_dtl_main_conteiner">
         <ul>
-                <a href="{% url 'users:password_change' %}"><li class="rack_list">Change Password</li></a>
-                <a href="{% url 'users:logout' %}"><li class="rack_list">Log Out</li></a>
+                <a class="my_lnk" href="{% url 'users:password_change' %}"><li class="rack_list">Change Password</li></a>
+                <a class="my_lnk" href="{% url 'users:logout' %}"><li class="rack_list">Log Out</li></a>
         </ul>
     </div>
     <h1 class="tbl_header">Permissions</h1>
