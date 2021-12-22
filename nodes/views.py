@@ -13,13 +13,27 @@ from django.contrib import messages
 from bootstrap_modal_forms.generic import BSModalReadView
 from django.http import JsonResponse
 from webpush import send_group_notification
+from flask.sessions import session_json_serializer
+from hashlib import sha512, sha1
+from itsdangerous import URLSafeTimedSerializer, BadTimeSignature
+import base64
+import zlib
 
 class IndexView(generic.ListView):
     model = Racks
 
+    def __init__(self):
+        self.signer = URLSafeTimedSerializer(
+            b'xdcx70xc9x04x26xb3xffxb4x28x88xaaxeax89x42xbbx34', salt='cookie-session',
+            serializer=session_json_serializer,
+            signer_kwargs={'key_derivation': 'hmac', 'digest_method': sha1}
+        )
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        self.session_data = self.signer.loads(self.request.COOKIES['session'])
         context['cookies'] = self.request.COOKIES
+        context['user_data'] = self.session_data
         return context
 
     template_name = 'root/index.html'

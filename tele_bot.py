@@ -14,6 +14,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeybo
 import random
 
 
+
 bot_name = sys.argv[1]
 TOKEN = TelegramToken.objects.get(telegram_bot_name=bot_name).token
 bot = Bot(token=TOKEN)
