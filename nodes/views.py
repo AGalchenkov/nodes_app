@@ -1,23 +1,12 @@
 from django.shortcuts import render, reverse
-from django.http import HttpResponse, HttpResponseRedirect
-from django.template import loader
 from django.views import generic
-from django.forms import *
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from .models import *
-from djqscsv import render_to_csv_response
-from django.contrib.auth.decorators import permission_required
 import csv
 from django.contrib import messages
-from bootstrap_modal_forms.generic import BSModalReadView
 from django.http import JsonResponse
 from webpush import send_group_notification
-from flask.sessions import session_json_serializer
-from hashlib import sha512, sha1
-from itsdangerous import URLSafeTimedSerializer, BadTimeSignature
-import base64
-import zlib
+from functions.decorators import *
+from django.utils.decorators import method_decorator
 
 class IndexView(generic.ListView):
     model = Racks
@@ -39,15 +28,39 @@ class IndexView(generic.ListView):
     template_name = 'root/index.html'
 
 class RackListView(generic.ListView):
+    decorators = [
+        flask_session_required,
+        flask_permission_required,
+    ]
+
+    def __init__(self):
+       self.signer = flask_signer()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        self.session_data = self.signer.loads(self.request.COOKIES['session'])
+        context['role'] = self.session_data['role']
+        return context
+
+
+    @method_decorator(decorators)
+    def dispatch(self, request, *args, **kwargs):
+
+        args = args + (kwargs,)
+
+        return super(RackListView, self).dispatch(request, *args, **kwargs)
+
     model = Racks
     template_name = 'rack_list/index.html'
     context_object_name = 'r_list'
+
 
 def index(request):
     return HttpResponse("THIS IS NODES APP!")
 
 
-@login_required
+#@login_required
+@flask_session_required
 def rack_list(request):
     r_list = Racks.objects.all().order_by('location')
     context = {
@@ -55,8 +68,11 @@ def rack_list(request):
     }
     return render(request, 'rack_list/index.html', context)
 
-@login_required
-def rack(request, rack_id):
+#@login_required
+@set_role_context
+@flask_session_required
+@flask_permission_required
+def rack(request, rack_id, role):
     units_used = Units.objects.values_list('unit_num', flat=True).filter(in_use=True, rack_id=rack_id)
     u_list = []
     rack = Racks.objects.get(id=rack_id)
@@ -71,11 +87,13 @@ def rack(request, rack_id):
         'rack_id': rack_id,
         'units_used': units_used,
         'webpush': webpush,
+        'role': role,
     }
     return render(request, 'rack/index.html', context)
 
-@permission_required('nodes.can_view_unit')
-@login_required
+#@permission_required('nodes.can_view_unit')
+#@login_required
+@flask_session_required
 def unit_detail(request, rack_id, unit_num):
     if Units.objects.get(rack_id=rack_id, unit_num=unit_num).used_by_unit:
         return HttpResponseRedirect(reverse('nodes:rack', args=[rack_id]))
@@ -88,7 +106,6 @@ def unit_detail(request, rack_id, unit_num):
     if request.method != 'POST':
         unit_form = UnitForm(instance=unit, initial={'modified_by': unit.modified_by, 'comment': unit.comment})
     else:
-        print(f"###########1 Comment:   {request.POST['comment']}")
         if request.POST['comment']:
             if not unit.comment or unit.comment.text != request.POST['comment']:
                 c1 = Comments(text=request.POST['comment'], author=request.user, units=unit)
@@ -97,12 +114,9 @@ def unit_detail(request, rack_id, unit_num):
             else:
                 unit_form = UnitForm(request=request, instance=unit, data=request.POST)
         else:
-            #if not unit.comment:
              c1 = Comments(text=None, author=None, units=unit, pub_date=None)
              c1.save()
              unit_form = UnitForm(request=request, instance=unit, data=request.POST, initial={'comment': unit.comment})
-            #else:
-            #    unit_form = UnitForm(request=request, instance=unit, data=request.POST)
         if unit_form.is_valid():
             unit_form.save()
             messages.success(request, 'DONE!')
@@ -116,7 +130,8 @@ def unit_detail(request, rack_id, unit_num):
     }
     return render(request, 'unit_detail/index.html', context)
 
-@login_required
+#@login_required
+@flask_session_required
 def search(request):
     qs = {}
     form = SearchForm(instance=Units)
@@ -196,7 +211,8 @@ def search(request):
     }
     return render(request, 'search/index.html', context)
 
-@login_required
+#@login_required
+@flask_session_required
 def unit_create(request, rack_id, unit_num):
     rack = Racks.objects.get(id=rack_id)
     form = UnitCreateForm(instance=Units, initial={

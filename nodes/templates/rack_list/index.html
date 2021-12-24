@@ -8,7 +8,7 @@
     <div class="tbl_header">Rack List</div>
     <ul>
     {% for r in r_list %}
-        <a href="{% url 'nodes:rack' r.id %}"><li class="rack_list del">{{ r }}</li></a>
+        <a class="my_lnk" href="{% url 'nodes:rack' r.id %}"><li class="rack_list del">{{ r }}</li></a>
     {% endfor %}
 </ul>
 </div>

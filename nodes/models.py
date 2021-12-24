@@ -5,9 +5,10 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.utils.timezone import now
 from bootstrap_modal_forms.forms import BSModalModelForm
-from functions.ping import *
+from functions.ping import ping
 
-from ping3 import ping
+
+#from ping3 import ping
 
 class Customers(models.Model):
     customer = models.CharField(unique=True, max_length=50)
@@ -344,6 +345,43 @@ class UnitForm(ModelForm):
         model = Units
         fields = '__all__'
         exclude = ['used_by_unit', 'comment', 'is_avaliable']
+
+
+class UnitFormDisabled(ModelForm):
+    error_css_class = 'error'
+    rack = Field(disabled=True)
+    modified = Field(disabled=True)
+    unit_num = CharField(disabled=True)
+    comment = CharField(widget=Textarea(attrs={'cols': 40, 'rows': 3}), required=False, disabled=True)
+    comment_author = CharField(disabled=True, required=False)
+    comment_pub_date = CharField(disabled=True, required=False)
+    modified_by = CharField(disabled=True, required=False)
+    ram = CharField(required=False, disabled=True)
+    field_order = [
+        'in_use', 'owner', 'rack', 'unit_num', 'model', 'vendor', 'power', 'vendor_model',
+        'console', 'mng_ip', 'appliance', 'sn', 'ram', 'hostname', 'modified', 'modified_by', 'comment',
+        'comment_author', 'comment_pub_date',
+    ]
+    model = Units
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+        self.initial['rack'] = kwargs['instance'].rack
+        try:
+            self.initial['ram'] = kwargs['instance'].appliance.ram
+        except AttributeError:
+            self.initial['ram'] = None
+        try:
+            self.initial['comment_author'] = kwargs['instance'].comment.author
+            self.initial['comment_pub_date'] = kwargs['instance'].comment.pub_date
+        except AttributeError:
+            self.initial['comment_author'] = None
+
+    class Meta:
+        model = Units
+        fields = '__all__'
+        exclude = ['used_by_unit', 'comment', 'is_avaliable']
+
 
 class CommentForm(ModelForm):
     class Meta:

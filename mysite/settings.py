@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-$!v0g35u!b(j-&vy$%!7#nt#_s8wu&$ush0f$sea5@@!mxli4p'
+SECRET_KEY = 'xdcx70xc9x04x26xb3xffxb4x28x88xaaxeax89x42xbbx34'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -65,6 +65,13 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+### MY SETTING
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+SESSION_SAVE_EVERY_REQUEST = True
+
+###
 
 ROOT_URLCONF = 'mysite.urls'
 

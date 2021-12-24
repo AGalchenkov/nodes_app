@@ -3,9 +3,8 @@
 {% block content %}
 
 {% load static %}
-
 <div class="pstn_adv_btn">
-    {% if request.user.is_staff %}
+    {% if role < 3 %}
         <a class="my_lnk" data-toggle="modal" data-target="#confirm-delete" data-href="{% url 'nodes:delete_rack' rack_id %}"><div id="del_btn" class="edit_red_btn">Delete</div></a>
     {% endif %}
 </div>
@@ -15,7 +14,7 @@
     <table class="nbs_table">
 	    <thead>
 		    <tr>
-			    <td class="rack_tbl">Unit</td>
+			    <td class="rack_tbl">U</td>
 			    <td>Node</td>
                 <td>Status</td>
                 <td>Mng ip</td>
