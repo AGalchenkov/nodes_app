@@ -5,7 +5,7 @@
 {% load static %}
 <div class="pstn_adv_btn">
     {% if role < 3 %}
-        <a class="my_lnk" data-toggle="modal" data-target="#confirm-delete" data-href="{% url 'nodes:delete_rack' rack_id %}"><div id="del_btn" class="edit_red_btn">Delete</div></a>
+        <a class="my_lnk modal-trigger" href="#confirm-delete" data-href="{% url 'nodes:delete_rack' rack_id %}"><div id="del_btn" class="edit_red_btn">Delete</div></a>
     {% endif %}
 </div>
 <div class="node_tbl_cnt">
@@ -119,21 +119,19 @@
   </div>
 </div>
 
-<div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-            </div>
-            <div class="modal-body">
-                Delete Rack on = {{ location }} =
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-danger btn-ok" style="color:white;">Delete</a>
+           <h4>Delete confirmation</h4>
+           Delete Rack on = {{ location }} =
+           <div class="modal-footer">
+                <button type="button" class="btn btn-default modal-close" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-danger" style="color:white;" href="{% url 'nodes:delete_rack' rack_id %}">Delete</a>
             </div>
         </div>
     </div>
 </div>
+
 
 <!--
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -141,6 +139,13 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 -->
 <script>
+
+
+  // Or with jQuery
+
+  $(document).ready(function(){
+    $('.modal').modal();
+  });
 
 $( document ).ready(function() {
 
@@ -185,7 +190,7 @@ $('#create-modal').on('hidden.bs.modal', function (e) {
 })
 
 $('#confirm-delete').on('show.bs.modal', function(e) {
-    $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+    $(this).find('.btn-danger').attr('href', $(e.relatedTarget).data('href'));
 });
 
 $('#mypop').on('shown.bs.popover', function (e) {
