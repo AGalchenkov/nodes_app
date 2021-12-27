@@ -3,9 +3,9 @@
 {% block content %}
 
 {% load static %}
-<div class="pstn_adv_btn">
+<div class="absl_pos">
     {% if role < 3 %}
-        <a class="my_lnk modal-trigger" href="#confirm-delete" data-href="{% url 'nodes:delete_rack' rack_id %}"><div id="del_btn" class="edit_red_btn">Delete</div></a>
+        <a class="my_lnk modal-trigger" href="#confirm-delete" data-href="{% url 'nodes:delete_rack' rack_id %}"><div id="del_btn" class="flask_del_btn">Удалить стойку</div></a>
     {% endif %}
 </div>
 <div class="node_tbl_cnt">
@@ -16,11 +16,15 @@
 		    <tr>
 			    <td class="rack_tbl">U</td>
 			    <td>Node</td>
-                <td>Status</td>
+                <td></td>
                 <td>Mng ip</td>
 			    <td>Owner</td>
                 <td>Appliance</td>
-                <td>Inf</td>
+                <td>Vendor</td>
+                <td>Model</td>
+                <td>Pwr</td>
+                <td>Ram</td>
+                <td>Int</td>
                 <td>Comment</td>
 		    </tr>
 	    </thead>
@@ -78,36 +82,49 @@
                     {% else %}
                         <td>{{item.appliance}}</td>
                     {% endif %}
-
-                    {% if item.model %}
-                        <td class="unit_detail_modal psn_rltv" data-toggle="modal" data-target="#create-modal" value="{{item.unit_num}}">
-                            <div class="inf_btn" >
-                                <span>i</span>
-                                <br><br>
-                                U{{item.unit_num}}
-                                <br><br><br>
-                                <p><label for="id_model">Model:</label> <input type="text" name="model" value="{{item.model}}" required="" disabled="" id="id_model"></p>
-                                <p><label for="id_vendor">Vendor:</label> <input type="text" name="vendor" value="{{item.vendor}}" required="" disabled="" id="id_vendor"></p>
-                                <p><label for="id_vendor_model">Vendor model:</label> <input type="text" name="vendor_model" value="{{item.vendor_model}}" required="" disabled="" id="id_vendor_model"></p>
-                                <p><label for="id_power">Power:</label> <input type="text" name="power" value="{{item.power}}" required="" disabled="" id="id_power"></p>
-                                <p><label for="id_appliance">Appliance:</label> <input type="text" name="appliance" value="{{item.appliance}}" required="" disabled="" id="id_appliance"></p>
-                                <p><label for="id_ram">Ram:</label> <input type="text" name="ram" value="{{item.ram}}" required="" disabled="" id="id_ram"></p>
-                                <p><label for="id_sn">Sn:</label> <input type="text" name="sn" value="{{item.sn}}" required="" disabled="" id="id_sn"></p>
-                                <p><label for="id_comment">Comment:</label> <textarea class="no_rsz invisible-scrollbar" name="comment"  cols="30" rows="12" disabled="" id="id_comment">{{item.comment}}</textarea></p>
-                           </div>
-                        </td>
-                    {% else %}
+                    {% if item.vendor == None %}
                         <td></td>
+                    {% else %}
+                        <td>{{item.vendor}}</td>
+                    {% endif %}
+                     {% if item.vendor == None %}
+                        <td></td>
+                    {% else %}
+                        <td>{{item.vendor_model}}</td>
+                    {% endif %}
+                     {% if item.power == None %}
+                        <td></td>
+                    {% else %}
+                        <td>{{item.power}}</td>
+                    {% endif %}
+                    {% if item.appliance.ram == None %}
+                        <td></td>
+                    {% else %}
+                        <td>{{item.appliance.ram}}G</td>
+                    {% endif %}
+                    {% if item.int == None %}
+                        <td></td>
+                    {% else %}
+                        <td>{{item.int}}</td>
                     {% endif %}
                     {% if item.comment == None %}
                         <td class="comment"></td>
                     {% else %}
-                        <td class="comment">{{item.comment}}</td>
+                        <td class="comment">
+                            <ul class="collapsible">
+                                <li>
+                                    <div class="collapsible-header">{{item.comment}}</div>
+                                    <div class="collapsible-body collapsible_comment">{{item.comment}}</div>
+                                </li>
+                            </ul>
+
+                        </td>
                     {% endif %}
                 </tr>
         {% endfor %}
         </tbody>
     </table>
+        <button type="submit">Edit</button>
     </div>
 </div>
 
@@ -133,6 +150,7 @@
 </div>
 
 
+
 <!--
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
@@ -140,6 +158,9 @@
 -->
 <script>
 
+    $(document).ready(function(){
+    $('.collapsible').collapsible();
+  });
 
   // Or with jQuery
 
