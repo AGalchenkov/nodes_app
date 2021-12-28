@@ -5,7 +5,7 @@
 {% load static %}
 
 <div class="small_tbl_cnt">
-    <div class="tbl_header">Rack List</div>
+    <div class="tbl_header">Список стоек</div>
     <ul>
     {% for r in r_list %}
         <a class="my_lnk" href="{% url 'nodes:rack' r.id %}"><li class="rack_list del">{{ r }}</li></a>
@@ -13,20 +13,6 @@
 </ul>
 </div>
 
-<ul class="collapsible">
-    <li>
-      <div class="collapsible-header">First</div>
-      <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
-    </li>
-    <li>
-      <div class="collapsible-header">Second</div>
-      <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
-    </li>
-    <li>
-      <div class="collapsible-header">Third</div>
-      <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
-    </li>
-  </ul>
 
 <script>
     $(document).ready(function(){

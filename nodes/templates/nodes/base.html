@@ -4,15 +4,13 @@
 
 {% webpush_header %}
 
-######
-<!---
 
 <script type="text/javascript" src="{% static 'js/jquery-3.6.0.js' %}"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 
 
-
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 
@@ -21,9 +19,6 @@
 
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
-
--->
-####
 
 <!--
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -71,20 +66,39 @@
             <div class="right">
                 <a href="http://127.0.0.1:5000/" class="right_float"><img class="logo" src="{% static 'nodes/image/logo.png' %}"></a>
             </div>
+          <a href="#" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+        <ul class="left hide-on-med-and-down">
+                <li><a href="http://127.0.0.1:5000/bookings">Bookings</a></li>
+                <li><a href="http://127.0.0.1:5000/zone/1">Рабочие места</a></li>
+                <li><a href="http://127.0.0.1:5000/zone/2">Парковка</a></li>
+                <li><a href="http://127.0.0.1:5000/zone/3">Переговорки</a></li>
+                <li><a href="http://127.0.0.1:5000/zone/4">Лаба 1</a></li>
+                <li><a href="http://127.0.0.1:5000/zone/5">Лаба 2</a></li>
+                <li class="active"><a href="http://127.0.0.1:8000/rack_list/">Сборочная</a></li>
+                <li><a href="http://127.0.0.1:5000/logout"><i class="material-icons">logout</i></a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <nav class="node_nav">
+        <div class="nav-wrapper">
             <a href="#" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
             <ul class="left hide-on-med-and-down">
-                <li><a href="http://127.0.0.1:8000/">Сборочная</a></li>
+                {% if role < 3 and 'rack/' in request.path %}
+                   <li><a class="clr_red modal-trigger" href="#confirm-delete" data-href="{% url 'nodes:delete_rack' rack_id %}">Удалить стойку</a></li>
+                {% endif %}
                 {% if not 'rack_list' in request.path %}
                     <li><a href="{% url 'nodes:rack_list' %}">Список стоек</a></li>
                 {% endif %}
                 {% if 'unit_detail' in request.path %}
                     <li><a href="{% url 'nodes:rack' rack_id %}">Стойка</a></li>
                 {% endif %}
-                <li><a href="{% url 'nodes:search' %}">Поиск</a></li>
+                {% if not 'search' in request.path  %}
+                    <li><a href="{% url 'nodes:search' %}">Поиск</a></li>
+                {% endif %}
                 {% if role < 3 %}
                     <li><a href="{% url 'nodes:create_rack' %}">Создать стойку</a></li>
                 {% endif %}
-                <li><a href="http://127.0.0.1:5000/logout">Выход</a></li>
             </ul>
         </div>
     </nav>

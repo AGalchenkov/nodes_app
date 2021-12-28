@@ -5,14 +5,14 @@
 {% load static %}
 
 <div class="full-notify"></div>
-<div class="node_tbl_cnt">
+<div class="node_tbl_cnt_sml">
     <h1 class="tbl_header">U{{ unit_num }}</h1>
-    <div class="unit_dtl_main_conteiner hght_60_prc">
+    <div class="unit_dtl_main_conteiner hght_70_prc">
         <form class="frm_unit_dtl" action="{% url 'nodes:unit_detail' rack_id unit_num %}" method="post">
             {% csrf_token %}
             {{ form.as_p }}
 </div>
-{% if perms.nodes.can_edit_unit %}
+{% if role <= 2 %}
     <input type="submit" value="Submit">
 {% endif %}
 </form>

@@ -43,14 +43,37 @@ class Racks(models.Model):
     def __str__(self):
         return f'{self.location}_#{self.rack_id} ({self.units_num}U)'
 
+class Interfaces(models.Model):
+    g10 = models.IntegerField(default=0,
+        validators=[
+            MinValueValidator(0, message='negative unit number'),
+            MaxValueValidator(52, message='to much unit number'),
+        ]
+    )
+    g40 = models.IntegerField(default=0,
+        validators=[
+            MinValueValidator(0, message='negative unit number'),
+            MaxValueValidator(52, message='to much unit number'),
+        ]
+    )
+    g100 = models.IntegerField(default=0,
+        validators=[
+            MinValueValidator(0, message='negative unit number'),
+            MaxValueValidator(52, message='to much unit number'),
+        ]
+    )
+
+
 class Models(models.Model):
     model_name = models.CharField(unique=True, max_length=20)
+    #interface = models.ForeignKey(Interfaces, null=True, blank=True, on_delete=models.CASCADE)
     units_takes = models.IntegerField(default=1,
         validators=[
             MinValueValidator(1, message='negative unit number'),
             MaxValueValidator(5, message='to much unit number'),
         ]
     )
+
     def __str__(self):
         return self.model_name
 
@@ -143,7 +166,26 @@ class Units(models.Model):
     vendor_model = models.ForeignKey(VendorModels,null=True, blank=True, on_delete=models.RESTRICT)
     console = models.ForeignKey(Consoles,null=True, blank=True, on_delete=models.RESTRICT)
     mng_ip = models.GenericIPAddressField(blank=True, null=True)
+    ipmi = models.BooleanField(default=False)
     appliance = models.ForeignKey(Appliances, null=True, blank=True, default=None,  on_delete=models.RESTRICT)
+    g10 = models.IntegerField(default=0,
+        validators=[
+            MinValueValidator(0, message='negative unit number'),
+            MaxValueValidator(52, message='to much unit number'),
+        ]
+    )
+    g40 = models.IntegerField(default=0,
+        validators=[
+            MinValueValidator(0, message='negative unit number'),
+            MaxValueValidator(52, message='to much unit number'),
+        ]
+    )
+    g100 = models.IntegerField(default=0,
+        validators=[
+            MinValueValidator(0, message='negative unit number'),
+            MaxValueValidator(52, message='to much unit number'),
+        ]
+    )
     is_avaliable = models.BooleanField(default=False)
     sn = models.CharField(blank=True, max_length=30)
     hostname = models.CharField(blank=True, max_length=15)
@@ -191,12 +233,13 @@ class UnitForm(ModelForm):
     ram = CharField(required=False, disabled=True)
     field_order = [
         'in_use', 'owner', 'rack', 'unit_num', 'model', 'vendor', 'power', 'vendor_model',
-        'console', 'mng_ip', 'appliance', 'sn', 'ram', 'hostname', 'modified', 'modified_by', 'comment',
+        'console', 'mng_ip', 'appliance', 'g10', 'sn', 'g40', 'ram', 'g100', 'hostname', 'modified', 'comment', 'modified_by',
         'comment_author', 'comment_pub_date',
     ]
     model = Units
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
+        self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         self.initial['rack'] = kwargs['instance'].rack
         try:
@@ -255,11 +298,8 @@ class UnitForm(ModelForm):
                 continue
 
     def clean(self):
-        print(f'########## CHANGED:   {self.changed_data}')
-        print('SELF FORMS::::')
-        print(self.instance.is_avaliable)
         other_unit_used_list = []
-        user = self.request.user
+        user = self.user
         cleaned_data = super().clean()
         modified_by = cleaned_data.get('modified_by')
         comment = cleaned_data.get('comment')
@@ -330,10 +370,11 @@ class UnitForm(ModelForm):
                     self.remove_fatboy(unit_num, old_model, rack)
 
         if self.has_changed():
-            if not user.has_perm('nodes.can_edit_unit'):
+            #if not user.has_perm('nodes.can_edit_unit'):
+            if not user.is_staff:
                 raise ValidationError('You dont have permisson to change unit!')
-            if 'owner' in self.changed_data and not user.has_perm('nodes.can_set_owner'):
-                raise ValidationError('You dont have permission to set unit owner!')
+            #if 'owner' in self.changed_data and not user.has_perm('nodes.can_set_owner'):
+            #    raise ValidationError('You dont have permission to set unit owner!')
             cleaned_data['modified_by'] = user
             cleaned_data['modified'] = now().replace(microsecond=0)
         else:
@@ -402,7 +443,31 @@ class SearchForm(ModelForm):
         (2, 'yes'),
         (3, 'no'),
     )
+    has_ipmi = (
+        (1, 'no matter'),
+        (2, 'yes'),
+        (3, 'no'),
+    )
+    has_10G = (
+        (1, 'no matter'),
+        (2, 'yes'),
+        (3, 'no'),
+    )
+    has_40G = (
+        (1, 'no matter'),
+        (2, 'yes'),
+        (3, 'no'),
+    )
+    has_100G = (
+        (1, 'no matter'),
+        (2, 'yes'),
+        (3, 'no'),
+    )
     has_model = ChoiceField(choices=has_model_choises)
+    has_ipmi = ChoiceField(choices=has_ipmi)
+    has_10G = ChoiceField(choices=has_10G)
+    has_40G = ChoiceField(choices=has_40G)
+    has_100G = ChoiceField(choices=has_100G)
     is_avaliable = ChoiceField(choices=is_avaliable_choises)
 
     model = Units
@@ -413,7 +478,7 @@ class SearchForm(ModelForm):
 
     class Meta:
         model = Units
-        exclude = ['used_by_unit', 'in_use', 'unit_num', 'console', 'modified', 'modified_by']
+        exclude = ['used_by_unit', 'in_use', 'unit_num', 'console', 'modified', 'modified_by', 'g10', 'g40', 'g100', 'ipmi',]
 
 class UnitCreateForm(ModelForm):
     comment = CharField(widget=Textarea(attrs={'cols': 40, 'rows': 3}), required=False)

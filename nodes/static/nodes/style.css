@@ -88,7 +88,7 @@ thead tr:first-child td{
 			border: none;
 			padding: 10px;
 			padding-bottom: 15px;
-			font-size: 17px;
+			font-size: 15px;
 			font-weight: bold;
 			width: 20%;
 }
@@ -112,34 +112,38 @@ thead tr:first-child td:nth-child(4) {
 }
 
 thead tr:first-child td:nth-child(5) {
-            width: 10%
+            width: 4%
 }
 
 thead tr:first-child td:nth-child(6) {
-            width: 14%
+            width: 10%
 }
 
 thead tr:first-child td:nth-child(7) {
-            width: 6%
+            width: 14%
 }
 
 thead tr:first-child td:nth-child(8) {
-            width: 8%
+            width: 6%
 }
 
 thead tr:first-child td:nth-child(9) {
-            width: 2%
+            width: 8%
 }
+
 thead tr:first-child td:nth-child(10) {
-            width: 3%
+            width: 4%
 }
 thead tr:first-child td:nth-child(11) {
-            width: 8%
+            width: 4%
+}
+thead tr:first-child td:nth-child(12) {
+            width: 11%
 }
 
 
 thead tr:first-child td:last-child {
-            width: 25%
+            width: 16%
 }
 
 thead tr:first-child td:last-child {
@@ -231,6 +235,11 @@ tbody td.bg_green:hover {
 .clr_gray {
             color: gray !important;
 }
+
+.clr_red {
+    color: red !important;
+}
+
 .bold {
 			font-weight: bold;
 }
@@ -243,6 +252,15 @@ tbody td.bg_green:hover {
 
 .red_status {
         background-color: #f05555;
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        box-sizing: border-box;
+}
+
+.gray_status {
+        background-color: gray;
         display: inline-block;
         width: 12px;
         height: 12px;
@@ -332,6 +350,12 @@ a:hover {
 .node_tbl_cnt {
             margin: 0px auto;
             width: 97%;
+            margin-bottom: 100px;
+}
+
+.node_tbl_cnt_sml {
+            margin: 0px auto;
+            width: 80%;
 }
 
 .small_tbl_cnt {
@@ -392,9 +416,9 @@ label {
 input, textarea, select {
     border: 1px solid #cecdcd;
     border-radius: 10px;
-    padding: 7px;
- //   color: #484848;
-     width: auto;
+   // padding: 7px;
+    color: #3e3c3c;
+    width: auto;
     height: auto;
 }
 
@@ -408,19 +432,20 @@ input[type="text"] {
     height: auto;
     font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
 }
-input[type="text"]:not(.browser-default) {
-    width: auto;
+input[type="text"]:not(.browser-default), input[type="number"]:not(.browser-default), textarea, select {
+    width: 300px;
     height: auto;
     border: 1px solid #cecdcd;
     border-radius: 10px;
-    padding: 7px;
+    padding: 5px;
     font-family: Arial, Helvetica Neue, Helvetica, sans-serif !important;
     font-size: 1rem;
     margin: 0px;
+    box-sizing: border-box;
 }
 
 input[type="text"]:not(.browser-default):disabled {
-    border: 1px solid #cecdcd !important;
+    border: 1px solid #eee !important;
 }
 
 
@@ -560,7 +585,7 @@ input[type=submit]:hover {
 .search {
     display: flex;
     justify-content: space-around;
-    width: 90%;
+    width: 95%;
     margin: 0 auto;
 }
 
@@ -966,8 +991,9 @@ nav ul a {
 
 select {
     display: inline-block;
-    width: auto;
+//    width: auto;
     height: auto;
+    padding: 5px;
 }
 
 label {
@@ -976,9 +1002,9 @@ label {
 }
 
 .logo {
-    height: 46px;
+    height: 64px;
     padding: 10px;
-    width: 221px;
+
 }
 
 .right_float {
@@ -998,6 +1024,8 @@ nav {
     width: 100%;
     height: 64px;
     line-height: 64px;
+    position: relative;
+    z-index: 1;
 }
 
 .z-depth-1, nav, .card-panel, .card, .toast, .btn, .btn-large, .btn-small, .btn-floating, .dropdown-content, .collapsible, .sidenav {
@@ -1062,7 +1090,8 @@ nav .nav-wrapper {
     margin-top: 9px;
     white-space: break-spaces;
     text-align: left;
-    width: 300px;
+    width: 265px;
+    color: #2f2f2f;
 }
 
 .collapsible-header {
@@ -1096,4 +1125,51 @@ nav .nav-wrapper {
     text-align: center;
     font-size: 15px;
     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+}
+
+.flask_del_btn:hover {
+    background-color: #ec1212;
+    cursor: pointer;
+}
+
+.btn-danger {
+    background-color: #e66d6d;
+}
+
+.btn-danger:hover {
+    background-color: #ec1212;
+}
+
+.collapsible-header:hover {
+    color: #2f2f2f;
+}
+
+input:not([type]):focus:not([readonly]), input[type="text"]:not(.browser-default):focus:not([readonly]), input[type="password"]:not(.browser-default):focus:not([readonly]), input[type="email"]:not(.browser-default):focus:not([readonly]), input[type="url"]:not(.browser-default):focus:not([readonly]), input[type="time"]:not(.browser-default):focus:not([readonly]), input[type="date"]:not(.browser-default):focus:not([readonly]), input[type="datetime"]:not(.browser-default):focus:not([readonly]), input[type="datetime-local"]:not(.browser-default):focus:not([readonly]), input[type="tel"]:not(.browser-default):focus:not([readonly]), input[type="number"]:not(.browser-default):focus:not([readonly]), input[type="search"]:not(.browser-default):focus:not([readonly]), textarea.materialize-textarea:focus:not([readonly]) {
+    border-bottom: 1px solid #3949ab;
+    -webkit-box-shadow: 0 1px 0 0 #3949ab;
+    box-shadow: 0 1px 0 0 #3949ab;
+}
+
+[type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+    position: unset;
+    opacity: 100;
+    pointer-events: auto;
+}
+
+.node_nav {
+    color: #fff;
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    background-color: #2e3b8a;
+    position: relative;
+    z-index: 0;
+}
+
+nav.node_nav ul a:hover {
+    background-color: rgba(0,0,0,0.1);
+}
+
+div.search form {
+    font-size: 4px;
 }

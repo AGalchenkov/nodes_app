@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from webpush import send_group_notification
 from functions.decorators import *
 from django.utils.decorators import method_decorator
+from django.db.models import Q
 
 class IndexView(generic.ListView):
     model = Racks
@@ -72,7 +73,7 @@ def rack_list(request):
 @set_role_context
 @flask_session_required
 @flask_permission_required
-def rack(request, rack_id, role):
+def rack(request, rack_id, **kwargs):
     units_used = Units.objects.values_list('unit_num', flat=True).filter(in_use=True, rack_id=rack_id)
     u_list = []
     rack = Racks.objects.get(id=rack_id)
@@ -87,14 +88,17 @@ def rack(request, rack_id, role):
         'rack_id': rack_id,
         'units_used': units_used,
         'webpush': webpush,
-        'role': role,
+        'role': kwargs['role'],
+        'user': kwargs['user'],
     }
     return render(request, 'rack/index.html', context)
 
 #@permission_required('nodes.can_view_unit')
 #@login_required
+@set_role_context
 @flask_session_required
-def unit_detail(request, rack_id, unit_num):
+@flask_permission_required
+def unit_detail(request, rack_id, unit_num, **kwargs):
     if Units.objects.get(rack_id=rack_id, unit_num=unit_num).used_by_unit:
         return HttpResponseRedirect(reverse('nodes:rack', args=[rack_id]))
     rack = Racks.objects.get(id=rack_id)
@@ -108,15 +112,15 @@ def unit_detail(request, rack_id, unit_num):
     else:
         if request.POST['comment']:
             if not unit.comment or unit.comment.text != request.POST['comment']:
-                c1 = Comments(text=request.POST['comment'], author=request.user, units=unit)
+                c1 = Comments(text=request.POST['comment'], author=kwargs['user'], units=unit)
                 c1.save()
-                unit_form = UnitForm(request=request, instance=unit, data=request.POST, initial={'comment': unit.comment})
+                unit_form = UnitForm(user=kwargs['user'], request=request, instance=unit, data=request.POST, initial={'comment': unit.comment})
             else:
-                unit_form = UnitForm(request=request, instance=unit, data=request.POST)
+                unit_form = UnitForm(user=kwargs['user'], request=request, instance=unit, data=request.POST)
         else:
              c1 = Comments(text=None, author=None, units=unit, pub_date=None)
              c1.save()
-             unit_form = UnitForm(request=request, instance=unit, data=request.POST, initial={'comment': unit.comment})
+             unit_form = UnitForm(user=kwargs['user'], request=request, instance=unit, data=request.POST, initial={'comment': unit.comment})
         if unit_form.is_valid():
             unit_form.save()
             messages.success(request, 'DONE!')
@@ -127,12 +131,16 @@ def unit_detail(request, rack_id, unit_num):
         'rack': rack,
         'unit_num': unit_num,
         'form': unit_form,
+        'role': kwargs['role'],
+        'user': kwargs['user'],
     }
     return render(request, 'unit_detail/index.html', context)
 
 #@login_required
+@set_role_context
 @flask_session_required
-def search(request):
+@flask_permission_required
+def search(request, **kwargs):
     qs = {}
     form = SearchForm(instance=Units)
     if request.method != 'POST':
@@ -155,6 +163,42 @@ def search(request):
                     continue
                 elif request.POST['has_model'] == '3':
                     qs = qs.filter(model__isnull=True)
+                    continue
+                else:
+                    continue
+            if key == 'has_10G':
+                if request.POST['has_10G'] == '2':
+                    qs = qs.filter(~Q(g10=0))
+                    continue
+                elif request.POST['has_10G'] == '3':
+                    qs = qs.filter(g10=0)
+                    continue
+                else:
+                    continue
+            if key == 'has_40G':
+                if request.POST['has_40G'] == '2':
+                    qs = qs.filter(~Q(g40=0))
+                    continue
+                elif request.POST['has_10G'] == '3':
+                    qs = qs.filter(g40=0)
+                    continue
+                else:
+                    continue
+            if key == 'has_100G':
+                if request.POST['has_100G'] == '2':
+                    qs = qs.filter(~Q(g100=0))
+                    continue
+                elif request.POST['has_10G'] == '3':
+                    qs = qs.filter(g100=0)
+                    continue
+                else:
+                    continue
+            if key == 'has_ipmi':
+                if request.POST['has_ipmi'] == '2':
+                    qs = qs.filter(ipmi=True)
+                    continue
+                elif request.POST['has_ipmi'] == '3':
+                    qs = qs.filter(ipmi=False)
                     continue
                 else:
                     continue
@@ -186,6 +230,10 @@ def search(request):
             'has_model': request.POST['has_model'],
             'comment': request.POST['comment'],
             'is_avaliable': request.POST['is_avaliable'],
+            'has_10G': request.POST['has_10G'],
+            'has_40G': request.POST['has_40G'],
+            'has_100G': request.POST['has_100G'],
+            'has_ipmi': request.POST['has_ipmi'],
         })
 
         form_csv = SearchForm(instance=Units, initial={
@@ -208,12 +256,16 @@ def search(request):
         'form_csv': form_csv,
         'qs': qs,
         'request': request,
+        'role': kwargs['role'],
+        'user': kwargs['user'],
     }
     return render(request, 'search/index.html', context)
 
 #@login_required
+@set_role_context
 @flask_session_required
-def unit_create(request, rack_id, unit_num):
+@flask_permission_required
+def unit_create(request, rack_id, unit_num, **kwargs):
     rack = Racks.objects.get(id=rack_id)
     form = UnitCreateForm(instance=Units, initial={
         'unit_num': unit_num,
@@ -226,7 +278,9 @@ def unit_create(request, rack_id, unit_num):
     context = {
         'form': form,
         'rack_id': rack_id,
-        'unit_num': unit_num
+        'unit_num': unit_num,
+        'role': kwargs['role'],
+        'user': kwargs['user'],
     }
     return render(request, 'unit_create/index.html', context)
 

@@ -7,6 +7,10 @@ from django.shortcuts import reverse
 import time
 from django.core.exceptions import PermissionDenied
 import functools
+from nodes.models import *
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.db import IntegrityError
 
 def flask_signer():
     signer = URLSafeTimedSerializer(
@@ -21,10 +25,19 @@ def flask_session_required(func):
         signer = flask_signer()
         try:
             session_data = signer.loads(request.COOKIES['session'])
+            try:
+                u = User.objects.get(username=session_data['username'])
+            except ObjectDoesNotExist:
+                first_name = session_data['username'].split(' ')[0]
+                last_name = session_data['username'].split(' ')[1]
+                is_staff = True if session_data['role'] <= 2 else False
+                User(username=session_data['username'], first_name=first_name, last_name=last_name, is_staff=is_staff).save()
+                u = User.objects.get(username=session_data['username'])
         except KeyError:
             return HttpResponseRedirect('http://127.0.0.1:5000/login')
         if (int(time.time()) - session_data['login_time']) > 86400:
             return HttpResponseRedirect('http://127.0.0.1:5000/login')
+        kwargs.update({'user': u})
         return func(request, **kwargs)
     return wrapper
 
@@ -42,7 +55,6 @@ def set_role_context(func):
     def wrapper(request, *args, **kwargs):
         signer = flask_signer()
         try:
-            print(f'PARAMSSSS::::   {args}; {kwargs}')
             session_data = signer.loads(request.COOKIES['session'])
             kwargs.update({'role': session_data['role']})
             return func(request, *args, **kwargs)
