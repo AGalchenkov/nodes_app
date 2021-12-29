@@ -21,7 +21,8 @@
 			    <td>Node</td>
                 <td></td>
                 <td>Mng ip</td>
-                <td>Ipmi</td>
+                <td></td>
+                <td>IPMI/BMC</td>
 			    <td>Owner</td>
                 <td>Appliance</td>
                 <td>Vendor</td>
@@ -76,12 +77,22 @@
                         </td>
                         <td></td>
                     {% endif %}
-                    {% if item.ipmi %}
-                    <td>
-                        <div class="gray_status"></div>
-                    </td>
+                    {% if item.ipmi_bmc %}
+                        {% if item.ipmi_is_avaliable %}
+                            <td>
+                                <div class="green_status"></div>
+                            </td>
+                        {% else %}
+                            <td>
+                                <div class="red_status"></div>
+                            </td>
+                        {% endif %}
+                        <td>{{item.ipmi_bmc}}</td>
                     {% else %}
-                    <td></td>
+                        <td>
+                            <div class="none_status"></div>
+                        </td>
+                        <td></td>
                     {% endif %}
                     {% if item.owner == None %}
                         <td></td>

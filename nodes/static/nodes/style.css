@@ -42,7 +42,7 @@ tbody tr:hover {
 }
 
 td {
-			text-align: center;
+			text-align: left;
 		//	border-top: 6px solid white;
 		//	border-bottom: 6px solid white;
 		    border-bottom: 1px solid #d9d6d6;
@@ -87,7 +87,7 @@ thead tr:first-child td{
             background-color: white;
 			color: #5d5d5d;
 			border: none;
-			padding: 10px;
+		//	padding: 10px;
 			padding-bottom: 15px;
 			font-size: 15px;
 			font-weight: bold;
@@ -95,13 +95,14 @@ thead tr:first-child td{
 }
 
 thead tr:first-child td:first-child {
-			border-bottom-left-radius: 15px;
-			border-top-left-radius: 15px;
+	//		border-bottom-left-radius: 15px;
+	//		border-top-left-radius: 15px;
 			width:2%;
 }
 
 thead tr:first-child td:nth-child(2) {
-            width: 14%
+            width: 14%;
+            text-align: center;
 }
 
 thead tr:first-child td:nth-child(3) {
@@ -113,33 +114,37 @@ thead tr:first-child td:nth-child(4) {
 }
 
 thead tr:first-child td:nth-child(5) {
-            width: 4%
+            width: 1%
 }
 
 thead tr:first-child td:nth-child(6) {
-            width: 10%
+            width: 5%
 }
 
 thead tr:first-child td:nth-child(7) {
-            width: 14%
+            width: 10%
 }
 
 thead tr:first-child td:nth-child(8) {
-            width: 6%
+            width: 14%
 }
 
 thead tr:first-child td:nth-child(9) {
-            width: 8%
+            width: 6%
 }
 
 thead tr:first-child td:nth-child(10) {
-            width: 4%
+            width: 8%
 }
+
 thead tr:first-child td:nth-child(11) {
             width: 4%
 }
 thead tr:first-child td:nth-child(12) {
-            width: 11%
+            width: 4%
+}
+thead tr:first-child td:nth-child(13) {
+            width: 9%
 }
 
 

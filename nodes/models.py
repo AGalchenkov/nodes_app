@@ -166,7 +166,8 @@ class Units(models.Model):
     vendor_model = models.ForeignKey(VendorModels,null=True, blank=True, on_delete=models.RESTRICT)
     console = models.ForeignKey(Consoles,null=True, blank=True, on_delete=models.RESTRICT)
     mng_ip = models.GenericIPAddressField(blank=True, null=True)
-    ipmi = models.BooleanField(default=False)
+    ipmi_bmc = models.GenericIPAddressField(blank=True, null=True)
+    ipmi_is_avaliable = models.BooleanField(default=False)
     appliance = models.ForeignKey(Appliances, null=True, blank=True, default=None,  on_delete=models.RESTRICT)
     g10 = models.IntegerField(default=0,
         validators=[
@@ -389,7 +390,7 @@ class UnitForm(ModelForm):
     class Meta:
         model = Units
         fields = '__all__'
-        exclude = ['used_by_unit', 'comment', 'is_avaliable']
+        exclude = ['used_by_unit', 'comment', 'is_avaliable', 'ipmi_is_avaliable',]
 
 
 class UnitFormDisabled(ModelForm):
