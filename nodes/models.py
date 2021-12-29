@@ -254,12 +254,13 @@ class UnitForm(ModelForm):
 
     def add_fatboy(self, unit_num, model, rack):
         other_unit_used_list = []
-        start_unit = int(unit_num) - 1
-        end_unit = int(unit_num) - int(model.units_takes)
-        if start_unit == 0 or end_unit < 0:
+        start_unit = int(unit_num) + 1
+        end_unit = int(unit_num) + int(model.units_takes)
+        if end_unit > 40:
             raise ValidationError('At this unit cant set this model')
-        list = [i for i in range(start_unit, end_unit, -1)]
+        list = [i for i in range(start_unit, end_unit)]
         for item in list:
+
             try:
                 u = Units.objects.get(rack=rack, unit_num=item)
                 if u.model or u.in_use == True:
@@ -274,9 +275,9 @@ class UnitForm(ModelForm):
         Units.objects.bulk_update(other_unit_used_list, ['used_by_unit'])
 
     def remove_fatboy(self, unit_num, old_model, rack):
-        start_unit = int(unit_num) - 1
-        end_unit = int(unit_num) - int(old_model.units_takes)
-        list = [i for i in range(start_unit, end_unit, -1)]
+        start_unit = int(unit_num) + 1
+        end_unit = int(unit_num) + int(old_model.units_takes)
+        list = [i for i in range(start_unit, end_unit)]
         for item in list:
             use_u = Units.objects.get(rack=rack, unit_num=item)
             use_u.used_by_unit = ''
@@ -284,13 +285,14 @@ class UnitForm(ModelForm):
             continue
 
     def change_fatboy(self, unit_num, model, old_model, rack):
-        start_unit = int(unit_num) - 1
-        end_unit = int(unit_num) - int(old_model.units_takes)
+        start_unit = int(unit_num) + 1
+        end_unit = int(unit_num) + int(old_model.units_takes)
         if model.units_takes > old_model.units_takes:
             diff = model.units_takes - old_model.units_takes
         else:
             diff = old_model.units_takes - model.units_takes
-            list = [i for i in range(end_unit + 1, end_unit + diff + 1)]
+            list = [i for i in range(end_unit - diff, end_unit)]
+            print(f'LIST ######      {list}')
             for item in list:
                 use_u = Units.objects.get(rack=rack, unit_num=item)
                 use_u.used_by_unit = ''
@@ -366,8 +368,10 @@ class UnitForm(ModelForm):
                         model.units_takes > 1 and old_model_units_takes > 1 and model.units_takes > old_model_units_takes or \
                         model.units_takes > 1 and old_model_units_takes == 1:
                     self.add_fatboy(unit_num, model, rack)
-                elif model.units_takes == 1 and old_model_units_takes > 1 or model == None and old_model_units_takes > 1:
+                elif model.units_takes == 1 and old_model_units_takes > 1:
                     self.remove_fatboy(unit_num, old_model, rack)
+        elif  model == None and old_model_units_takes > 1:
+            self.remove_fatboy(unit_num, old_model, rack)
 
         if self.has_changed():
             #if not user.has_perm('nodes.can_edit_unit'):

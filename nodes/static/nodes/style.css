@@ -1060,7 +1060,7 @@ ul {
  }
 
 nav a.sidenav-trigger {
-    display: none;
+  //  display: none;
 }
 
 ul:not(.browser-default) > li {
