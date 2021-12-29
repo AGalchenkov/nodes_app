@@ -61,3 +61,4 @@ def set_role_context(func):
         except KeyError:
             return func(request, **kwargs)
     return wrapper
+

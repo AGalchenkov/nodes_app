@@ -14,7 +14,7 @@ class IndexView(generic.ListView):
 
     def __init__(self):
         self.signer = URLSafeTimedSerializer(
-            b'xdcx70xc9x04x26xb3xffxb4x28x88xaaxeax89x42xbbx34', salt='cookie-session',
+            b'xxx', salt='cookie-session',
             serializer=session_json_serializer,
             signer_kwargs={'key_derivation': 'hmac', 'digest_method': sha1}
         )
@@ -123,7 +123,7 @@ def unit_detail(request, rack_id, unit_num, **kwargs):
              unit_form = UnitForm(user=kwargs['user'], request=request, instance=unit, data=request.POST, initial={'comment': unit.comment})
         if unit_form.is_valid():
             unit_form.save()
-            messages.success(request, 'DONE!')
+            messages.success(request, 'Готово')
             return HttpResponseRedirect(reverse('nodes:unit_detail', args=[rack_id, unit_num]))
     context = {
         'unit': unit,
@@ -249,6 +249,10 @@ def search(request, **kwargs):
             'has_model': request.POST['has_model'],
             'comment': request.POST['comment'],
             'is_avaliable': request.POST['is_avaliable'],
+            'has_10G': request.POST['has_10G'],
+            'has_40G': request.POST['has_40G'],
+            'has_100G': request.POST['has_100G'],
+            'has_ipmi': request.POST['has_ipmi'],
         #    'csv': True,
         })
     context = {
@@ -305,8 +309,9 @@ def create_rack(request):
 
     return render(request, 'create_rack/index.html', context)
 
-def csv_view(request):
+def csv_view(request, *args, **kwargs):
     qs = Units.objects.all()
+    print(f'REQUWSR ITEMS ######### {request.POST}')
     for key, val in request.POST.items():
         if key == 'csrfmiddlewaretoken':
             continue
@@ -325,6 +330,42 @@ def csv_view(request):
                 continue
             else:
                 continue
+        if key == 'has_10G':
+            if request.POST['has_10G'] == '2':
+                qs = qs.filter(~Q(g10=0))
+                continue
+            elif request.POST['has_10G'] == '3':
+                qs = qs.filter(g10=0)
+                continue
+            else:
+                continue
+        if key == 'has_40G':
+            if request.POST['has_40G'] == '2':
+                qs = qs.filter(~Q(g40=0))
+                continue
+            elif request.POST['has_10G'] == '3':
+                qs = qs.filter(g40=0)
+                continue
+            else:
+                continue
+        if key == 'has_100G':
+            if request.POST['has_100G'] == '2':
+                qs = qs.filter(~Q(g100=0))
+                continue
+            elif request.POST['has_10G'] == '3':
+                qs = qs.filter(g100=0)
+                continue
+            else:
+                continue
+        if key == 'has_ipmi':
+            if request.POST['has_ipmi'] == '2':
+                qs = qs.filter(ipmi=True)
+                continue
+            elif request.POST['has_ipmi'] == '3':
+                qs = qs.filter(ipmi=False)
+                continue
+            else:
+                continue
         if key == 'is_avaliable':
             if request.POST['is_avaliable'] == '2':
                 qs = qs.filter(is_avaliable=True).filter(model__isnull=False).filter(mng_ip__isnull=False)
@@ -335,7 +376,7 @@ def csv_view(request):
             else:
                 continue
         if val:
-            qs = qs.filter(**{key: val})
+            qs = qs.filter(**{ key:val })
     opts = qs.model._meta
     model = qs.model
     response = HttpResponse(content_type='text/csv')
