@@ -448,6 +448,11 @@ class SearchForm(ModelForm):
         (2, 'yes'),
         (3, 'no'),
     )
+    ipmi_is_avaliable_choises = (
+        (1, 'no matter'),
+        (2, 'yes'),
+        (3, 'no'),
+    )
     has_ipmi = (
         (1, 'no matter'),
         (2, 'yes'),
@@ -474,6 +479,7 @@ class SearchForm(ModelForm):
     has_40G = ChoiceField(choices=has_40G)
     has_100G = ChoiceField(choices=has_100G)
     is_avaliable = ChoiceField(choices=is_avaliable_choises)
+    ipmi_is_avaliable = ChoiceField(choices=ipmi_is_avaliable_choises)
 
     model = Units
 
@@ -483,7 +489,7 @@ class SearchForm(ModelForm):
 
     class Meta:
         model = Units
-        exclude = ['used_by_unit', 'in_use', 'unit_num', 'console', 'modified', 'modified_by', 'g10', 'g40', 'g100', 'ipmi',]
+        exclude = ['used_by_unit', 'in_use', 'unit_num', 'console', 'modified', 'modified_by', 'g10', 'g40', 'g100', 'ipmi', 'ipmi_is_avaliable']
 
 class UnitCreateForm(ModelForm):
     comment = CharField(widget=Textarea(attrs={'cols': 40, 'rows': 3}), required=False)

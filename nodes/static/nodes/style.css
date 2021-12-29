@@ -54,6 +54,10 @@ td {
          cursor: default;
 }
 
+td.not_active {
+        text-align: center;
+}
+
 td, th {
     padding: 1px 1px;
 }

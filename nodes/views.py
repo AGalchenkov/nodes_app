@@ -144,7 +144,7 @@ def search(request, **kwargs):
     qs = {}
     form = SearchForm(instance=Units)
     if request.method != 'POST':
-        form_without_csv = SearchForm(instance=Units, initial={'sn': '', 'comment': '', 'hostname': '', 'mng_ip': ''})
+        form_without_csv = SearchForm(instance=Units, initial={'sn': '', 'comment': '', 'hostname': '', 'mng_ip': '', 'ipmi_bmc': ''})
         form_csv = None
     else:
         qs = Units.objects.all()
@@ -195,10 +195,10 @@ def search(request, **kwargs):
                     continue
             if key == 'has_ipmi':
                 if request.POST['has_ipmi'] == '2':
-                    qs = qs.filter(ipmi=True)
+                    qs = qs.filter(ipmi_bmc__isnull=False)
                     continue
                 elif request.POST['has_ipmi'] == '3':
-                    qs = qs.filter(ipmi=False)
+                    qs = qs.filter(ipmi_bmc__isnull=True)
                     continue
                 else:
                     continue
@@ -211,11 +211,21 @@ def search(request, **kwargs):
                     continue
                 else:
                     continue
+            if key == 'ipmi_is_avaliable':
+                if request.POST['ipmi_is_avaliable'] == '2':
+                    qs = qs.filter(ipmi_is_avaliable=True).filter(model__isnull=False).filter(ipmi_bmc__isnull=False)
+                    continue
+                elif request.POST['ipmi_is_avaliable'] == '3':
+                    qs = qs.filter(ipmi_is_avaliable=False).filter(model__isnull=False).filter(ipmi_bmc__isnull=False)
+                    continue
+                else:
+                    continue
             if val:
                 qs = qs.filter(**{ key:val })
         sn = request.POST['sn'] if request.POST['sn'] else ''
         mng_ip = request.POST['mng_ip'] if request.POST['mng_ip'] else ''
         hostname = request.POST['hostname'] if request.POST['hostname'] else ''
+        ipmi_bmc = request.POST['ipmi_bmc'] if request.POST['ipmi_bmc'] else ''
 
         form_without_csv = SearchForm(instance=Units, initial={
             'owner': request.POST['owner'],
@@ -226,6 +236,7 @@ def search(request, **kwargs):
             'vendor_model': request.POST['vendor_model'],
             'sn': sn,
             'mng_ip': mng_ip,
+            'ipmi_bmc': ipmi_bmc,
             'hostname': hostname,
             'has_model': request.POST['has_model'],
             'comment': request.POST['comment'],
@@ -245,6 +256,7 @@ def search(request, **kwargs):
             'vendor_model': request.POST['vendor_model'],
             'sn': sn,
             'mng_ip': mng_ip,
+            'ipmi_bmc': ipmi_bmc,
             'hostname': hostname,
             'has_model': request.POST['has_model'],
             'comment': request.POST['comment'],
@@ -372,6 +384,15 @@ def csv_view(request, *args, **kwargs):
                 continue
             elif request.POST['is_avaliable'] == '3':
                 qs = qs.filter(is_avaliable=False).filter(model__isnull=False).filter(mng_ip__isnull=False)
+                continue
+            else:
+                continue
+        if key == 'ipmi_is_avaliable':
+            if request.POST['ipmi_is_avaliable'] == '2':
+                qs = qs.filter(ipmi_is_avaliable=True).filter(model__isnull=False).filter(ipmi_bmc__isnull=False)
+                continue
+            elif request.POST['ipmi_is_avaliable'] == '3':
+                qs = qs.filter(ipmi_is_avaliable=False).filter(model__isnull=False).filter(ipmi_bmc__isnull=False)
                 continue
             else:
                 continue
