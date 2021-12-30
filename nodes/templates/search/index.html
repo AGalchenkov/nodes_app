@@ -14,7 +14,10 @@
                 {% csrf_token %}
                 {{ form_without_csv.as_p }}
         </div>
-        <input type="Submit" value="Search">
+        <label for="submit" class="custom-submit">
+            <i class="green-icon small material-icons">done</i>
+        </label>
+        <input id="submit" type="submit" value="Submit">
         </form>
 </div>
 <div class="small_tbl_cnt_search">
@@ -44,10 +47,22 @@
                         {% else %}
                             <div class="none_status"></div>
                         {% endif %}
-                        {% if q.ipmi %}
-                             <div class="gray_status"></div>
+                        {% if q.ipmi_bmc %}
+                             {% if q.ipmi_is_avaliable %}
+                                <div class="green_status"></div>
+                            {% else %}
+                                <div class="red_status"></div>
+                            {% endif %}
                         {% else %}
-                            <div class="none_status"></div>
+                                 {% if q.has_ipmi%}
+                                    <td>
+                                        <div class="blue_status"></div>
+                                    </td>
+                                {% else %}
+                                    <td>
+                                        <div class="empty_status"></div>
+                                    </td>
+                                {% endif %}
                         {% endif %}
                         {% if q.owner %}
                             <span> {{q.owner}}</span>
@@ -62,5 +77,5 @@
         </ul>
     </div>
 </div>
-</div>
+
 {% endblock content %}

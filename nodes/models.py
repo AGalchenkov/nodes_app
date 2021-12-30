@@ -41,7 +41,7 @@ class Racks(models.Model):
         ordering = ['location', 'rack_id']
 
     def __str__(self):
-        return f'{self.location}_#{self.rack_id} ({self.units_num}U)'
+        return f'{self.location} #{self.rack_id} ({self.units_num}U)'
 
 class Interfaces(models.Model):
     g10 = models.IntegerField(default=0,
@@ -167,6 +167,7 @@ class Units(models.Model):
     console = models.ForeignKey(Consoles,null=True, blank=True, on_delete=models.RESTRICT)
     mng_ip = models.GenericIPAddressField(blank=True, null=True)
     ipmi_bmc = models.GenericIPAddressField(blank=True, null=True)
+    has_ipmi = models.BooleanField(default=False)
     ipmi_is_avaliable = models.BooleanField(default=False)
     appliance = models.ForeignKey(Appliances, null=True, blank=True, default=None,  on_delete=models.RESTRICT)
     g10 = models.IntegerField(default=0,
@@ -328,8 +329,10 @@ class UnitForm(ModelForm):
         else:
             cleaned_data['modified_by'] = User.objects.get(id=modified_by)
         in_use = cleaned_data.get('in_use')
+        has_ipmi = cleaned_data.get('has_ipmi')
         owner = cleaned_data.get('owner')
         mng_ip = cleaned_data.get('mng_ip')
+        ipmi_bmc = cleaned_data.get('ipmi_bmc')
         sn = cleaned_data.get('sn')
         unit_num = cleaned_data.get('unit_num')
         rack = cleaned_data.get('rack')
@@ -342,6 +345,8 @@ class UnitForm(ModelForm):
 
         if mng_ip and not model:
             raise ValidationError('set model')
+        if ipmi_bmc and not has_ipmi:
+            raise ValidationError("set 'has_ipmi' if you set 'ipmi_bmc' ip")
         if in_use == True and owner == None:
             raise ValidationError('assigned(in use) unit must have owner')
         if model:
@@ -480,6 +485,13 @@ class SearchForm(ModelForm):
     has_100G = ChoiceField(choices=has_100G)
     is_avaliable = ChoiceField(choices=is_avaliable_choises)
     ipmi_is_avaliable = ChoiceField(choices=ipmi_is_avaliable_choises)
+
+    field_order = [
+        'owner', 'rack', 'model', 'vendor', 'power', 'vendor_model',
+        'mng_ip', 'ipmi_bmc', 'appliance', 'sn', 'ram', 'hostname', 'comment',
+        'has_ipmi', 'ipmi_is_avaliable', 'is_avaliable', 'has_10G', 'has_40G', 'has_100G',
+        'has_model',
+    ]
 
     model = Units
 

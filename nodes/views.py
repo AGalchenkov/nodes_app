@@ -195,10 +195,10 @@ def search(request, **kwargs):
                     continue
             if key == 'has_ipmi':
                 if request.POST['has_ipmi'] == '2':
-                    qs = qs.filter(ipmi_bmc__isnull=False)
+                    qs = qs.filter(has_ipmi=True)
                     continue
                 elif request.POST['has_ipmi'] == '3':
-                    qs = qs.filter(ipmi_bmc__isnull=True)
+                    qs = qs.filter(has_ipmi=False)
                     continue
                 else:
                     continue
@@ -371,10 +371,10 @@ def csv_view(request, *args, **kwargs):
                 continue
         if key == 'has_ipmi':
             if request.POST['has_ipmi'] == '2':
-                qs = qs.filter(ipmi=True)
+                qs = qs.filter(has_ipmi=True)
                 continue
             elif request.POST['has_ipmi'] == '3':
-                qs = qs.filter(ipmi=False)
+                qs = qs.filter(has_ipmi=False)
                 continue
             else:
                 continue

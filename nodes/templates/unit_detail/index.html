@@ -13,10 +13,12 @@
             {{ form.as_p }}
 </div>
 {% if role <= 2 %}
-    <input type="submit" value="Submit">
+    <label for="submit" class="custom-submit">
+        <i class="green-icon small material-icons">done</i>
+    </label>
+    <input id="submit" type="submit" value="Submit">
 {% endif %}
 </form>
 </div>
-
 
 {% endblock content %}

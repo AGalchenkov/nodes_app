@@ -5,7 +5,7 @@
 {% load static %}
 
 <div class="full-notify"></div>
-<div class="node_tbl_cnt_sml">
+<div class="node_tbl_cnt_sml wdth_40_prc">
     <h1 class="tbl_header">Create rack</h1>
     <div class="unit_dtl_main_conteiner">
         <form id="create_rack_form" action="{% url 'nodes:create_rack' %}" method="post">
@@ -13,7 +13,10 @@
             {{ form.as_p }}
         </form>
     </div>
-    <input form="create_rack_form" type="submit" value="Submit">
+    <label for="submit" class="custom-submit">
+        <i class="green-icon small material-icons">done</i>
+    </label>
+    <input form="create_rack_form" id="submit" type="submit" value="Submit">
 </div>
 
 {% if messages %}

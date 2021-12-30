@@ -60,6 +60,18 @@
 
 <div class="full-notify"></div>
 
+<ul class="sidenav" id="mobile-nav">
+    <li><a href="http://127.0.0.1:5000/bookings">Bookings</a></li>
+                <li><a href="http://127.0.0.1:5000/zone/1">Рабочие места</a></li>
+                <li><a href="http://127.0.0.1:5000/zone/2">Парковка</a></li>
+                <li><a href="http://127.0.0.1:5000/zone/3">Переговорки</a></li>
+                <li><a href="http://127.0.0.1:5000/zone/4">Лаба 1</a></li>
+                <li><a href="http://127.0.0.1:5000/zone/5">Лаба 2</a></li>
+                <li class="active"><a href="http://127.0.0.1:8000/rack_list/">Сборочная</a></li>
+                <li><a href="http://127.0.0.1:5000/logout"><i class="material-icons">logout</i></a></li>
+
+    </ul>
+
 
     <nav>
         <div class="nav-wrapper">
@@ -111,5 +123,14 @@
     </script>
   {% endfor %}
 {% endif %}
+
+<script>
+    $(document).ready(function (){
+        var elem_height = $('.unit_dtl_main_conteiner').outerHeight( false )
+        var pos = $('.unit_dtl_main_conteiner').position()
+        $('.custom-submit').outerHeight(elem_height, false)
+        $('.custom-submit').offset({top: pos.top, left: pos.left - 50});
+    });
+</script>
 
 {% block content %}{% endblock content %}

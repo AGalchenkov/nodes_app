@@ -73,7 +73,7 @@
                         <td>{{item.mng_ip}}</td>
                     {% else %}
                         <td>
-                            <div class="none_status"></div>
+                    <!--        <div class="none_status"></div>  -->
                         </td>
                         <td></td>
                     {% endif %}
@@ -84,15 +84,22 @@
                             </td>
                         {% else %}
                             <td>
-                                <div class="red_status"></div>
+                                <div class="green_status"></div>
                             </td>
                         {% endif %}
                         <td>{{item.ipmi_bmc}}</td>
                     {% else %}
-                        <td>
-                            <div class="none_status"></div>
-                        </td>
-                        <td></td>
+                        {% if item.has_ipmi%}
+                                <td>
+                                    <div class="blue_status"></div>
+                                </td>
+                                <td></td>
+                            {% else %}
+                                <td>
+                            <!--        <div class="none_status"></div>  -->
+                                </td>
+                                <td></td>
+                            {% endif %}
                     {% endif %}
                     {% if item.owner == None %}
                         <td></td>
