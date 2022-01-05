@@ -1,14 +1,17 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.forms import ModelForm, Textarea, CharField, ChoiceField, Field, BooleanField, HiddenInput
+from django.forms import ModelForm, Textarea, CharField, ChoiceField, Field, BooleanField, HiddenInput, IntegerField
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.utils.timezone import now
 from bootstrap_modal_forms.forms import BSModalModelForm
+from django.utils.translation import gettext_lazy as _
+from datetime import datetime
+from simple_history.models import HistoricalRecords
+
+import mysite.settings
 from functions.ping import ping
-
-
-#from ping3 import ping
+from functions.funcs import get_client_ip
 
 class Customers(models.Model):
     customer = models.CharField(unique=True, max_length=50)
@@ -196,6 +199,7 @@ class Units(models.Model):
     modified = models.DateTimeField(default=now().replace(microsecond=0))
     modified_by = models.ForeignKey(User, null=True, blank=True, default=None, related_name='modified_by', on_delete=models.SET_DEFAULT)
     comment = models.OneToOneField(Comments, null=True, blank=True, default=None, on_delete=models.SET_DEFAULT)
+    history = HistoricalRecords()
 
     class Meta:
         unique_together = ['rack_id', 'unit_num']
@@ -235,9 +239,10 @@ class UnitForm(ModelForm):
     ram = CharField(required=False, disabled=True)
     field_order = [
         'in_use', 'owner', 'rack', 'unit_num', 'model', 'vendor', 'power', 'vendor_model',
-        'console', 'mng_ip', 'appliance', 'g10', 'sn', 'g40', 'ram', 'g100', 'hostname', 'modified', 'comment', 'modified_by',
+        'console', 'has_ipmi', 'ipmi_bmc', 'appliance', 'mng_ip', 'ram', 'g10', 'sn', 'g40', 'hostname', 'g100', 'modified',  'modified_by',
         'comment_author', 'comment_pub_date',
     ]
+
     model = Units
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -294,7 +299,6 @@ class UnitForm(ModelForm):
         else:
             diff = old_model.units_takes - model.units_takes
             list = [i for i in range(end_unit - diff, end_unit)]
-            print(f'LIST ######      {list}')
             for item in list:
                 use_u = Units.objects.get(rack=rack, unit_num=item)
                 use_u.used_by_unit = ''
@@ -303,13 +307,14 @@ class UnitForm(ModelForm):
 
     def clean(self):
         other_unit_used_list = []
+        request = self.request
         user = self.user
         cleaned_data = super().clean()
         modified_by = cleaned_data.get('modified_by')
         comment = cleaned_data.get('comment')
         if not comment:
-            cleaned_data['comment'] = None
-            cleaned_data['comment_pub_date'] = None
+           cleaned_data['comment'] = None
+           cleaned_data['comment_pub_date'] = None
         if comment in self.changed_data:
             cleaned_data['comment'] = Units.objects.get(id=comment).comment
         if 'mng_ip' in self.changed_data:
@@ -385,6 +390,10 @@ class UnitForm(ModelForm):
                 raise ValidationError('You dont have permisson to change unit!')
             #if 'owner' in self.changed_data and not user.has_perm('nodes.can_set_owner'):
             #    raise ValidationError('You dont have permission to set unit owner!')
+            ip = get_client_ip(request)
+            file = mysite.settings.BASE_DIR / 'visitors.txt'
+            with open(file, 'a') as f:
+                f.write(f"{datetime.now().replace(microsecond=0)}  FROM: {ip}  USER: {user}  ACCESS_TO: {request.path}  ACTION: change unit fields {self.changed_data}\n")
             cleaned_data['modified_by'] = user
             cleaned_data['modified'] = now().replace(microsecond=0)
         else:
@@ -396,6 +405,11 @@ class UnitForm(ModelForm):
         model = Units
         fields = '__all__'
         exclude = ['used_by_unit', 'comment', 'is_avaliable', 'ipmi_is_avaliable',]
+        labels = {
+            'g10': _('10G'),
+            'g40': '40G',
+            'g100': '100G',
+        }
 
 
 class UnitFormDisabled(ModelForm):

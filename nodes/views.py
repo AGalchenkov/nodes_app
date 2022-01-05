@@ -32,6 +32,7 @@ class RackListView(generic.ListView):
     decorators = [
         flask_session_required,
         flask_permission_required,
+        account_visitor,
     ]
 
     def __init__(self):
@@ -61,6 +62,7 @@ def index(request):
 
 
 #@login_required
+@account_visitor
 @flask_session_required
 def rack_list(request):
     r_list = Racks.objects.all().order_by('location')
@@ -73,6 +75,7 @@ def rack_list(request):
 @set_role_context
 @flask_session_required
 @flask_permission_required
+@account_visitor
 def rack(request, rack_id, **kwargs):
     units_used = Units.objects.values_list('unit_num', flat=True).filter(in_use=True, rack_id=rack_id)
     u_list = []
@@ -98,6 +101,7 @@ def rack(request, rack_id, **kwargs):
 @set_role_context
 @flask_session_required
 @flask_permission_required
+@account_visitor
 def unit_detail(request, rack_id, unit_num, **kwargs):
     if Units.objects.get(rack_id=rack_id, unit_num=unit_num).used_by_unit:
         return HttpResponseRedirect(reverse('nodes:rack', args=[rack_id]))
@@ -116,15 +120,16 @@ def unit_detail(request, rack_id, unit_num, **kwargs):
                 c1.save()
                 unit_form = UnitForm(user=kwargs['user'], request=request, instance=unit, data=request.POST, initial={'comment': unit.comment})
             else:
-                unit_form = UnitForm(user=kwargs['user'], request=request, instance=unit, data=request.POST)
+                unit_form = UnitForm(user=kwargs['user'], request=request, instance=unit, data=request.POST, initial={'comment': unit.comment.text})
         else:
-             c1 = Comments(text=None, author=None, units=unit, pub_date=None)
-             c1.save()
-             unit_form = UnitForm(user=kwargs['user'], request=request, instance=unit, data=request.POST, initial={'comment': unit.comment})
+            c1 = Comments(text=None, author=None, units=unit, pub_date=None)
+            c1.save()
+            unit_form = UnitForm(user=kwargs['user'], request=request, instance=unit, data=request.POST, initial={'comment': unit.comment.text})
         if unit_form.is_valid():
-            unit_form.save()
-            messages.success(request, 'Готово')
-            return HttpResponseRedirect(reverse('nodes:unit_detail', args=[rack_id, unit_num]))
+            if unit_form.has_changed():
+                unit_form.save()
+                messages.success(request, 'Готово')
+                return HttpResponseRedirect(reverse('nodes:unit_detail', args=[rack_id, unit_num]))
     context = {
         'unit': unit,
         'rack_id': rack_id,
@@ -140,6 +145,7 @@ def unit_detail(request, rack_id, unit_num, **kwargs):
 @set_role_context
 @flask_session_required
 @flask_permission_required
+@account_visitor
 def search(request, **kwargs):
     qs = {}
     form = SearchForm(instance=Units)
@@ -281,6 +287,7 @@ def search(request, **kwargs):
 @set_role_context
 @flask_session_required
 @flask_permission_required
+@account_visitor
 def unit_create(request, rack_id, unit_num, **kwargs):
     rack = Racks.objects.get(id=rack_id)
     form = UnitCreateForm(instance=Units, initial={

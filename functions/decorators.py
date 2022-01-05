@@ -11,6 +11,8 @@ from nodes.models import *
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError
+from functions.funcs import get_client_ip
+from datetime import datetime
 
 def flask_signer():
     signer = URLSafeTimedSerializer(
@@ -61,4 +63,14 @@ def set_role_context(func):
         except KeyError:
             return func(request, **kwargs)
     return wrapper
+
+def account_visitor(func):
+    def wrapper(request, *args, **kwargs):
+        ip = get_client_ip(request)
+        file = site_setting.BASE_DIR / 'visitors.txt'
+        with open(file, 'a') as f:
+            f.write(f"{datetime.now().replace(microsecond=0)}  FROM: {ip}  USER: {kwargs['user']}  ACCESS_TO: {request.path}  ACTION: GET\n")
+        return func(request, *args, **kwargs)
+    return wrapper
+
 
