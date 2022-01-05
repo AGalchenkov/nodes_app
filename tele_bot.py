@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
@@ -154,7 +155,7 @@ async def action(call: types.CallbackQuery, base_buttons=base_buttons):
         keyboard_inline_local = InlineKeyboardMarkup()
         LittleSecret(id=ls_id, in_use=False, owner=None).save()
         for k in call.message.reply_markup.values['inline_keyboard']:
-            if not k[0]['text'] == ls_name:
+            if not re.search(node, k[0]['text']):
                 keyboard_inline_local.add(k[0])
         #await bot.send_message(call.from_user.id, f'Release {node}')
         await bot.edit_message_text(chat_id=call.from_user.id, message_id=call.message.message_id, text=f'Release node #{ls_id}', reply_markup=keyboard_inline_local)
