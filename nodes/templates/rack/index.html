@@ -11,6 +11,8 @@
     {% endif %}
 </div>
 
+{{json_resp}}
+
 <div class="node_tbl_cnt">
     <div class="tbl_header">{{ location }}</div>
     <div class="table_container">
@@ -84,7 +86,7 @@
                             </td>
                         {% else %}
                             <td>
-                                <div class="green_status"></div>
+                                <div class="red_status"></div>
                             </td>
                         {% endif %}
                         <td>{{item.ipmi_bmc}}</td>
@@ -177,6 +179,8 @@
     </div>
 </div>
 
+
+    <div id="example-table"></div>
 
 
 <!--

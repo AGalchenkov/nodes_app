@@ -8,6 +8,10 @@ from webpush import send_group_notification
 from functions.decorators import *
 from django.utils.decorators import method_decorator
 from django.db.models import Q
+import json
+import html
+from django.core.serializers.json import DjangoJSONEncoder
+from django.core.serializers import serialize
 
 class IndexView(generic.ListView):
     model = Racks
@@ -439,3 +443,67 @@ def send_notifi(request):
 
     send_group_notification(group_name='all', payload=payload, ttl=1000)
     return JsonResponse(status=200, data={"message": "Web push successful"})
+
+@set_role_context
+@flask_session_required
+@flask_permission_required
+def rack_to_json(request, rack_id, **kwargs):
+    u = Units.objects.filter(rack_id=rack_id)
+    json_resp = []
+    green = '<div class="green status"></div>'
+    red = '<div class="red status"></div>'
+    blue = '<div class="blue status"></div>'
+    for e in reversed(u):
+        int = ''
+        unit_num = '<span class="in_used">' + str(e.unit_num) + '</span>' if e.in_use else '<span class="not_in_used">' + str(e.unit_num) + '</span>'
+        hostname = '@<span class="bold">' + e.hostname + '</span>' if e.hostname else ''
+        if e.model:
+            model = '<span class="bold">' + e.model.model_name + hostname + '</span>'
+        elif e.used_by_unit:
+            model = 'U' + e.used_by_unit
+        else:
+            model = 'empty'
+        is_avaliable = e.is_avaliable
+        if e.mng_ip:
+            if is_avaliable:
+                mng_ip = green + e.mng_ip
+            else:
+                mng_ip = red + e.mng_ip
+        else:
+            mng_ip = ''
+        if e.ipmi_bmc:
+            if e.ipmi_is_avaliable:
+                ipmi = green + e.ipmi_bmc
+            else:
+                ipmi = red + e.ipmi_bmc
+        elif e.has_ipmi:
+                ipmi = blue + '<span class="transp">no ip</span>'
+        else:
+            ipmi = ''
+        owner = e.owner.username if e.owner else ''
+        appliance = e.appliance.appliance if e.appliance else ''
+        vendor = e.vendor.vendor_name if e.vendor else ''
+        vendor_model = e.vendor_model.vendor_model if e.vendor_model else ''
+        pwr = e.power.power if e.power else ''
+        ram = e.appliance.ram if appliance else ''
+        comment = e.comment.text if e.comment else ''
+        c = f'''
+            <ul class="collapsible">
+            <li>
+            <div class="collapsible-header">{comment}</div>
+            <div class="collapsible-body collapsible_comment">{comment}</div>
+            </li>
+            </ul>
+        '''
+        int += f'{e.g10}<span class="clr_gray">^10G</span>' if e.g10 else ''
+        int += f' {e.g40}<span class="clr_gray">^40G</span>' if e.g40 else ''
+        int += f' {e.g100}<span class="clr_gray">^100G</span>' if e.g100 else ''
+        json_resp.append({
+            'unit_num': unit_num, 'model': model, 'is_avaliable': is_avaliable, 'mng_ip': mng_ip,
+            'ipmi': ipmi, 'owner': owner, 'appliance': appliance, 'ram': ram, 'vendor': vendor,
+            'vendor_model': vendor_model, 'pwr': pwr, 'int': int, 'comment': c
+            })
+    json_resp = json.dumps(json_resp)
+
+    #return JsonResponse(status=200, data=html.unescape(json_resp), safe=False)
+    return HttpResponse(json_resp, content_type='application/json')
