@@ -13,150 +13,7 @@
 
 {{json_resp}}
 
-<div class="node_tbl_cnt">
-    <div class="tbl_header">{{ location }}</div>
-    <div class="table_container">
-    <table class="nbs_table">
-	    <thead>
-		    <tr>
-			    <td class="rack_tbl">U</td>
-			    <td>Node</td>
-                <td></td>
-                <td>Mng ip</td>
-                <td></td>
-                <td>IPMI/BMC</td>
-			    <td>Owner</td>
-                <td>Appliance</td>
-                <td>Vendor</td>
-                <td>Model</td>
-                <td>Pwr</td>
-                <td>Ram</td>
-                <td>Int</td>
-                <td>Comment</td>
-		    </tr>
-	    </thead>
-	    <tbody class="section">
-        {% for item in u_list %}
-                <tr>
-                    {% if item.unit_num in units_used %}
-                    <td class="rack_tbl"><span class="in_used">U{{item.unit_num}}</span></td>
-                    {% else %}
-                        <td class="rack_tbl">U{{item.unit_num}}</td>
-                    {% endif %}
-                    {% if item.used_by_unit %}
-                        <td class="not_active">U{{item.used_by_unit}}</td>
-                    {% elif item.model == None %}
-                        <td class="rack_tbl"><a class="flx_cntr hght_100_prc my_lnk" href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">empty</a></td>
-                    {% else %}
-                        {% if item.model.units_takes > 1 %}
-                            {% if item.hostname %}
-                                <td class="rack_tbl with_model"><a class="bold flx_cntr hght_100_prc my_lnk" href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">{{item.model}}@{{item.hostname}} ({{item.model.units_takes}}U)</a></td>
-                            {% else %}
-                                <td class="rack_tbl with_model bold"><a class="bold flx_cntr hght_100_prc my_lnk" href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">{{item.model}}{{item.hostname}} ({{item.model.units_takes}}U)</a></td>
-                            {% endif %}
-                        {% else %}
-                                {% if item.hostname %}
-                                    <td class="rack_tbl with_model"><a class="bold flx_cntr hght_100_prc my_lnk" href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">{{item.model}}@{{item.hostname}}</a></td>
-                                {% else %}
-                                    <td class="rack_tbl with_model"><a class="bold flx_cntr hght_100_prc my_lnk" href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">{{item.model}}{{item.hostname}}</a></td>
-                                {% endif %}
-                        {% endif %}
-                    {% endif%}
-                    {% if item.mng_ip %}
-                        {% if item.is_avaliable %}
-                            <td>
-                                <div class="green_status"></div>
-                            </td>
-                        {% else %}
-                            <td>
-                                <div class="red_status"></div>
-                            </td>
-                        {% endif %}
-                        <td>{{item.mng_ip}}</td>
-                    {% else %}
-                        <td>
-                    <!--        <div class="none_status"></div>  -->
-                        </td>
-                        <td></td>
-                    {% endif %}
-                    {% if item.ipmi_bmc %}
-                        {% if item.ipmi_is_avaliable %}
-                            <td>
-                                <div class="green_status"></div>
-                            </td>
-                        {% else %}
-                            <td>
-                                <div class="red_status"></div>
-                            </td>
-                        {% endif %}
-                        <td>{{item.ipmi_bmc}}</td>
-                    {% else %}
-                        {% if item.has_ipmi%}
-                                <td>
-                                    <div class="blue_status"></div>
-                                </td>
-                                <td></td>
-                            {% else %}
-                                <td>
-                            <!--        <div class="none_status"></div>  -->
-                                </td>
-                                <td></td>
-                            {% endif %}
-                    {% endif %}
-                    {% if item.owner == None %}
-                        <td></td>
-                    {% else %}
-                        <td>{{item.owner}}</td>
-                    {% endif %}
-                    {% if item.appliance == None %}
-                        <td></td>
-                    {% else %}
-                        <td>{{item.appliance}}</td>
-                    {% endif %}
-                    {% if item.vendor == None %}
-                        <td></td>
-                    {% else %}
-                        <td>{{item.vendor}}</td>
-                    {% endif %}
-                     {% if item.vendor == None %}
-                        <td></td>
-                    {% else %}
-                        <td>{{item.vendor_model}}</td>
-                    {% endif %}
-                     {% if item.power == None %}
-                        <td></td>
-                    {% else %}
-                        <td>{{item.power}}</td>
-                    {% endif %}
-                    {% if item.appliance.ram == None %}
-                        <td></td>
-                    {% else %}
-                        <td>{{item.appliance.ram}}G</td>
-                    {% endif %}
-                    {% if item.g10 or item.g40 or item.g100 %}
-                        <td>{% if item.g10 %} {{item.g10}}<span class="clr_gray">^10G</span> {% endif %}{% if item.g40 %} {{item.g40}}<span class="clr_gray">^40G</span> {% endif %} {% if item.g100 %} {{item.g100}}<span class="clr_gray">^100G</span>{% endif %}</td>
-                    {% else %}
-                        <td> - </td>
-                    {% endif %}
-                    {% if item.comment == None %}
-                        <td class="comment"></td>
-                    {% else %}
-                        <td class="comment">
-                            <ul class="collapsible">
-                                <li>
-                                    <div class="collapsible-header">{{item.comment}}</div>
-                                    <div class="collapsible-body collapsible_comment">{{item.comment}}</div>
-                                </li>
-                            </ul>
-
-                        </td>
-                    {% endif %}
-                </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    </div>
-</div>
+<div class="tbl_header">{{ location }}</div>
 
 
 <div class="modal" id="create-modal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -180,8 +37,11 @@
 </div>
 
 
-    <div id="example-table"></div>
-
+<div class="node_tbl_cnt">
+    <div class="table_container">
+        <div id="example-table"></div>
+    </div>
+</div>
 
 <!--
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -258,6 +118,78 @@ $('#confirm-delete').on('show.bs.modal', function(e) {
 $('#mypop').on('shown.bs.popover', function (e) {
     alert('ffff')
 })
+
+
+    var path = window.location.pathname
+    var rack_id = path.split('/').pop()
+	var table = new Tabulator("#example-table", {
+            ajaxURL: "/rack_to_json/" + rack_id,
+            columns:[
+                {title:"U", field:"unit_num", sorter:"number", width:10, formatter:"html"},
+                {title:"Node", field:"model", hozAlign:"center", sorter:"string", width:200, formatter:"html", headerFilter:true},
+                {title:"Mng ip", field:"mng_ip", sorter:"string", width:140, formatter:"html", headerFilter:true},
+                {title:"Ipmi/BMC", field:"ipmi", sorter:"string", width:140, formatter:"html", headerFilter:true},
+                {title:"Owner", field:"owner", sorter:"string", width:200, headerFilter:true},
+                {title:"Appliance", field:"appliance", sorter:"string", width:330, headerFilter:true},
+                {title:"Ram", field:"ram", sorter:"number", width:70, headerFilter:true},
+                {title:"Vendor", field:"vendor", sorter:"string", width:80, headerFilter:true},
+                {title:"Model", field:"vendor_model", sorter:"string", width:140, headerFilter:true},
+                {title:"Pwr", field:"pwr", sorter:"string", width:60, headerFilter:true},
+                {title:"Int", field:"int", sorter:"string", width:180, formatter:"html", headerFilter:true},
+                {title:"Comment", field:"comment", sorter:"string", width:241, formatter:"html", headerFilter:true},
+            ],
+        });
+
+
+    $(document).ready(function(){
+        setTimeout(function(){
+            $('.collapsible').collapsible();
+
+            $('.tabulator-cell').click(function (){
+            if ($(this).attr('tabulator-field') != 'comment') {
+                $(this).siblings().each(function() {
+                    if ($(this).attr('tabulator-field') == 'unit_num') {
+                        var unit_num =$(this).first().text()
+                    //  var curr = window.location.pathname
+                    var curr = '/rack/1'
+                        var url =  curr + '/unit_detail/' + unit_num
+                        $(location).attr('href', url)
+                    }
+                })
+            }
+    })
+
+    $('.tabulator-cell').dblclick(function (){
+        if ($(this).attr('tabulator-field') == 'comment') {
+            $(this).siblings().each(function() {
+                if ($(this).attr('tabulator-field') == 'unit_num') {
+                    var unit_num =$(this).first().text()
+                  //  var curr = window.location.pathname
+                  var curr = '/rack/1'
+                    var url =  curr + '/unit_detail/' + unit_num
+                    $(location).attr('href', url)
+                }
+            })
+        }
+    })
+
+    }, 2000);
+
+    $(document).keyup(function (e) {
+        $('input[type="search"]').each(function() {
+            if ($(this).val()) {
+                $(this).addClass('has_val')
+            }else{
+                $(this).removeClass('has_val')
+           }
+        })
+    })
+
+    });
+
+
+
+
 
 </script>
 

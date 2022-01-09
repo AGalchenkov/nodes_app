@@ -12,110 +12,16 @@
     {% endfor %}
 </ul>
 </div>
-{% autoescape off %}
-<div class="node_tbl_cnt">
-    <div class="table_container">
-        <div id="example-table"></div>
-    </div>
-</div>
-
 
 <script>
-    $(document).ready(function(){
-        $(document).click(function (e) {
-            var elem = e.currentTarget.activeElement
-            if(!$(elem).hasClass('collapsible-header')) {
-                $('.collapsible-body').hide()
-            }
-
-        });
-  });
-
-
             $(document).ready(function(){
-            $('.sidenav').sidenav();
-        });
-
-         $(document).ready(function(){
-            $('.mobile-nav').sidenav();
-
+                $('.sidenav').sidenav();
+                $('.mobile-nav').sidenav();
              });
-
-         document.addEventListener('DOMContentLoaded', function() {
-            var e = document.getElementById('mobile-nav');
+            document.addEventListener('DOMContentLoaded', function() {
+                var e = document.getElementById('mobile-nav');
                 M.Sidenav.init(e);
             });
-
-
-		var table = new Tabulator("#example-table", {
-            ajaxURL: "{% url 'nodes:rack_to_json' 1 %}",
-            columns:[
-                {title:"U", field:"unit_num", sorter:"number", width:10, formatter:"html"},
-                {title:"Node", field:"model", hozAlign:"center", sorter:"string", width:200, formatter:"html", headerFilter:true},
-                {title:"Mng ip", field:"mng_ip", sorter:"string", width:140, formatter:"html", headerFilter:true},
-                {title:"Ipmi/BMC", field:"ipmi", sorter:"string", width:140, formatter:"html", headerFilter:true},
-                {title:"Owner", field:"owner", sorter:"string", width:200, headerFilter:true},
-                {title:"Appliance", field:"appliance", sorter:"string", width:330, headerFilter:true},
-                {title:"Ram", field:"ram", sorter:"number", width:70, headerFilter:true},
-                {title:"Vendor", field:"vendor", sorter:"string", width:80, headerFilter:true},
-                {title:"Model", field:"vendor_model", sorter:"string", width:140, headerFilter:true},
-                {title:"Pwr", field:"pwr", sorter:"string", width:60, headerFilter:true},
-                {title:"Int", field:"int", sorter:"string", width:180, formatter:"html", headerFilter:true},
-                {title:"Comment", field:"comment", sorter:"string", width:241, formatter:"html", headerFilter:true},
-            ],
-        });
-
-
-    $(document).ready(function(){
-    setTimeout(function(){
-        $('.collapsible').collapsible();
-
-        $('.tabulator-cell').click(function (){
-        if ($(this).attr('tabulator-field') != 'comment') {
-            $(this).siblings().each(function() {
-                if ($(this).attr('tabulator-field') == 'unit_num') {
-                    var unit_num =$(this).first().text()
-                  //  var curr = window.location.pathname
-                  var curr = '/rack/1'
-                    var url =  curr + '/unit_detail/' + unit_num
-                    $(location).attr('href', url)
-                }
-            })
-        }
-    })
-
-    $('.tabulator-cell').dblclick(function (){
-        if ($(this).attr('tabulator-field') == 'comment') {
-            $(this).siblings().each(function() {
-                if ($(this).attr('tabulator-field') == 'unit_num') {
-                    var unit_num =$(this).first().text()
-                  //  var curr = window.location.pathname
-                  var curr = '/rack/1'
-                    var url =  curr + '/unit_detail/' + unit_num
-                    $(location).attr('href', url)
-                }
-            })
-        }
-    })
-
-    }, 2000);
-
-    $('.collapsible').collapsible();
-    $(document).keyup(function (e) {
-        $('input[type="search"]').each(function() {
-            if ($(this).val()) {
-                $(this).addClass('has_val')
-            }else{
-                $(this).removeClass('has_val')
-           }
-        })
-    })
-
-    });
-
-
 </script>
-
-{% endautoescape %}
 
 {% endblock content %}

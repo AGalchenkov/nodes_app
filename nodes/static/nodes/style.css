@@ -1399,3 +1399,29 @@ td.comment li {
 .tabulator-row {
  min-height:18px;
 }
+
+.tabulator .tabulator-loader {
+ position:absolute;
+ display:flex;
+ align-items:center;
+ top:0;
+ left:0;
+ z-index:100;
+ height:100%;
+ width:100%;
+ background:rgba(0,0,0,.4);
+ text-align:center
+}
+.tabulator .tabulator-loader .tabulator-loader-msg {
+ display:inline-block;
+ margin:0 auto;
+ padding:10px 20px;
+ border-radius:0px;
+ background:#fff;
+ font-weight:700;
+ font-size:13px
+}
+.tabulator .tabulator-loader .tabulator-loader-msg.tabulator-loading {
+ border:none;
+ color:#000
+}
