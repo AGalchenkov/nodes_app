@@ -1,0 +1,7 @@
+.idea/
+**/migrations/**
+db.sqlite3
+**/__pycache__/*
+**/test_session.session
+**/media/**
+/visitors.txt
