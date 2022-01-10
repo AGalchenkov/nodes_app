@@ -150,8 +150,8 @@ $('#mypop').on('shown.bs.popover', function (e) {
                 $(this).siblings().each(function() {
                     if ($(this).attr('tabulator-field') == 'unit_num') {
                         var unit_num =$(this).first().text()
-                    //  var curr = window.location.pathname
-                    var curr = '/rack/1'
+                        var curr = window.location.pathname
+                    //  var curr = '/rack/1'
                         var url =  curr + '/unit_detail/' + unit_num
                         $(location).attr('href', url)
                     }

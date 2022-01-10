@@ -486,7 +486,10 @@ def rack_to_json(request, rack_id, **kwargs):
         vendor_model = e.vendor_model.vendor_model if e.vendor_model else ''
         pwr = e.power.power if e.power else ''
         ram = e.appliance.ram if appliance else ''
-        comment = e.comment.text if e.comment else ''
+        if e.comment:
+            comment = e.comment.text if e.comment.text else ''
+        else:
+            comment = ''
         c = f'''
             <ul class="collapsible">
             <li>

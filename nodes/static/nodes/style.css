@@ -505,7 +505,7 @@ input[type="text"]:not(.browser-default), input[type="number"]:not(.browser-defa
 .tabulator-header-filter input[type="search"]:hover {
     background-color: white;
  //   border-radius: 3px;
-    transition: 1s;
+    transition: .3s;
 }
 
 
