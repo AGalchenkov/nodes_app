@@ -228,14 +228,14 @@ class UnitForm(ModelForm):
     rack = Field(disabled=True)
     modified = Field(disabled=True)
     unit_num = CharField(disabled=True)
-    comment = CharField(widget=Textarea(attrs={'cols': 40, 'rows': 3}), required=False)
+    comment = CharField(widget=Textarea(attrs={'cols': 40, 'rows': 3, 'style': 'resize:none;'}), required=False)
     comment_author = CharField(disabled=True, required=False)
     comment_pub_date = CharField(disabled=True, required=False)
     modified_by = CharField(disabled=True, required=False)
     ram = CharField(required=False, disabled=True)
     field_order = [
         'in_use', 'owner', 'rack', 'unit_num', 'model', 'vendor', 'power', 'vendor_model',
-        'console', 'mng_ip', 'appliance', 'g10', 'sn', 'g40', 'ram', 'g100', 'hostname', 'modified', 'comment', 'modified_by',
+        'console', 'has_ipmi', 'ipmi_bmc', 'appliance', 'mng_ip', 'ram', 'g10', 'sn', 'g40', 'hostname', 'g100', 'modified',  'modified_by',
         'comment_author', 'comment_pub_date',
     ]
     model = Units
@@ -396,6 +396,12 @@ class UnitForm(ModelForm):
         model = Units
         fields = '__all__'
         exclude = ['used_by_unit', 'comment', 'is_avaliable', 'ipmi_is_avaliable',]
+        labels = {
+            'g10': '10G',
+            'g40': '40G',
+            'g100': '100G',
+        }
+
 
 
 class UnitFormDisabled(ModelForm):

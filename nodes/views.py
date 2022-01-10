@@ -120,15 +120,16 @@ def unit_detail(request, rack_id, unit_num, **kwargs):
                 c1.save()
                 unit_form = UnitForm(user=kwargs['user'], request=request, instance=unit, data=request.POST, initial={'comment': unit.comment})
             else:
-                unit_form = UnitForm(user=kwargs['user'], request=request, instance=unit, data=request.POST)
+                unit_form = UnitForm(user=kwargs['user'], request=request, instance=unit, data=request.POST, initial={'comment': unit.comment.text})
         else:
              c1 = Comments(text=None, author=None, units=unit, pub_date=None)
              c1.save()
              unit_form = UnitForm(user=kwargs['user'], request=request, instance=unit, data=request.POST, initial={'comment': unit.comment})
         if unit_form.is_valid():
-            unit_form.save()
-            messages.success(request, 'Готово')
-            return HttpResponseRedirect(reverse('nodes:unit_detail', args=[rack_id, unit_num]))
+            if unit_form.has_changed():
+                unit_form.save()
+                messages.success(request, 'Готово')
+                return HttpResponseRedirect(reverse('nodes:unit_detail', args=[rack_id, unit_num]))
     context = {
         'unit': unit,
         'rack_id': rack_id,
@@ -249,6 +250,7 @@ def search(request, **kwargs):
             'has_40G': request.POST['has_40G'],
             'has_100G': request.POST['has_100G'],
             'has_ipmi': request.POST['has_ipmi'],
+            'ipmi_is_avaliable': request.POST['ipmi_is_avaliable'],
         })
 
         form_csv = SearchForm(instance=Units, initial={
@@ -269,6 +271,7 @@ def search(request, **kwargs):
             'has_40G': request.POST['has_40G'],
             'has_100G': request.POST['has_100G'],
             'has_ipmi': request.POST['has_ipmi'],
+            'ipmi_is_avaliable': request.POST['ipmi_is_avaliable'],
         #    'csv': True,
         })
     context = {

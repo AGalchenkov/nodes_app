@@ -553,8 +553,8 @@ input[type=submit]:hover {
     background-color: white;
  //   border-radius: 15px;
     padding-left: 80px;
-    padding-bottom: 30px;
-    padding-top: 30px;
+ //   padding-bottom: 30px;
+ //   padding-top: 30px;
     box-shadow: 0 0 15px #d7d7d7;
     margin-bottom: 20px;
     padding-right: 50px;
@@ -685,6 +685,13 @@ input[type=submit]:hover {
     float: left;
     margin: 5px;
 }
+
+.frm_unit_dtl p {
+    width: 600px;
+    margin: 5px;
+    display: inline-block;
+}
+
 
 .single_adv {
     background-color: white;
@@ -1171,7 +1178,7 @@ nav .nav-wrapper {
     margin-top: 6px;
     white-space: break-spaces;
     text-align: left;
-    width: 235px;
+    width: 220px;
     color: #2f2f2f;
 }
 
@@ -1181,7 +1188,7 @@ nav .nav-wrapper {
     background-color: inherit;
     border-bottom: none;
     display: inline-block;
-    max-width: 238px;
+    max-width: 223px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -1372,6 +1379,9 @@ td.comment li {
 .tabulator, .tabulator-header {
     border: none !important;
 }
+.tabulator .tabulator-header {
+    background-color: white;
+}
 
 .tabulator-row.tabulator-selectable:hover {
     background-color: #eaeaea;
@@ -1424,4 +1434,13 @@ td.comment li {
 .tabulator .tabulator-loader .tabulator-loader-msg.tabulator-loading {
  border:none;
  color:#000
+}
+
+.fieldWrapper_gray {
+    border-bottom: 1px solid #ddd;
+    padding: 20px;
+}
+
+.fieldWrapper_gray:last-child {
+    border-bottom: 1px solid transparent;
 }
