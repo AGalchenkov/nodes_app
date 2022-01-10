@@ -302,3 +302,4 @@
 2022-01-05 22:52:25  FROM: 127.0.0.1  USER: Галчёнков Андрей  ACCESS_TO: /search/  ACTION: GET
 2022-01-05 22:52:34  FROM: 127.0.0.1  USER: Галчёнков Андрей  ACCESS_TO: /search/  ACTION: GET
 2022-01-10 11:44:19  FROM: 127.0.0.1  USER: Галчёнков Андрей  ACCESS_TO: /rack/1  ACTION: GET
+2022-01-10 11:47:06  FROM: 127.0.0.1  USER: Галчёнков Андрей  ACCESS_TO: /rack/1  ACTION: GET
