@@ -1,0 +1,27 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+.notiser {
+    text-align: center;
+    color: white;
+    padding: 5px 5px;
+    font-size: 13px;
+    margin-bottom: 0px;
+    cursor: pointer;
+    font-weight: bold;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+   // box-shadow: 0 0 15px #7b7a7a;
+   box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14),0 3px 1px -2px rgba(0,0,0,0.12),0 1px 5px 0 rgba(0,0,0,0.2);
+}
+
+.notiser.success {
+  background-color: #31B893;
+}
+
+.notiser.warning {
+  background-color: #D66882;
+}
+
+.notiser.basic {
+  background-color: #d0d3d3;
+}
