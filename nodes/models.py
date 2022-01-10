@@ -448,7 +448,7 @@ class CommentForm(ModelForm):
 
 class SearchForm(ModelForm):
 
-    comment = CharField(widget=Textarea(attrs={'cols': 40, 'rows': 3}), required=False)
+    comment = CharField(widget=Textarea(attrs={'cols': 40, 'rows': 3, 'style': 'resize:none;'}), required=False)
     has_model_choises = (
         (1, 'no matter'),
         (2, 'yes'),
