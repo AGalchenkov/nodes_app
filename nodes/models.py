@@ -294,7 +294,6 @@ class UnitForm(ModelForm):
         else:
             diff = old_model.units_takes - model.units_takes
             list = [i for i in range(end_unit - diff, end_unit)]
-            print(f'LIST ######      {list}')
             for item in list:
                 use_u = Units.objects.get(rack=rack, unit_num=item)
                 use_u.used_by_unit = ''
@@ -321,13 +320,16 @@ class UnitForm(ModelForm):
                     self.instance.is_avaliable = False
             except (OSError, TypeError):
                 self.instance.is_avaliable = False
-        if not modified_by:
-            cleaned_data['modified_by'] = None
         if self.has_changed():
+            if not user.is_staff:
+                raise ValidationError('You dont have permisson to change unit!')
             cleaned_data['modified_by'] = user
             cleaned_data['modified'] = now().replace(microsecond=0)
         else:
-            cleaned_data['modified_by'] = User.objects.get(id=modified_by)
+            if not modified_by:
+                cleaned_data['modified_by'] = None
+            else:
+                cleaned_data['modified_by'] = User.objects.get(id=modified_by)
         in_use = cleaned_data.get('in_use')
         has_ipmi = cleaned_data.get('has_ipmi')
         owner = cleaned_data.get('owner')
@@ -339,7 +341,6 @@ class UnitForm(ModelForm):
         model = cleaned_data.get('model')
         vendor = cleaned_data.get('vendor')
         power = cleaned_data.get('power')
-        #cleaned_data['modified_by'] = user
         old_model = Units.objects.get(rack=rack, unit_num=unit_num).model
         old_model_units_takes = old_model.units_takes if hasattr(old_model, 'units_takes') else 0
 
@@ -348,7 +349,7 @@ class UnitForm(ModelForm):
         if ipmi_bmc and not has_ipmi:
             raise ValidationError("set 'has_ipmi' if you set 'ipmi_bmc' ip")
         if in_use == True and owner == None:
-            raise ValidationError('assigned(in use) unit must have owner')
+            raise ValidationError("'in use' units must have owner")
         if model:
             if sn == '':
                 raise ValidationError('if one of fields model or SN are set then both must be filled')
@@ -368,8 +369,6 @@ class UnitForm(ModelForm):
             else:
                 if model.units_takes > 1 and old_model_units_takes > 1 and model.units_takes < old_model_units_takes:
                     self.change_fatboy(unit_num, model, old_model, rack)
-               # elif model.units_takes > 1 and old_model_units_takes > 1 and model.units_takes > old_model_units_takes:
-               #     pass
                 elif model.units_takes > 1 and old_model == None or \
                         model.units_takes > 1 and old_model_units_takes > 1 and model.units_takes > old_model_units_takes or \
                         model.units_takes > 1 and old_model_units_takes == 1:
@@ -378,17 +377,6 @@ class UnitForm(ModelForm):
                     self.remove_fatboy(unit_num, old_model, rack)
         elif  model == None and old_model_units_takes > 1:
             self.remove_fatboy(unit_num, old_model, rack)
-
-        if self.has_changed():
-            #if not user.has_perm('nodes.can_edit_unit'):
-            if not user.is_staff:
-                raise ValidationError('You dont have permisson to change unit!')
-            #if 'owner' in self.changed_data and not user.has_perm('nodes.can_set_owner'):
-            #    raise ValidationError('You dont have permission to set unit owner!')
-            cleaned_data['modified_by'] = user
-            cleaned_data['modified'] = now().replace(microsecond=0)
-        else:
-            cleaned_data['modified_by'] = User.objects.get(id=modified_by)
 
         return self.cleaned_data
 

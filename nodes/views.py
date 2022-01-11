@@ -118,18 +118,20 @@ def unit_detail(request, rack_id, unit_num, **kwargs):
             if not unit.comment or unit.comment.text != request.POST['comment']:
                 c1 = Comments(text=request.POST['comment'], author=kwargs['user'], units=unit)
                 c1.save()
-                unit_form = UnitForm(user=kwargs['user'], request=request, instance=unit, data=request.POST, initial={'comment': unit.comment})
+                unit_form = UnitForm(user=kwargs['user'], request=request, instance=unit, data=request.POST, initial={'modified_by': unit.modified_by, 'comment': unit.comment})
             else:
                 unit_form = UnitForm(user=kwargs['user'], request=request, instance=unit, data=request.POST, initial={'comment': unit.comment.text})
         else:
-             c1 = Comments(text=None, author=None, units=unit, pub_date=None)
-             c1.save()
-             unit_form = UnitForm(user=kwargs['user'], request=request, instance=unit, data=request.POST, initial={'comment': unit.comment})
+            # c1 = Comments(text=None, author=None, units=unit, pub_date=None)
+            # c1.save()
+            unit_form = UnitForm(user=kwargs['user'], request=request, instance=unit, data=request.POST, initial={'comment': None})
         if unit_form.is_valid():
             if unit_form.has_changed():
                 unit_form.save()
                 messages.success(request, 'Готово')
                 return HttpResponseRedirect(reverse('nodes:unit_detail', args=[rack_id, unit_num]))
+            else:
+                unit_form = UnitForm(user=kwargs['user'], request=request, instance=unit, initial=unit_form.cleaned_data)
     context = {
         'unit': unit,
         'rack_id': rack_id,
@@ -332,7 +334,6 @@ def create_rack(request):
 
 def csv_view(request, *args, **kwargs):
     qs = Units.objects.all()
-    print(f'REQUWSR ITEMS ######### {request.POST}')
     for key, val in request.POST.items():
         if key == 'csrfmiddlewaretoken':
             continue

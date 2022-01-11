@@ -7,114 +7,122 @@
 <div class="full-notify"></div>
 <div class="node_tbl_cnt_sml">
     <h1 class="tbl_header">U{{ unit_num }}</h1>
-    <div class="unit_dtl_main_conteiner">
-            {{ form.non_field_errors }}
-            <div class="frm_unit_dtl">
-                {{ form.non_field.errors }}
+    <div class="unit_dtl_main_conteiner off-padding-bottom off-padding-top">
+            <form class="frm_unit_dtl" action="{% url 'nodes:unit_detail' rack_id unit_num %}" method="post">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
                 <div class="fieldWrapper_gray">
-                    <p>
-                        {{ form..errors }}
+                    <div class="field">
                         <label for="{{ form.rack.id_for_label }}">Rack:</label>
                         {{ form.rack }}
-                    </p>
-                    <p>
+                    </div>
+                    <div class="field">
                         <label for="{{ form.unit_num.id_for_label }}">Unit Num:</label>
                         {{ form.unit_num }}
-                    </p>
-                     <p>
+                    </div>
+                     <div class="field">
                         <label for="{{ form.in_use.id_for_label }}">In Use:</label>
                         {{ form.in_use }}
-                    </p>
-                    <p>
+                    </div>
+                    <div class="field">
                         <label for="{{ form.owner.id_for_label }}">Owner:</label>
                         {{ form.owner }}
-                    </p>
+                    </div>
                 </div>
                 <div class="fieldWrapper_gray">
-                    <p>
+                    <div class="field">
                         <label for="{{ form.model.id_for_label }}">Model:</label>
                         {{ form.model }}
-                    </p>
-                    <p>
+                    </div>
+                    <div class="field">
                         <label for="{{ form.vendor.id_for_label }}">Vendor:</label>
                         {{ form.vendor }}
-                    </p>
-                    <p>
+                    </div>
+                    <div class="field">
                         <label for="{{ form.power.id_for_label }}">Power:</label>
                         {{ form.power }}
-                    </p>
-                    <p>
+                    </div>
+                    <div class="field">
                         <label for="{{ form.vendor_model.id_for_label }}">Vendor Model:</label>
                         {{ form.vendor_model }}
-                    </p>
-                    <p>
+                    </div>
+                    <div class="field">
                         <label for="{{ form.appliance.id_for_label }}">Appliance:</label>
                         {{ form.appliance }}
-                    </p>
-                    <p>
+                    </div>
+                    <div class="field">
                         <label for="{{ form.ram.id_for_label }}">Ram:</label>
                         {{ form.ram }}
-                    </p>
-                    <p>
+                    </div>
+                    <div class="field">
                         <label for="{{ form.sn.id_for_label }}">SN:</label>
                         {{ form.sn }}
-                    </p>
-                    <p>
+                        {{ form.sn.errors}}
+                    </div>
+                    <div class="field">
                         <label for="{{ form.hostname.id_for_label }}">Hostname:</label>
                         {{ form.hostname }}
-                    </p>
+                        {{ form.hostname.errors}}
+                    </div>
                 </div>
                 <div class="fieldWrapper_gray">
-                    <p>
+                    <div class="field">
                         <label for="{{ form.has_ipmi.id_for_label }}">Has IPMI:</label>
                         {{ form.has_ipmi }}
-                    </p>
-                    <p>
+                    </div>
+                    <div class="field">
                         <label for="{{ form.ipmi_bmc.id_for_label }}">IPMI/BMC:</label>
                         {{ form.ipmi_bmc }}
-                    </p>
-                    <p></p>
-                    <p>
+                        {{ form.ipmi_bmc.errors }}
+                    </div>
+                    <div class="field"></div>
+
+                    <div class="field">
                         <label for="{{ form.mng_ip.id_for_label }}">Mng Ip:</label>
                         {{ form.mng_ip }}
-                    </p>
-                    <p>
+                        {{ form.mng_ip.errors }}
+                    </div>
+                    <div class="field">
                         <label for="{{ form.g10.id_for_label }}">10G:</label>
                         {{ form.g10 }}
-                    </p>
-                    <p></p>
-                    <p>
+                        {{ form.g10.errors }}
+                    </div>
+                    <div class="field"></div>
+                    <div class="field">
                         <label for="{{ form.g100.id_for_label }}">100G:</label>
                         {{ form.g100 }}
-                    </p>
-                    <p>
+                        {{ form.g100.errors }}
+                    </div>
+                    <div class="field">
                         <label for="{{ form.g40.id_for_label }}">40G:</label>
                         {{ form.g40 }}
-                    </p>
+                        {{ form.g40.errors }}
+                    </div>
                 </div>
                 <div class="fieldWrapper_gray">
-                    <p>
+                    <div class="field">
                         <label for="{{ form.modified.id_for_label }}">Modified:</label>
                         {{ form.modified }}
-                    </p>
-                    <p>
+                    </div>
+                    <div class="field">
                         <label for="{{ form.modified_by.id_for_label }}">Modified By:</label>
                         {{ form.modified_by }}
-                    </p>
-                    <p>
+                    </div>
+                    <div class="field">
                         <label for="{{ form.comment_pub_date.id_for_label }}">Comment Pub Date:</label>
                         {{ form.comment_pub_date }}
-                    </p>
-                    <p>
+                    </div>
+                    <div class="field">
                         <label for="{{ form.comment_author.id_for_label }}">Comment Author:</label>
                         {{ form.comment_author }}
-                    </p>
-                    <p>
+                    </div>
+                    <div class="field">
                         <label for="{{ form.comment.id_for_label }}">Comment:</label>
                         {{ form.comment }}
-                    </p>
+                        {{ form.comment.errors }}
+                    </div>
                 </div>
-            </div>
+
     </div>
 {% if role <= 2 %}
     <label for="submit" class="custom-submit">
