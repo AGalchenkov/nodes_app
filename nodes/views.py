@@ -461,7 +461,7 @@ def rack_to_json(request, rack_id, **kwargs):
     blue = '<div class="blue status"></div>'
     for e in reversed(u):
         int = ''
-        unit_num = '<span class="in_used">' + str(e.unit_num) + '</span>' if e.in_use else '<span class="not_in_used">' + str(e.unit_num) + '</span>'
+        unit_num = '<span class="in_used">' + str(e.unit_num) + '</span>' if e.in_use else '<span class="free">' + str(e.unit_num) + '</span>'
         hostname = '@<span class="bold">' + e.hostname + '</span>' if e.hostname else ''
         if e.model:
             model = '<span class="bold">' + e.model.model_name + hostname + '</span>'

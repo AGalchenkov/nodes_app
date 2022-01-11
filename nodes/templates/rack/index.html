@@ -119,13 +119,17 @@ $('#mypop').on('shown.bs.popover', function (e) {
     alert('ffff')
 })
 
-
+    var sorterParams = 'number'
     var path = window.location.pathname
     var rack_id = path.split('/').pop()
 	var table = new Tabulator("#example-table", {
             ajaxURL: "/rack_to_json/" + rack_id,
             columns:[
-                {title:"U", field:"unit_num", hozAlign:"left", headerHozAlign:"left", headerSort:false, width:10, formatter:"html"},
+                {title:"U", field:"unit_num", hozAlign:"left", headerHozAlign:"left", width:10, formatter:"html", headerFilter:true, sorter:function(a, b, aRow, bRow, column, dir, sorterParams){
+                    a = a.replace(/<(.|\n)*?>/g, '');
+                    b = b.replace(/<(.|\n)*?>/g, '');
+                    return a - b;
+                }},
                 {title:"Node", field:"model", hozAlign:"center", sorter:"string", width:200, formatter:"html", headerFilter:true},
                 {title:"Mng ip", field:"mng_ip", sorter:"string", width:140, formatter:"html", headerFilter:true},
                 {title:"Ipmi/BMC", field:"ipmi", sorter:"string", width:140, formatter:"html", headerFilter:true},

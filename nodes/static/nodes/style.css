@@ -570,7 +570,7 @@ input[type=submit]:hover {
     font-weight: bold;
 }
 
-.not_in_used {
+.free {
     background-color: white;
     color: #333;
     padding-left: 2px;
