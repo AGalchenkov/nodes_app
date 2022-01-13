@@ -353,8 +353,8 @@ class UnitForm(ModelForm):
         if model:
             if sn == '':
                 raise ValidationError('if one of fields model or SN are set then both must be filled')
-            if vendor == None or power == None:
-                raise ValidationError('if model are set then vendor and power must be filled')
+            if vendor == None:
+                raise ValidationError('if model are set then vendor must be filled')
         if sn:
             if model == None:
                 raise ValidationError('if one of fields model or SN are set then both must be filled')

@@ -26,11 +26,11 @@
 <div class="modal" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-           <h4>Delete confirmation</h4>
-           Delete Rack on = {{ location }} =
+           <h4>Подтверждение удаления</h4>
+           Удалить стойку :  = {{ location }} =
            <div class="modal-footer">
-                <button type="button" class="btn btn-default modal-close" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-danger" style="color:white;" href="{% url 'nodes:delete_rack' rack_id %}">Delete</a>
+                <button type="button" class="btn btn-default modal-close" data-dismiss="modal">Отмена</button>
+                <a class="btn btn-danger" style="color:white;" href="{% url 'nodes:delete_rack' rack_id %}">Удалить!</a>
             </div>
         </div>
     </div>
@@ -54,9 +54,9 @@
         $('.collapsible').collapsible();
         $(document).click(function (e) {
             var elem = e.currentTarget.activeElement
-            if(!$(elem).hasClass('collapsible-header')) {
-                $('.collapsible-body').hide()
-            }
+         //   if(!$(elem).hasClass('collapsible-header')) {
+         //       $('.collapsible-body').hide()
+         //   }
 
         });
 
@@ -131,16 +131,17 @@ $('#mypop').on('shown.bs.popover', function (e) {
                     return a - b;
                 }},
                 {title:"Node", field:"model", hozAlign:"center", sorter:"string", width:200, formatter:"html", headerFilter:true},
-                {title:"Mng ip", field:"mng_ip", sorter:"string", width:140, formatter:"html", headerFilter:true},
-                {title:"Ipmi/BMC", field:"ipmi", sorter:"string", width:140, formatter:"html", headerFilter:true},
-                {title:"Owner", field:"owner", sorter:"string", width:200, headerFilter:true},
+                {title:"Mng ip", field:"mng_ip", sorter:"string", width:120, formatter:"html", headerFilter:true},
+                {title:"Ipmi/BMC", field:"ipmi", sorter:"string", width:120, formatter:"html", headerFilter:true},
+                {title:"Owner", field:"owner", sorter:"string", width:190, headerFilter:true},
+                {title:"Sn", field:"sn", sorter:"string", width:130, headerFilter:true},
                 {title:"Appliance", field:"appliance", sorter:"string", width:330, headerFilter:true},
-                {title:"Ram", field:"ram", sorter:"number", width:70, headerFilter:true},
+              //  {title:"Ram", field:"ram", sorter:"number", width:70, headerFilter:true},
                 {title:"Vendor", field:"vendor", sorter:"string", width:80, headerFilter:true},
                 {title:"Model", field:"vendor_model", sorter:"string", width:140, headerFilter:true},
                 {title:"Pwr", field:"pwr", sorter:"string", width:60, headerFilter:true},
                 {title:"Int", field:"int", sorter:"string", width:180, formatter:"html", headerFilter:true},
-                {title:"Comment", field:"comment", sorter:"string", width:226, formatter:"html", headerFilter:true},
+                {title:"Comment", field:"comment", sorter:"string", width:217, formatter:"html", headerFilter:true},
             ],
         });
 
@@ -149,17 +150,34 @@ $('#mypop').on('shown.bs.popover', function (e) {
         setTimeout(function(){
             $('.collapsible').collapsible();
 
-            $('.tabulator-cell').click(function (){
+            $('.tabulator-cell').dblclick(function (){
+            if ($(this).attr('tabulator-field') == 'model') {
+                if ($(this).text().indexOf("used by") >= 0) {
+                            window.unit_num = $(this).text().split("U")[1]
+                            var curr = window.location.pathname
+                            var url =  curr + '/unit_detail/' + window.unit_num
+                            $(location).attr('href', url)
+                            return
+                        }
+            }
+
             if ($(this).attr('tabulator-field') != 'comment') {
+                var sibl = $(this).siblings()
                 $(this).siblings().each(function() {
                     if ($(this).attr('tabulator-field') == 'unit_num') {
-                        var unit_num =$(this).first().text()
-                        var curr = window.location.pathname
-                    //  var curr = '/rack/1'
-                        var url =  curr + '/unit_detail/' + unit_num
-                        $(location).attr('href', url)
+                        window.unit_num =$(this).first().text()
                     }
+                    if ($(this).attr('tabulator-field') == 'model') {
+                        if ($(this).text().indexOf("used by") >= 0) {
+                            window.unit_num = $(this).text().split("U")[1]
+                        }
+                    }
+
                 })
+                var curr = window.location.pathname
+            //  var curr = '/rack/1'
+                var url =  curr + '/unit_detail/' + window.unit_num
+                $(location).attr('href', url)
             }
     })
 

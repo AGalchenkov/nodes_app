@@ -579,7 +579,7 @@ input[type=submit]:hover {
  //   font-weight: bold;
 }
 
-.tabulator-row.tabulator-selectable:hover .not_in_used{
+.tabulator-row.tabulator-selectable:hover .free{
     background-color: #eaeaea;
 }
 
@@ -1195,17 +1195,17 @@ nav .nav-wrapper {
     margin-top: 6px;
     white-space: break-spaces;
     text-align: left;
-    width: 220px;
+    width: 210px;
     color: #2f2f2f;
 }
 
 .collapsible-header {
-    line-height: 1;
+    line-height: 15px;
     padding: 0;
     background-color: inherit;
     border-bottom: none;
     display: inline-block;
-    max-width: 223px;
+    max-width: 215px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -1426,7 +1426,7 @@ td.comment li {
 .tabulator-row {
     min-height: 15px !important;
     //height: 17px;
-    line-height: 14px;
+    line-height: 15px;
 }
 
 .tabulator .tabulator-loader {

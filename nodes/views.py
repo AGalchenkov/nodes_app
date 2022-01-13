@@ -323,7 +323,7 @@ def create_rack(request):
             units_num = request.POST.get('units_num')
             for i in range(1, int(units_num)+1):
                 Units(rack=rack, unit_num=i).save()
-            messages.success(request, 'DONE!')
+            messages.success(request, 'Готово')
             return HttpResponseRedirect(reverse('nodes:rack_list'))
 
     context = {
@@ -441,7 +441,7 @@ def BsUnitDetail(request, rack_id, unit_num):
 
 def delet_rack(request, rack_id):
     Racks.objects.get(id=rack_id).delete()
-    messages.success(request, 'DONE!')
+    messages.success(request, 'Готово')
     return HttpResponseRedirect(reverse('nodes:rack_list'))
 
 def send_notifi(request):
@@ -460,13 +460,16 @@ def rack_to_json(request, rack_id, **kwargs):
     red = '<div class="red status"></div>'
     blue = '<div class="blue status"></div>'
     for e in reversed(u):
+        unit_takes = ''
         int = ''
         unit_num = '<span class="in_used">' + str(e.unit_num) + '</span>' if e.in_use else '<span class="free">' + str(e.unit_num) + '</span>'
         hostname = '@<span class="bold">' + e.hostname + '</span>' if e.hostname else ''
         if e.model:
-            model = '<span class="bold">' + e.model.model_name + hostname + '</span>'
+            if e.model.units_takes > 1:
+                unit_takes = f' (U{e.model.units_takes})'
+            model = '<span class="bold">' + e.model.model_name + hostname + unit_takes + '</span>'
         elif e.used_by_unit:
-            model = 'U' + e.used_by_unit
+            model = 'used by U' + e.used_by_unit
         else:
             model = 'empty'
         is_avaliable = e.is_avaliable
@@ -491,7 +494,8 @@ def rack_to_json(request, rack_id, **kwargs):
         vendor = e.vendor.vendor_name if e.vendor else ''
         vendor_model = e.vendor_model.vendor_model if e.vendor_model else ''
         pwr = e.power.power if e.power else ''
-        ram = e.appliance.ram if appliance else ''
+        sn = e.sn if e.sn else ''
+        #ram = e.appliance.ram if appliance else ''
         if e.comment:
             comment = e.comment.text if e.comment.text else ''
         else:
@@ -509,7 +513,9 @@ def rack_to_json(request, rack_id, **kwargs):
         int += f' {e.g100}<span class="clr_gray">^100G</span>' if e.g100 else ''
         json_resp.append({
             'unit_num': unit_num, 'model': model, 'is_avaliable': is_avaliable, 'mng_ip': mng_ip,
-            'ipmi': ipmi, 'owner': owner, 'appliance': appliance, 'ram': ram, 'vendor': vendor,
+            'ipmi': ipmi, 'owner': owner, 'appliance': appliance, 'sn': sn,
+            #'ram': ram,
+            'vendor': vendor,
             'vendor_model': vendor_model, 'pwr': pwr, 'int': int, 'comment': c
             })
     json_resp = json.dumps(json_resp)
