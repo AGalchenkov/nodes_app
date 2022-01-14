@@ -5,4 +5,5 @@ django-queryset-csv
 six
 telethon
 pillow
+django-webpush
 
