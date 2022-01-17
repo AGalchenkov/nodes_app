@@ -4,4 +4,8 @@ db.sqlite3
 **/test_session.session
 **/media/**
 /visitors.txt
-
+bin/
+lib/
+lib64
+pyvenv.cfg
+share/
