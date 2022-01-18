@@ -6,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.utils.timezone import now
 from bootstrap_modal_forms.forms import BSModalModelForm
 from functions.ping import ping
+from simple_history.models import HistoricalRecords
 
 
 #from ping3 import ping
@@ -35,6 +36,7 @@ class Racks(models.Model):
             MaxValueValidator(48, message='to much unit number'),
         ]
     )
+    history = HistoricalRecords()
 
     class Meta:
         unique_together = ['rack_id', 'location']
@@ -133,6 +135,17 @@ class Appliances(models.Model):
 
 #Little Secret
 
+class Ram(models.Model):
+    ram = models.IntegerField(
+        validators=[
+            MinValueValidator(16, message='negative unit number'),
+            MaxValueValidator(4096, message='to much unit number'),
+        ]
+    )
+
+    def __str__(self):
+        return str(self.ram) + 'G'
+
 class TelegramToken(models.Model):
     telegram_bot_name = models.CharField(null=True, blank=True, max_length=100)
     token = models.CharField(null=True, blank=True, max_length=150)
@@ -161,6 +174,7 @@ class Units(models.Model):
         ]
     )
     model = models.ForeignKey(Models, null=True, blank=True, on_delete=models.RESTRICT)
+    ram = models.ForeignKey(Ram,null=True, blank=True, on_delete=models.RESTRICT)
     vendor = models.ForeignKey(Vendors,null=True, blank=True, on_delete=models.RESTRICT)
     power = models.ForeignKey(PowerSupply,null=True, blank=True, on_delete=models.RESTRICT)
     vendor_model = models.ForeignKey(VendorModels,null=True, blank=True, on_delete=models.RESTRICT)
@@ -196,6 +210,7 @@ class Units(models.Model):
     modified = models.DateTimeField(default=now().replace(microsecond=0))
     modified_by = models.ForeignKey(User, null=True, blank=True, default=None, related_name='modified_by', on_delete=models.SET_DEFAULT)
     comment = models.OneToOneField(Comments, null=True, blank=True, default=None, on_delete=models.SET_DEFAULT)
+    history = HistoricalRecords()
 
     class Meta:
         unique_together = ['rack_id', 'unit_num']
@@ -221,18 +236,33 @@ class Units(models.Model):
 #    pub_date = models.DateTimeField(auto_now=True)
 #    def __str__(self):
 #        return self.text
+class UnitRebaseForm(ModelForm):
+    model = Units
+    class Meta:
+        model = Units
+        fields = ['rack', 'unit_num']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        rack_id = cleaned_data.get('rack')
+        unit_num = cleaned_data.get('unit_num')
+        if Units.objects.get(rack_id=rack_id, unit_num=unit_num).model:
+            raise ValidationError('Unit bizziii')
+        return self.cleaned_data
+
 
 
 class UnitForm(ModelForm):
     error_css_class = 'error'
     rack = Field(disabled=True)
+    in_use = Field(disabled=True)
     modified = Field(disabled=True)
     unit_num = CharField(disabled=True)
     comment = CharField(widget=Textarea(attrs={'cols': 40, 'rows': 3, 'style': 'resize:none;'}), required=False)
     comment_author = CharField(disabled=True, required=False)
     comment_pub_date = CharField(disabled=True, required=False)
     modified_by = CharField(disabled=True, required=False)
-    ram = CharField(required=False, disabled=True)
+    #ram = CharField(required=False, disabled=True)
     field_order = [
         'in_use', 'owner', 'rack', 'unit_num', 'model', 'vendor', 'power', 'vendor_model',
         'console', 'has_ipmi', 'ipmi_bmc', 'appliance', 'mng_ip', 'ram', 'g10', 'sn', 'g40', 'hostname', 'g100', 'modified',  'modified_by',
@@ -244,10 +274,10 @@ class UnitForm(ModelForm):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         self.initial['rack'] = kwargs['instance'].rack
-        try:
-            self.initial['ram'] = kwargs['instance'].appliance.ram
-        except AttributeError:
-            self.initial['ram'] = None
+        #try:
+        #    self.initial['ram'] = kwargs['instance'].appliance.ram
+        #except AttributeError:
+        #    self.initial['ram'] = None
         try:
             self.initial['comment_author'] = kwargs['instance'].comment.author
             self.initial['comment_pub_date'] = kwargs['instance'].comment.pub_date
@@ -258,8 +288,8 @@ class UnitForm(ModelForm):
         other_unit_used_list = []
         start_unit = int(unit_num) + 1
         end_unit = int(unit_num) + int(model.units_takes)
-        if end_unit > 40:
-            raise ValidationError('At this unit cant set this model')
+        if end_unit > rack.units_num:
+            raise ValidationError('this model takes too much units')
         list = [i for i in range(start_unit, end_unit)]
         for item in list:
 
@@ -348,8 +378,6 @@ class UnitForm(ModelForm):
             raise ValidationError('set model')
         if ipmi_bmc and not has_ipmi:
             raise ValidationError("set 'has_ipmi' if you set 'ipmi_bmc' ip")
-        if in_use == True and owner == None:
-            raise ValidationError("'in use' units must have owner")
         if model:
             if sn == '':
                 raise ValidationError('if one of fields model or SN are set then both must be filled')
@@ -360,9 +388,15 @@ class UnitForm(ModelForm):
                 raise ValidationError('if one of fields model or SN are set then both must be filled')
             sn_unit = Units.objects.filter(sn=sn).exclude(unit_num=unit_num, rack=rack)
             if sn_unit:
-                raise ValidationError(f'unit with this SN are exists ({sn_unit[0]})')
-        if in_use == False and owner:
-            raise ValidationError('not in use unit must have no owner')
+                raise ValidationError(
+                    f'''
+                    unit with this SN are exists <a class="clr_blue underline"
+                    href="/rack/{sn_unit[0].rack.id}/unit_detail/{sn_unit[0].unit_num}">
+                    {sn_unit[0].rack.location} #{sn_unit[0].rack.rack_id} U{sn_unit[0].unit_num}</a>
+                    '''
+                )
+        self.cleaned_data['in_use'] = True if owner else False
+            #raise ValidationError('not in use unit must have no owner')
         if model:
             if old_model == model:
                 pass

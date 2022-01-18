@@ -10,7 +10,13 @@
     <div class="unit_dtl_main_conteiner off-padding-bottom off-padding-top">
             <form class="frm_unit_dtl" action="{% url 'nodes:unit_detail' rack_id unit_num %}" method="post">
                 {% csrf_token %}
-                {{ form.non_field_errors }}
+                {% for error in form.non_field_errors %}
+                <ul class="errorlist nonfield">
+                    <li>
+                        {{ error|safe }}
+                    </li>
+                </ul>
+                {% endfor %}
                 <div class="fieldWrapper_gray">
                     <div class="field">
                         <label for="{{ form.rack.id_for_label }}">Rack:</label>
@@ -21,8 +27,7 @@
                         {{ form.unit_num }}
                     </div>
                      <div class="field">
-                        <label for="{{ form.in_use.id_for_label }}">In Use:</label>
-                        {{ form.in_use }}
+
                     </div>
                     <div class="field">
                         <label for="{{ form.owner.id_for_label }}">Owner:</label>
@@ -75,8 +80,10 @@
                         {{ form.ipmi_bmc }}
                         {{ form.ipmi_bmc.errors }}
                     </div>
-                    <div class="field"></div>
-
+                    <div class="field">
+                        <label for="{{ form.console.id_for_label }}">Console:</label>
+                        {{ form.console }}
+                    </div>
                     <div class="field">
                         <label for="{{ form.mng_ip.id_for_label }}">Mng Ip:</label>
                         {{ form.mng_ip }}
@@ -132,5 +139,53 @@
 {% endif %}
 </form>
 </div>
+
+<div class="modal" id="clear_unit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+           <h4>Подтверждение очистки</h4>
+           Очистить юнит :  " {{ rack.location }} #{{ rack.rack_id }} => U{{ unit_num }} "
+           <div class="modal-footer">
+                <button type="button" class="btn btn-default modal-close" data-dismiss="modal">Отмена</button>
+                <a class="btn btn-danger" style="color:white;" href="{% url 'nodes:clear_unit' rack_id unit_num %}">Очистить!</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="rebase_unit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+           <h4>Переместить юнит</h4>
+           <form class="frm_unit_dtl" action="{% url 'nodes:rebase_unit' %}" method="post">
+              {% csrf_token %}
+              <div class="fieldWrapper_grayy">
+                    <div class="field">
+                        <label for="{{ rebase_form.rack.id_for_label }}">Rack:</label>
+                        {{ rebase_form.rack }}
+                    </div>
+                    <div class="field">
+                        <label for="{{ rebase_form.unit_num.id_for_label }}">Unit Num:</label>
+                        {{ rebase_form.unit_num }}
+                    </div>
+              </div>
+              <input type="hidden" name="old_rack" value="{{ rack.rack_id }}">
+              <input type="hidden" name="old_unit_num" value="{{ unit_num }}">
+              <div class="modal-footer">
+                    <button class="btn btn-deafult" type="submit" style="color:white;" >Переместить!</button>
+            </div>
+           </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $('.modal').modal();
+        $('#confirm-delete').on('show.bs.modal', function(e) {
+            $(this).find('.btn-danger').attr('href', $(e.relatedTarget).data('href'));
+        });
+    });
+</script>
 
 {% endblock content %}

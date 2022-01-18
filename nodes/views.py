@@ -132,11 +132,13 @@ def unit_detail(request, rack_id, unit_num, **kwargs):
                 return HttpResponseRedirect(reverse('nodes:unit_detail', args=[rack_id, unit_num]))
             else:
                 unit_form = UnitForm(user=kwargs['user'], request=request, instance=unit, initial=unit_form.cleaned_data)
+    rebase_form = UnitRebaseForm(instance=unit)
     context = {
         'unit': unit,
         'rack_id': rack_id,
         'rack': rack,
         'unit_num': unit_num,
+        'rebase_form': rebase_form,
         'form': unit_form,
         'role': kwargs['role'],
         'user': kwargs['user'],
@@ -444,6 +446,83 @@ def delet_rack(request, rack_id):
     messages.success(request, 'Готово')
     return HttpResponseRedirect(reverse('nodes:rack_list'))
 
+def clear_unit(request, rack_id, unit_num):
+    unit = Units.objects.get(rack_id=rack_id, unit_num=unit_num)
+    unit.owner = None
+    unit.in_use = False
+    unit.model = None
+    unit.ram = None
+    unit.vendor = None
+    unit.power = None
+    unit.vendor_model = None
+    unit.appliance = None
+    unit.sn = ''
+    unit.hostname = ''
+    unit.has_ipmi = False
+    unit.ipmi_bmc = ''
+    unit.mng_ip = ''
+    unit.console = None
+    unit.g10 = 0
+    unit.g40 = 0
+    unit.g100 = 0
+    unit.comment = None
+    unit.save()
+    messages.success(request, 'Готово')
+    return HttpResponseRedirect(reverse('nodes:unit_detail', args=[rack_id, unit_num]))
+
+def rebase_unit(request, **kwargs):
+    print(request.POST)
+    new_rack_id = request.POST['rack']
+    rack = Racks.objects.get(id=new_rack_id)
+    new_unit_num = request.POST['unit_num']
+    old_rack = Racks.objects.get(rack_id=request.POST['old_rack'])
+    old_unit_num = request.POST['old_unit_num']
+    if Units.objects.get(rack_id=new_rack_id, unit_num=new_unit_num).model:
+        messages.warning(request, 'Юнит назначения ЗАНЯТ')
+        return HttpResponseRedirect(reverse('nodes:unit_detail', args=[old_rack.id, old_unit_num]))
+    old_unit = Units.objects.get(rack=old_rack, unit_num=old_unit_num)
+    new_unit = Units.objects.get(rack=rack, unit_num=new_unit_num)
+    new_unit.owner = old_unit.owner
+    new_unit.in_use = old_unit.in_use
+    new_unit.model = old_unit.model
+    new_unit.ram = old_unit.ram
+    new_unit.vendor = old_unit.vendor
+    new_unit.power = old_unit.power
+    new_unit.vendor_model = old_unit.vendor_model
+    new_unit.appliance = old_unit.appliance
+    new_unit.sn = old_unit.sn
+    new_unit.hostname = old_unit.hostname
+    new_unit.has_ipmi = old_unit.has_ipmi
+    new_unit.ipmi_bmc = old_unit.ipmi_bmc
+    new_unit.mng_ip = old_unit.mng_ip
+    new_unit.console = old_unit.console
+    new_unit.g10 = old_unit.g10
+    new_unit.g40 = old_unit.g40
+    new_unit.g100 = old_unit.g100
+    new_unit.comment = old_unit.comment
+    old_unit.owner = None
+    old_unit.in_use = False
+    old_unit.model = None
+    old_unit.ram = None
+    old_unit.vendor = None
+    old_unit.power = None
+    old_unit.vendor_model = None
+    old_unit.appliance = None
+    old_unit.sn = ''
+    old_unit.hostname = ''
+    old_unit.has_ipmi = False
+    old_unit.ipmi_bmc = ''
+    old_unit.mng_ip = ''
+    old_unit.console = None
+    old_unit.g10 = 0
+    old_unit.g40 = 0
+    old_unit.g100 = 0
+    old_unit.comment = None
+    old_unit.save()
+    new_unit.save()
+    messages.success(request, f'Перемещено на {rack.location}#{rack.id} ==> U{new_unit_num}')
+    return HttpResponseRedirect(reverse('nodes:unit_detail', args=[rack.id, new_unit_num]))
+
 def send_notifi(request):
     payload = {"head": "Welcome to wunderfull peace of WebPush!", "body": "There is a body of webpush message!!!!"}
 
@@ -462,16 +541,17 @@ def rack_to_json(request, rack_id, **kwargs):
     for e in reversed(u):
         unit_takes = ''
         int = ''
-        unit_num = '<span class="in_used">' + str(e.unit_num) + '</span>' if e.in_use else '<span class="free">' + str(e.unit_num) + '</span>'
-        hostname = '@<span class="bold">' + e.hostname + '</span>' if e.hostname else ''
+        used_by = 'used_by' if e.used_by_unit else ''
+        unit_num = '<span class="in_used">' + str(e.unit_num) + '</span>' if e.in_use else f'<span class="free {used_by}">' + str(e.unit_num) + '</span>'
+        hostname = ' (<span class="bold">' + e.hostname + '</span>)' if e.hostname else ''
         if e.model:
             if e.model.units_takes > 1:
                 unit_takes = f' (U{e.model.units_takes})'
             model = '<span class="bold">' + e.model.model_name + hostname + unit_takes + '</span>'
         elif e.used_by_unit:
-            model = 'used by U' + e.used_by_unit
+            model = '<span class="used_by">used by U' + e.used_by_unit + '</span>'
         else:
-            model = 'empty'
+            model = ''
         is_avaliable = e.is_avaliable
         if e.mng_ip:
             if is_avaliable:
@@ -490,12 +570,13 @@ def rack_to_json(request, rack_id, **kwargs):
         else:
             ipmi = ''
         owner = e.owner.username if e.owner else ''
+        console = '<a class="hover_bold my_lnk" href="ssh://tac@10.212.130.117">' + e.console.console + '</a>' if e.console else ''
         appliance = e.appliance.appliance if e.appliance else ''
         vendor = e.vendor.vendor_name if e.vendor else ''
         vendor_model = e.vendor_model.vendor_model if e.vendor_model else ''
         pwr = e.power.power if e.power else ''
         sn = e.sn if e.sn else ''
-        #ram = e.appliance.ram if appliance else ''
+        ram = e.appliance.ram if appliance else ''
         if e.comment:
             comment = e.comment.text if e.comment.text else ''
         else:
@@ -503,20 +584,18 @@ def rack_to_json(request, rack_id, **kwargs):
         c = f'''
             <ul class="collapsible">
             <li>
-            <div class="collapsible-header">{comment}</div>
+            <div class="hover_bold collapsible-header">{comment}</div>
             <div class="collapsible-body collapsible_comment">{comment}</div>
             </li>
             </ul>
         '''
-        int += f'{e.g10}<span class="clr_gray">^10G</span>' if e.g10 else ''
-        int += f' {e.g40}<span class="clr_gray">^40G</span>' if e.g40 else ''
-        int += f' {e.g100}<span class="clr_gray">^100G</span>' if e.g100 else ''
+        int += f'{e.g10}<span class="clr_gray">x10G</span>' if e.g10 else ''
+        int += f' {e.g40}<span class="clr_gray">x40G</span>' if e.g40 else ''
+        int += f' {e.g100}<span class="clr_gray">x100G</span>' if e.g100 else ''
         json_resp.append({
             'unit_num': unit_num, 'model': model, 'is_avaliable': is_avaliable, 'mng_ip': mng_ip,
-            'ipmi': ipmi, 'owner': owner, 'appliance': appliance, 'sn': sn,
-            #'ram': ram,
-            'vendor': vendor,
-            'vendor_model': vendor_model, 'pwr': pwr, 'int': int, 'comment': c
+            'ipmi': ipmi, 'owner': owner, 'appliance': appliance, 'sn': sn, 'ram': ram, 'vendor': vendor,
+            'console': console, 'vendor_model': vendor_model, 'pwr': pwr, 'int': int, 'comment': c
             })
     json_resp = json.dumps(json_resp)
 

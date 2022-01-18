@@ -237,6 +237,11 @@ tbody td.bg_green:hover {
 .bg_blue {
 			background-color: rgba(34, 82, 155, 0.98);
 }
+
+.clr_blue {
+        color: rgba(34, 82, 155, 0.98);
+}
+
 .clr_white {
 			color: white !important;
 }
@@ -374,11 +379,15 @@ a.my_lnk {
 
 a {
     text-decoration: none;
-    color: white;
+//    color: white;
 }
 
 a:hover {
-       color: white;
+//       color: white;
+}
+
+.underline {
+    text-decoration: underline;
 }
 
 .node_tbl_cnt {
@@ -623,6 +632,10 @@ input[type=submit]:hover {
 .username:hover {
             background-color: rgba(34, 82, 155, 0.98);
             color: white;
+}
+
+.used_by {
+    color: #b7b7b7;
 }
 
 .with_model {
@@ -1470,4 +1483,9 @@ td.comment li {
 
 .off-padding-top {
     padding-top: 0px;
+}
+
+.hover_bold {}
+.hover_bold:hover {
+    font-weight: bold;
 }

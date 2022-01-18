@@ -27,7 +27,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
            <h4>Подтверждение удаления</h4>
-           Удалить стойку :  = {{ location }} =
+           Удалить стойку :  " {{ location }} "
            <div class="modal-footer">
                 <button type="button" class="btn btn-default modal-close" data-dismiss="modal">Отмена</button>
                 <a class="btn btn-danger" style="color:white;" href="{% url 'nodes:delete_rack' rack_id %}">Удалить!</a>
@@ -50,33 +50,20 @@
 -->
 <script>
 
-    $(document).ready(function(){
-        $('.collapsible').collapsible();
-        $(document).click(function (e) {
-            var elem = e.currentTarget.activeElement
-         //   if(!$(elem).hasClass('collapsible-header')) {
-         //       $('.collapsible-body').hide()
-         //   }
+$(document).ready(function(){
+    $(document).click(function (e) {
+        var elem = e.target
+        if((!$(elem).hasClass('collapsible-header')) && (!$(elem).hasClass('collapsible-body'))) {
+            $('.collapsible-body').hide()
+        }
+    });
+});
 
-        });
-
-
-  });
-
-  // Or with jQuery
-
-  $(document).ready(function(){
+$(document).ready(function(){
     $('.modal').modal();
-  });
+});
 
 $( document ).ready(function() {
-
-  $(function () {
-        $('[data-toggle="tooltip"]').tooltip();
-        $('[data-toggle="popover"]').popover();
-    })
-
-
     autosize();
     function autosize(){
         var text = $('.autosize');
@@ -115,10 +102,6 @@ $('#confirm-delete').on('show.bs.modal', function(e) {
     $(this).find('.btn-danger').attr('href', $(e.relatedTarget).data('href'));
 });
 
-$('#mypop').on('shown.bs.popover', function (e) {
-    alert('ffff')
-})
-
     var sorterParams = 'number'
     var path = window.location.pathname
     var rack_id = path.split('/').pop()
@@ -130,18 +113,19 @@ $('#mypop').on('shown.bs.popover', function (e) {
                     b = b.replace(/<(.|\n)*?>/g, '');
                     return a - b;
                 }},
-                {title:"Node", field:"model", hozAlign:"center", sorter:"string", width:200, formatter:"html", headerFilter:true},
-                {title:"Mng ip", field:"mng_ip", sorter:"string", width:120, formatter:"html", headerFilter:true},
-                {title:"Ipmi/BMC", field:"ipmi", sorter:"string", width:120, formatter:"html", headerFilter:true},
-                {title:"Owner", field:"owner", sorter:"string", width:190, headerFilter:true},
-                {title:"Sn", field:"sn", sorter:"string", width:130, headerFilter:true},
-                {title:"Appliance", field:"appliance", sorter:"string", width:330, headerFilter:true},
-              //  {title:"Ram", field:"ram", sorter:"number", width:70, headerFilter:true},
+                {title:"Node", field:"model", hozAlign:"left", sorter:"string", width:190, formatter:"html", headerFilter:true},
+                {title:"Mng ip", field:"mng_ip", headerSort:false, width:120, formatter:"html", headerFilter:true},
+                {title:"Ipmi/BMC", field:"ipmi", headerSort:false, width:120, formatter:"html", headerFilter:true},
+                {title:"Console", field:"console", width:60, headerSort:false, formatter:"html", headerFilter:true},
+                {title:"Owner", field:"owner", sorter:"string", width:145, headerFilter:true},
+                {title:"Sn", field:"sn", headerSort:false, width:120, headerFilter:true},
+                {title:"Appliance", field:"appliance", sorter:"string", width:315, headerFilter:true},
+                {title:"Ram", field:"ram", sorter:"number", width:55, headerFilter:true},
                 {title:"Vendor", field:"vendor", sorter:"string", width:80, headerFilter:true},
-                {title:"Model", field:"vendor_model", sorter:"string", width:140, headerFilter:true},
-                {title:"Pwr", field:"pwr", sorter:"string", width:60, headerFilter:true},
-                {title:"Int", field:"int", sorter:"string", width:180, formatter:"html", headerFilter:true},
-                {title:"Comment", field:"comment", sorter:"string", width:217, formatter:"html", headerFilter:true},
+                {title:"Model", field:"vendor_model", sorter:"string", width:130, headerFilter:true},
+                {title:"Pwr", field:"pwr", sorter:"string", width:50, headerFilter:true},
+                {title:"Int", field:"int", sorter:"string", width:165, formatter:"html", headerFilter:true},
+                {title:"Comment", field:"comment", headerSort:false, width:217, formatter:"html", headerFilter:true},
             ],
         });
 
@@ -149,6 +133,16 @@ $('#mypop').on('shown.bs.popover', function (e) {
     $(document).ready(function(){
         setTimeout(function(){
             $('.collapsible').collapsible();
+
+            $('.collapsible-header').click(function(e) {
+                var elem = e.target
+                var elem_body = $(elem).siblings('.collapsible-body')
+                $('.collapsible-body').each(function() {
+                    if (!$(this).is(elem_body)) {
+                        $(this).hide()
+                    }
+                })
+            })
 
             $('.tabulator-cell').dblclick(function (){
             if ($(this).attr('tabulator-field') == 'model') {
@@ -175,7 +169,6 @@ $('#mypop').on('shown.bs.popover', function (e) {
 
                 })
                 var curr = window.location.pathname
-            //  var curr = '/rack/1'
                 var url =  curr + '/unit_detail/' + window.unit_num
                 $(location).attr('href', url)
             }
@@ -186,8 +179,7 @@ $('#mypop').on('shown.bs.popover', function (e) {
             $(this).siblings().each(function() {
                 if ($(this).attr('tabulator-field') == 'unit_num') {
                     var unit_num =$(this).first().text()
-                  //  var curr = window.location.pathname
-                  var curr = '/rack/1'
+                    var curr = window.location.pathname
                     var url =  curr + '/unit_detail/' + unit_num
                     $(location).attr('href', url)
                 }
@@ -204,15 +196,9 @@ $('#mypop').on('shown.bs.popover', function (e) {
             }else{
                 $(this).removeClass('has_val')
            }
-        })
-    })
-
+         })
     });
-
-
-
-
-
+});
 </script>
 
 
