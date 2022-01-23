@@ -236,18 +236,28 @@ class Units(models.Model):
 #    pub_date = models.DateTimeField(auto_now=True)
 #    def __str__(self):
 #        return self.text
+
+
 class UnitRebaseForm(ModelForm):
     model = Units
     class Meta:
         model = Units
         fields = ['rack', 'unit_num']
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['rack'].widget.attrs['id'] = 'rebase_rack'
+        self.fields['unit_num'].widget.attrs['id'] = 'rebase_unit_num'
+
     def clean(self):
         cleaned_data = super().clean()
-        rack_id = cleaned_data.get('rack')
+        print(f'CLEANED DATA:    {cleaned_data}')
+        rack = cleaned_data.get('rack')
         unit_num = cleaned_data.get('unit_num')
-        if Units.objects.get(rack_id=rack_id, unit_num=unit_num).model:
-            raise ValidationError('Unit bizziii')
+        model = Units.objects.get(rack=rack, unit_num=unit_num).model
+        print(model)
+        if Units.objects.get(rack=rack, unit_num=unit_num).model:
+            raise ValidationError('Юнит назначения занят')
         return self.cleaned_data
 
 
@@ -272,6 +282,7 @@ class UnitForm(ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         self.user = kwargs.pop('user', None)
+        self.role = kwargs.pop('role', None)
         super().__init__(*args, **kwargs)
         self.initial['rack'] = kwargs['instance'].rack
         #try:
@@ -341,8 +352,8 @@ class UnitForm(ModelForm):
             cleaned_data['comment_pub_date'] = None
         if comment in self.changed_data:
             cleaned_data['comment'] = Units.objects.get(id=comment).comment
+        mng_ip = cleaned_data.get('mng_ip')
         if 'mng_ip' in self.changed_data:
-            mng_ip = cleaned_data.get('mng_ip')
             try:
                 if ping(mng_ip):
                     self.instance.is_avaliable = True
@@ -350,9 +361,17 @@ class UnitForm(ModelForm):
                     self.instance.is_avaliable = False
             except (OSError, TypeError):
                 self.instance.is_avaliable = False
+        ipmi_bmc = cleaned_data.get('ipmi_bmc')
+        if 'ipmi_bmc' in self.changed_data:
+            try:
+                if ping(ipmi_bmc):
+                    self.instance.ipmi_is_avaliable = True
+                else:
+                    self.instance.ipmi_is_avaliable = False
+            except (OSError, TypeError):
+                self.instance.ipmi_is_avaliable = False
         if self.has_changed():
-            if not user.is_staff:
-                raise ValidationError('You dont have permisson to change unit!')
+            #if not user.is_staff:
             cleaned_data['modified_by'] = user
             cleaned_data['modified'] = now().replace(microsecond=0)
         else:
@@ -363,8 +382,6 @@ class UnitForm(ModelForm):
         in_use = cleaned_data.get('in_use')
         has_ipmi = cleaned_data.get('has_ipmi')
         owner = cleaned_data.get('owner')
-        mng_ip = cleaned_data.get('mng_ip')
-        ipmi_bmc = cleaned_data.get('ipmi_bmc')
         sn = cleaned_data.get('sn')
         unit_num = cleaned_data.get('unit_num')
         rack = cleaned_data.get('rack')
@@ -411,6 +428,10 @@ class UnitForm(ModelForm):
                     self.remove_fatboy(unit_num, old_model, rack)
         elif  model == None and old_model_units_takes > 1:
             self.remove_fatboy(unit_num, old_model, rack)
+
+        if self.has_changed():
+            if self.role >= 3:
+                raise ValidationError('Недостаточно прав!')
 
         return self.cleaned_data
 

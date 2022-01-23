@@ -11,8 +11,6 @@
     {% endif %}
 </div>
 
-{{json_resp}}
-
 <div class="tbl_header">{{ location }}</div>
 
 
@@ -119,13 +117,13 @@ $('#confirm-delete').on('show.bs.modal', function(e) {
                 {title:"Console", field:"console", width:60, headerSort:false, formatter:"html", headerFilter:true},
                 {title:"Owner", field:"owner", sorter:"string", width:145, headerFilter:true},
                 {title:"Sn", field:"sn", headerSort:false, width:120, headerFilter:true},
-                {title:"Appliance", field:"appliance", sorter:"string", width:315, headerFilter:true},
+                {title:"Appliance", field:"appliance", sorter:"string", width:300, headerFilter:true},
                 {title:"Ram", field:"ram", sorter:"number", width:55, headerFilter:true},
                 {title:"Vendor", field:"vendor", sorter:"string", width:80, headerFilter:true},
                 {title:"Model", field:"vendor_model", sorter:"string", width:130, headerFilter:true},
                 {title:"Pwr", field:"pwr", sorter:"string", width:50, headerFilter:true},
                 {title:"Int", field:"int", sorter:"string", width:165, formatter:"html", headerFilter:true},
-                {title:"Comment", field:"comment", headerSort:false, width:217, formatter:"html", headerFilter:true},
+                {title:"Comment", field:"comment", headerSort:false, width:240, formatter:"html", headerFilter:true},
             ],
         });
 

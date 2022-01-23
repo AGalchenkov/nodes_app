@@ -1208,7 +1208,7 @@ nav .nav-wrapper {
     margin-top: 6px;
     white-space: break-spaces;
     text-align: left;
-    width: 210px;
+    width: 232px;
     color: #2f2f2f;
 }
 
@@ -1218,7 +1218,7 @@ nav .nav-wrapper {
     background-color: inherit;
     border-bottom: none;
     display: inline-block;
-    max-width: 215px;
+    max-width: 235px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -1489,3 +1489,4 @@ td.comment li {
 .hover_bold:hover {
     font-weight: bold;
 }
+

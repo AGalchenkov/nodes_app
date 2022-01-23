@@ -56,21 +56,21 @@
 
 
 
-
+<script src="{% static 'js/jquery.cookie.js' %}"></script>
 
 <link rel="stylesheet" type="text/css" href="{% static 'nodes/style.css' %}">
 
 <div class="full-notify"></div>
 
 <ul class="sidenav" id="mobile-nav">
-    <li><a href="http://127.0.0.1:5000/bookings">Bookings</a></li>
-                <li><a href="http://127.0.0.1:5000/zone/1">Рабочие места</a></li>
-                <li><a href="http://127.0.0.1:5000/zone/2">Парковка</a></li>
-                <li><a href="http://127.0.0.1:5000/zone/3">Переговорки</a></li>
-                <li><a href="http://127.0.0.1:5000/zone/4">Лаба 1</a></li>
-                <li><a href="http://127.0.0.1:5000/zone/5">Лаба 2</a></li>
-                <li class="active"><a href="http://127.0.0.1:8000/rack_list/">Сборочная</a></li>
-                <li><a href="http://127.0.0.1:5000/logout"><i class="material-icons">logout</i></a></li>
+    <li><a href="http://10.212.64.79:5000/bookings">Bookings</a></li>
+                <li><a href="http://10.212.64.79:5000/zone/1">Рабочие места</a></li>
+                <li><a href="http://10.212.64.79:5000/zone/2">Парковка</a></li>
+                <li><a href="http://10.212.64.79:5000/zone/3">Переговорки</a></li>
+                <li><a href="http://10.212.64.79:5000/zone/4">Лаба 1</a></li>
+                <li><a href="http://10.212.64.79:5000/zone/5">Лаба 2</a></li>
+                <li class="active"><a href="http://10.212.64.79:8000/rack_list/">Сборочная</a></li>
+                <li><a href="http://10.212.64.79:5000/logout"><i class="material-icons">logout</i></a></li>
 
     </ul>
 
@@ -78,18 +78,18 @@
     <nav>
         <div class="nav-wrapper">
             <div class="right">
-                <a href="http://127.0.0.1:5000/" class="right_float"><img class="logo" src="{% static 'nodes/image/logo.png' %}"></a>
+                <a href="http://10.212.64.79:5000/" class="right_float"><img class="logo" src="{% static 'nodes/image/logo.png' %}"></a>
             </div>
           <a href="#" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
         <ul class="left hide-on-med-and-down">
-                <li><a href="http://127.0.0.1:5000/bookings">Bookings</a></li>
-                <li><a href="http://127.0.0.1:5000/zone/1">Рабочие места</a></li>
-                <li><a href="http://127.0.0.1:5000/zone/2">Парковка</a></li>
-                <li><a href="http://127.0.0.1:5000/zone/3">Переговорки</a></li>
-                <li><a href="http://127.0.0.1:5000/zone/4">Лаба 1</a></li>
-                <li><a href="http://127.0.0.1:5000/zone/5">Лаба 2</a></li>
-                <li class="active"><a href="http://127.0.0.1:8000/rack_list/">Сборочная</a></li>
-                <li><a href="http://127.0.0.1:5000/logout"><i class="material-icons">logout</i></a></li>
+                <li><a href="http://10.212.64.79:5000/bookings">Bookings</a></li>
+                <li><a href="http://10.212.64.79:5000/zone/1">Рабочие места</a></li>
+                <li><a href="http://10.212.64.79:5000/zone/2">Парковка</a></li>
+                <li><a href="http://10.212.64.79:5000/zone/3">Переговорки</a></li>
+                <li><a href="http://10.212.64.79:5000/zone/4">Лаба 1</a></li>
+                <li><a href="http://10.212.64.79:5000/zone/5">Лаба 2</a></li>
+                <li class="active"><a href="http://10.212.64.79:8000/rack_list/">Сборочная</a></li>
+                <li><a href="http://10.212.64.79:5000/logout"><i class="material-icons">logout</i></a></li>
             </ul>
         </div>
     </nav>
@@ -98,11 +98,11 @@
         <div class="nav-wrapper">
             <a href="#" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
             <ul class="left hide-on-med-and-down">
-                {% if role < 3 and 'rack/' in request.path and 'unit_detail' not in request.path %}
+                {% if role < 2 and 'rack/' in request.path and 'unit_detail' not in request.path %}
                    <li><a class="clr_red modal-trigger" href="#confirm-delete" data-href="{% url 'nodes:delete_rack' rack_id %}">Удалить стойку</a></li>
                 {% endif %}
                 {% if role < 3 and 'unit_detail' in request.path %}
-                   <li><a class="clr_red modal-trigger" href="#clear_unit" data-href="{% url 'nodes:clear_unit' rack_id unit_num %}">Очистить юнит</a></li>
+                   <li><a class="clr_red modal-trigger" href="#clear_unit" data-href="{% url 'nodes:clear_unit' rack_id unit_num %}">Освободить юнит</a></li>
                 {% endif %}
                 {% if role < 3 and 'unit_detail' in request.path %}
                    <li><a class="clr_green modal-trigger" href="#rebase_unit" data-href="{% url 'nodes:clear_unit' rack_id unit_num %}">Переместить юнит</a></li>
@@ -116,7 +116,7 @@
                 {% if not 'search' in request.path  %}
                     <li><a href="{% url 'nodes:search' %}">Поиск</a></li>
                 {% endif %}
-                {% if role < 3 %}
+                {% if role < 2 %}
                     <li><a href="{% url 'nodes:create_rack' %}">Создать стойку</a></li>
                 {% endif %}
             </ul>
@@ -127,7 +127,7 @@
 {% if messages %}
 {% for message in messages %}
     <script>
-        $N('{{message}}').setStyle('{{message.tags}}').setAge(1500).show('.full-notify');
+        $N('{{message}}').setStyle('{{message.tags}}').setAge(2000).show('.full-notify');
     </script>
   {% endfor %}
 {% endif %}

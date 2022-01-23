@@ -19,5 +19,5 @@ urlpatterns = [
     path('rack/delete_rack/<int:rack_id>', views.delet_rack, name='delete_rack'),
     path('rack/<int:rack_id>/unit_detail/<int:unit_num>/clear_unit', views.clear_unit, name='clear_unit'),
     path('rebase_unit/', views.rebase_unit, name='rebase_unit'),
-    path('send_notifi/', views.send_notifi, name='send_notifi')
+    path('send_notifi/', views.send_notifi, name='send_notifi'),
 ]

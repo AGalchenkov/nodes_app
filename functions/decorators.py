@@ -34,9 +34,9 @@ def flask_session_required(func):
                 User(username=session_data['username'], first_name=first_name, last_name=last_name, is_staff=is_staff).save()
                 u = User.objects.get(username=session_data['username'])
         except KeyError:
-            return HttpResponseRedirect('http://127.0.0.1:5000/login')
+            return HttpResponseRedirect('http://10.212.64.79:5000/login')
         if (int(time.time()) - session_data['login_time']) > 86400:
-            return HttpResponseRedirect('http://127.0.0.1:5000/login')
+            return HttpResponseRedirect('http://10.212.64.79:5000/login')
         kwargs.update({'user': u})
         return func(request, **kwargs)
     return wrapper

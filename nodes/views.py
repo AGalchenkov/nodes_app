@@ -12,6 +12,7 @@ import json
 import html
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.serializers import serialize
+from . import views
 
 class IndexView(generic.ListView):
     model = Racks
@@ -103,6 +104,7 @@ def rack(request, rack_id, **kwargs):
 @flask_session_required
 @flask_permission_required
 def unit_detail(request, rack_id, unit_num, **kwargs):
+    #custom_messages = kwargs.get('messages', None)
     if Units.objects.get(rack_id=rack_id, unit_num=unit_num).used_by_unit:
         return HttpResponseRedirect(reverse('nodes:rack', args=[rack_id]))
     rack = Racks.objects.get(id=rack_id)
@@ -118,20 +120,20 @@ def unit_detail(request, rack_id, unit_num, **kwargs):
             if not unit.comment or unit.comment.text != request.POST['comment']:
                 c1 = Comments(text=request.POST['comment'], author=kwargs['user'], units=unit)
                 c1.save()
-                unit_form = UnitForm(user=kwargs['user'], request=request, instance=unit, data=request.POST, initial={'modified_by': unit.modified_by, 'comment': unit.comment})
+                unit_form = UnitForm(user=kwargs['user'], role=kwargs['role'], request=request, instance=unit, data=request.POST, initial={'modified_by': unit.modified_by, 'comment': unit.comment})
             else:
-                unit_form = UnitForm(user=kwargs['user'], request=request, instance=unit, data=request.POST, initial={'comment': unit.comment.text})
+                unit_form = UnitForm(user=kwargs['user'], role=kwargs['role'], request=request, instance=unit, data=request.POST, initial={'comment': unit.comment.text})
         else:
             # c1 = Comments(text=None, author=None, units=unit, pub_date=None)
             # c1.save()
-            unit_form = UnitForm(user=kwargs['user'], request=request, instance=unit, data=request.POST, initial={'comment': None})
+            unit_form = UnitForm(user=kwargs['user'], role=kwargs['role'], request=request, instance=unit, data=request.POST, initial={'comment': None})
         if unit_form.is_valid():
             if unit_form.has_changed():
                 unit_form.save()
                 messages.success(request, 'Готово')
                 return HttpResponseRedirect(reverse('nodes:unit_detail', args=[rack_id, unit_num]))
             else:
-                unit_form = UnitForm(user=kwargs['user'], request=request, instance=unit, initial=unit_form.cleaned_data)
+                unit_form = UnitForm(user=kwargs['user'], role=kwargs['role'], request=request, instance=unit, initial=unit_form.cleaned_data)
     rebase_form = UnitRebaseForm(instance=unit)
     context = {
         'unit': unit,
@@ -143,7 +145,9 @@ def unit_detail(request, rack_id, unit_num, **kwargs):
         'role': kwargs['role'],
         'user': kwargs['user'],
     }
+
     return render(request, 'unit_detail/index.html', context)
+
 
 #@login_required
 @set_role_context
@@ -447,7 +451,11 @@ def delet_rack(request, rack_id):
     return HttpResponseRedirect(reverse('nodes:rack_list'))
 
 def clear_unit(request, rack_id, unit_num):
+    rack = Racks.objects.get(id=rack_id)
     unit = Units.objects.get(rack_id=rack_id, unit_num=unit_num)
+    if unit.model.units_takes > 1:
+        unit_form = UnitForm(instance=unit)
+        unit_form.remove_fatboy(unit_num, unit.model, rack)
     unit.owner = None
     unit.in_use = False
     unit.model = None
@@ -472,56 +480,77 @@ def clear_unit(request, rack_id, unit_num):
 
 def rebase_unit(request, **kwargs):
     print(request.POST)
+    json_resp = []
     new_rack_id = request.POST['rack']
     rack = Racks.objects.get(id=new_rack_id)
     new_unit_num = request.POST['unit_num']
     old_rack = Racks.objects.get(rack_id=request.POST['old_rack'])
     old_unit_num = request.POST['old_unit_num']
-    if Units.objects.get(rack_id=new_rack_id, unit_num=new_unit_num).model:
-        messages.warning(request, 'Юнит назначения ЗАНЯТ')
-        return HttpResponseRedirect(reverse('nodes:unit_detail', args=[old_rack.id, old_unit_num]))
-    old_unit = Units.objects.get(rack=old_rack, unit_num=old_unit_num)
-    new_unit = Units.objects.get(rack=rack, unit_num=new_unit_num)
-    new_unit.owner = old_unit.owner
-    new_unit.in_use = old_unit.in_use
-    new_unit.model = old_unit.model
-    new_unit.ram = old_unit.ram
-    new_unit.vendor = old_unit.vendor
-    new_unit.power = old_unit.power
-    new_unit.vendor_model = old_unit.vendor_model
-    new_unit.appliance = old_unit.appliance
-    new_unit.sn = old_unit.sn
-    new_unit.hostname = old_unit.hostname
-    new_unit.has_ipmi = old_unit.has_ipmi
-    new_unit.ipmi_bmc = old_unit.ipmi_bmc
-    new_unit.mng_ip = old_unit.mng_ip
-    new_unit.console = old_unit.console
-    new_unit.g10 = old_unit.g10
-    new_unit.g40 = old_unit.g40
-    new_unit.g100 = old_unit.g100
-    new_unit.comment = old_unit.comment
-    old_unit.owner = None
-    old_unit.in_use = False
-    old_unit.model = None
-    old_unit.ram = None
-    old_unit.vendor = None
-    old_unit.power = None
-    old_unit.vendor_model = None
-    old_unit.appliance = None
-    old_unit.sn = ''
-    old_unit.hostname = ''
-    old_unit.has_ipmi = False
-    old_unit.ipmi_bmc = ''
-    old_unit.mng_ip = ''
-    old_unit.console = None
-    old_unit.g10 = 0
-    old_unit.g40 = 0
-    old_unit.g100 = 0
-    old_unit.comment = None
-    old_unit.save()
-    new_unit.save()
-    messages.success(request, f'Перемещено на {rack.location}#{rack.id} ==> U{new_unit_num}')
-    return HttpResponseRedirect(reverse('nodes:unit_detail', args=[rack.id, new_unit_num]))
+    unit = Units.objects.get(rack_id=new_rack_id, unit_num=new_unit_num)
+    if request.method == 'POST':
+        rebase_form = UnitRebaseForm(instance=unit, data=request.POST)
+    if rebase_form.is_valid():
+        if Units.objects.get(rack_id=new_rack_id, unit_num=new_unit_num).model:
+            messages.warning(request, 'Юнит назначения ЗАНЯТ')
+            return HttpResponseRedirect(reverse('nodes:unit_detail', args=[old_rack.id, old_unit_num]))
+        old_unit = Units.objects.get(rack=old_rack, unit_num=old_unit_num)
+        new_unit = Units.objects.get(rack=rack, unit_num=new_unit_num)
+        new_unit.owner = old_unit.owner
+        new_unit.in_use = old_unit.in_use
+        new_unit.model = old_unit.model
+        new_unit.ram = old_unit.ram
+        new_unit.vendor = old_unit.vendor
+        new_unit.power = old_unit.power
+        new_unit.vendor_model = old_unit.vendor_model
+        new_unit.appliance = old_unit.appliance
+        new_unit.sn = old_unit.sn
+        new_unit.hostname = old_unit.hostname
+        new_unit.has_ipmi = old_unit.has_ipmi
+        new_unit.ipmi_bmc = old_unit.ipmi_bmc
+        new_unit.mng_ip = old_unit.mng_ip
+        new_unit.console = old_unit.console
+        new_unit.g10 = old_unit.g10
+        new_unit.g40 = old_unit.g40
+        new_unit.g100 = old_unit.g100
+        new_unit.comment = old_unit.comment
+        old_unit.owner = None
+        old_unit.in_use = False
+        old_unit.model = None
+        old_unit.ram = None
+        old_unit.vendor = None
+        old_unit.power = None
+        old_unit.vendor_model = None
+        old_unit.appliance = None
+        old_unit.sn = ''
+        old_unit.hostname = ''
+        old_unit.has_ipmi = False
+        old_unit.ipmi_bmc = ''
+        old_unit.mng_ip = ''
+        old_unit.console = None
+        old_unit.g10 = 0
+        old_unit.g40 = 0
+        old_unit.g100 = 0
+        old_unit.comment = None
+        old_unit.save()
+        new_unit.save()
+        json_resp.append(
+            {
+                'messages': {'success': f'Перемещено на {rack.location}#{rack.id} ==> U{new_unit_num}'},
+                'result': True,
+                'location': reverse('nodes:unit_detail', args=[rack.id, new_unit_num]),
+            }
+        )
+        json_resp = json.dumps(json_resp)
+        return HttpResponse(json_resp, content_type='application/json')
+    else:
+        json_resp.append(
+            {
+                'messages': {'error': rebase_form.errors.get_json_data(escape_html=False)},
+                'result': False,
+            }
+        )
+        json_resp = json.dumps(json_resp)
+        return HttpResponse(json_resp, content_type='application/json')
 
 def send_notifi(request):
     payload = {"head": "Welcome to wunderfull peace of WebPush!", "body": "There is a body of webpush message!!!!"}

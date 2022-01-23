@@ -4,7 +4,7 @@
 
 {% load static %}
 
-<div class="full-notify"></div>
+
 <div class="node_tbl_cnt_sml">
     <h1 class="tbl_header">U{{ unit_num }}</h1>
     <div class="unit_dtl_main_conteiner off-padding-bottom off-padding-top">
@@ -143,11 +143,13 @@
 <div class="modal" id="clear_unit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-           <h4>Подтверждение очистки</h4>
-           Очистить юнит :  " {{ rack.location }} #{{ rack.rack_id }} => U{{ unit_num }} "
+           <h4>Подтверждение освобождения</h4>
+           Освободить юнит :  " {{ rack.location }} #{{ rack.rack_id }} => U{{ unit_num }} "
            <div class="modal-footer">
+               <!--
                 <button type="button" class="btn btn-default modal-close" data-dismiss="modal">Отмена</button>
-                <a class="btn btn-danger" style="color:white;" href="{% url 'nodes:clear_unit' rack_id unit_num %}">Очистить!</a>
+                -->
+                <a class="btn btn-danger" style="color:white;" href="{% url 'nodes:clear_unit' rack_id unit_num %}">Освободить!</a>
             </div>
         </div>
     </div>
@@ -156,9 +158,17 @@
 <div class="modal" id="rebase_unit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
+            <div id="errors" class="errorlist nonfield"></div>
            <h4>Переместить юнит</h4>
            <form class="frm_unit_dtl" action="{% url 'nodes:rebase_unit' %}" method="post">
               {% csrf_token %}
+               {% for error in rebase_form.non_field_errors %}
+                <ul class="errorlist nonfield">
+                    <li>
+                        {{ error|safe }}
+                    </li>
+                </ul>
+               {% endfor%}
               <div class="fieldWrapper_grayy">
                     <div class="field">
                         <label for="{{ rebase_form.rack.id_for_label }}">Rack:</label>
@@ -169,10 +179,10 @@
                         {{ rebase_form.unit_num }}
                     </div>
               </div>
-              <input type="hidden" name="old_rack" value="{{ rack.rack_id }}">
-              <input type="hidden" name="old_unit_num" value="{{ unit_num }}">
+              <input id="old_rack" type="hidden" name="old_rack" value="{{ rack.rack_id }}">
+              <input id="old_unit_num" type="hidden" name="old_unit_num" value="{{ unit_num }}">
               <div class="modal-footer">
-                    <button class="btn btn-deafult" type="submit" style="color:white;" >Переместить!</button>
+                    <div id="rebase_btn" class="btn" style="color:white;" >Переместить!</div>
             </div>
            </form>
         </div>
@@ -184,6 +194,39 @@
         $('.modal').modal();
         $('#confirm-delete').on('show.bs.modal', function(e) {
             $(this).find('.btn-danger').attr('href', $(e.relatedTarget).data('href'));
+        });
+        $(function () {
+            var csrftoken = $.cookie('csrftoken');
+            $.ajaxSetup({
+                headers: { "X-CSRFToken": csrftoken }
+            });
+        });
+
+        $('#rebase_btn').click(function(e) {
+            var old_rack = $('#old_rack').val()
+            var old_unit_num = $('#old_unit_num').val()
+            var rack = $('#rebase_rack').val()
+            var unit_num = $('#rebase_unit_num').val()
+            $.ajax({
+                url: "/rebase_unit/",
+                method: "POST",
+                data: {old_rack: old_rack, old_unit_num: old_unit_num, rack: rack, unit_num: unit_num},
+            }).done(function( data ) {
+                if (data[0].result) {
+                    $.cookie('success_msg', data[0].messages.success, { expires: 1, path: '/' });
+                    var url = data[0].location
+                    $(location).attr('href', url)
+                }else{
+                    $('#errors').text(data[0].messages.error.__all__[0].message)
+                }
+            })
+        });
+        $(function () {
+            var success_msg = $.cookie('success_msg')
+            $.removeCookie('success_msg', { path: '/' })
+            if (success_msg) {
+                $N(success_msg).setStyle('success').setAge(2000).show('.full-notify');
+            }
         });
     });
 </script>
