@@ -32,6 +32,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     '10.212.64.79',
     '10.212.130.57',
+    'www.nodebooker.ru',
 ]
 
 MEDIA_URL = ''
@@ -145,7 +146,7 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/nodes/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

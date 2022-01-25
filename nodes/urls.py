@@ -7,6 +7,7 @@ from . import views
 app_name = 'nodes'
 urlpatterns = [
     path('', views.RackListView.as_view(), name='rack_list'),
+    path('zone/5', views.RackListView.as_view(), name='rack_list'),
     path('rack_list/', views.RackListView.as_view(), name='rack_list'),
     path('rack/<int:rack_id>', views.rack, name='rack'),
     path('rack_to_json/<int:rack_id>', views.rack_to_json, name='rack_to_json'),
