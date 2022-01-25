@@ -1,0 +1,11 @@
+django
+django_bootstrap_modal_forms
+ping3
+django-queryset-csv
+six
+telethon
+pillow
+django-webpush
+django_simple_history
+
+

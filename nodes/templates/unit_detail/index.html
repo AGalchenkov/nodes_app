@@ -4,19 +4,231 @@
 
 {% load static %}
 
-<div class="full-notify"></div>
-<div class="node_tbl_cnt">
+
+<div class="node_tbl_cnt_sml">
     <h1 class="tbl_header">U{{ unit_num }}</h1>
-    <div class="unit_dtl_main_conteiner hght_60_prc">
-        <form class="frm_unit_dtl" action="{% url 'nodes:unit_detail' rack_id unit_num %}" method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-</div>
-{% if perms.nodes.can_edit_unit %}
-    <input type="submit" value="Submit">
+    <div class="unit_dtl_main_conteiner off-padding-bottom off-padding-top">
+            <form class="frm_unit_dtl" action="{% url 'nodes:unit_detail' rack_id unit_num %}" method="post">
+                {% csrf_token %}
+                {% for error in form.non_field_errors %}
+                <ul class="errorlist nonfield">
+                    <li>
+                        {{ error|safe }}
+                    </li>
+                </ul>
+                {% endfor %}
+                <div class="fieldWrapper_gray">
+                    <div class="field">
+                        <label for="{{ form.rack.id_for_label }}">Rack:</label>
+                        {{ form.rack }}
+                    </div>
+                    <div class="field">
+                        <label for="{{ form.unit_num.id_for_label }}">Unit Num:</label>
+                        {{ form.unit_num }}
+                    </div>
+                     <div class="field">
+
+                    </div>
+                    <div class="field">
+                        <label for="{{ form.owner.id_for_label }}">Owner:</label>
+                        {{ form.owner }}
+                    </div>
+                </div>
+                <div class="fieldWrapper_gray">
+                    <div class="field">
+                        <label for="{{ form.model.id_for_label }}">Model:</label>
+                        {{ form.model }}
+                    </div>
+                    <div class="field">
+                        <label for="{{ form.vendor.id_for_label }}">Vendor:</label>
+                        {{ form.vendor }}
+                    </div>
+                    <div class="field">
+                        <label for="{{ form.power.id_for_label }}">Power:</label>
+                        {{ form.power }}
+                    </div>
+                    <div class="field">
+                        <label for="{{ form.vendor_model.id_for_label }}">Vendor Model:</label>
+                        {{ form.vendor_model }}
+                    </div>
+                    <div class="field">
+                        <label for="{{ form.appliance.id_for_label }}">Appliance:</label>
+                        {{ form.appliance }}
+                    </div>
+                    <div class="field">
+                        <label for="{{ form.ram.id_for_label }}">Ram:</label>
+                        {{ form.ram }}
+                    </div>
+                    <div class="field">
+                        <label for="{{ form.sn.id_for_label }}">SN:</label>
+                        {{ form.sn }}
+                        {{ form.sn.errors}}
+                    </div>
+                    <div class="field">
+                        <label for="{{ form.hostname.id_for_label }}">Hostname:</label>
+                        {{ form.hostname }}
+                        {{ form.hostname.errors}}
+                    </div>
+                </div>
+                <div class="fieldWrapper_gray">
+                    <div class="field">
+                        <label for="{{ form.has_ipmi.id_for_label }}">Has IPMI:</label>
+                        {{ form.has_ipmi }}
+                    </div>
+                    <div class="field">
+                        <label for="{{ form.ipmi_bmc.id_for_label }}">IPMI/BMC:</label>
+                        {{ form.ipmi_bmc }}
+                        {{ form.ipmi_bmc.errors }}
+                    </div>
+                    <div class="field">
+                        <label for="{{ form.console.id_for_label }}">Console:</label>
+                        {{ form.console }}
+                    </div>
+                    <div class="field">
+                        <label for="{{ form.mng_ip.id_for_label }}">Mng Ip:</label>
+                        {{ form.mng_ip }}
+                        {{ form.mng_ip.errors }}
+                    </div>
+                    <div class="field">
+                        <label for="{{ form.g10.id_for_label }}">10G:</label>
+                        {{ form.g10 }}
+                        {{ form.g10.errors }}
+                    </div>
+                    <div class="field"></div>
+                    <div class="field">
+                        <label for="{{ form.g100.id_for_label }}">100G:</label>
+                        {{ form.g100 }}
+                        {{ form.g100.errors }}
+                    </div>
+                    <div class="field">
+                        <label for="{{ form.g40.id_for_label }}">40G:</label>
+                        {{ form.g40 }}
+                        {{ form.g40.errors }}
+                    </div>
+                </div>
+                <div class="fieldWrapper_gray">
+                    <div class="field">
+                        <label for="{{ form.modified.id_for_label }}">Modified:</label>
+                        {{ form.modified }}
+                    </div>
+                    <div class="field">
+                        <label for="{{ form.modified_by.id_for_label }}">Modified By:</label>
+                        {{ form.modified_by }}
+                    </div>
+                    <div class="field">
+                        <label for="{{ form.comment_pub_date.id_for_label }}">Comment Pub Date:</label>
+                        {{ form.comment_pub_date }}
+                    </div>
+                    <div class="field">
+                        <label for="{{ form.comment_author.id_for_label }}">Comment Author:</label>
+                        {{ form.comment_author }}
+                    </div>
+                    <div class="field">
+                        <label for="{{ form.comment.id_for_label }}">Comment:</label>
+                        {{ form.comment }}
+                        {{ form.comment.errors }}
+                    </div>
+                </div>
+
+    </div>
+{% if role <= 2 %}
+    <label for="submit" class="custom-submit">
+        <i class="green-icon small material-icons">done</i>
+    </label>
+    <input id="submit" type="submit" value="Submit">
 {% endif %}
 </form>
 </div>
 
+<div class="modal" id="clear_unit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+           <h4>Подтверждение освобождения</h4>
+           Освободить юнит :  " {{ rack.location }} #{{ rack.rack_id }} => U{{ unit_num }} "
+           <div class="modal-footer">
+               <!--
+                <button type="button" class="btn btn-default modal-close" data-dismiss="modal">Отмена</button>
+                -->
+                <a class="btn btn-danger" style="color:white;" href="{% url 'nodes:clear_unit' rack_id unit_num %}">Освободить!</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="rebase_unit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div id="errors" class="errorlist nonfield"></div>
+           <h4>Переместить юнит</h4>
+           <form class="frm_unit_dtl" action="{% url 'nodes:rebase_unit' %}" method="post">
+              {% csrf_token %}
+               {% for error in rebase_form.non_field_errors %}
+                <ul class="errorlist nonfield">
+                    <li>
+                        {{ error|safe }}
+                    </li>
+                </ul>
+               {% endfor%}
+              <div class="fieldWrapper_grayy">
+                    <div class="field">
+                        <label for="{{ rebase_form.rack.id_for_label }}">Rack:</label>
+                        {{ rebase_form.rack }}
+                    </div>
+                    <div class="field">
+                        <label for="{{ rebase_form.unit_num.id_for_label }}">Unit Num:</label>
+                        {{ rebase_form.unit_num }}
+                    </div>
+              </div>
+              <input id="old_rack" type="hidden" name="old_rack" value="{{ rack.rack_id }}">
+              <input id="old_unit_num" type="hidden" name="old_unit_num" value="{{ unit_num }}">
+              <div class="modal-footer">
+                    <div id="rebase_btn" class="btn" style="color:white;" >Переместить!</div>
+            </div>
+           </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $('.modal').modal();
+        $('#confirm-delete').on('show.bs.modal', function(e) {
+            $(this).find('.btn-danger').attr('href', $(e.relatedTarget).data('href'));
+        });
+        $(function () {
+            var csrftoken = $.cookie('csrftoken');
+            $.ajaxSetup({
+                headers: { "X-CSRFToken": csrftoken }
+            });
+        });
+
+        $('#rebase_btn').click(function(e) {
+            var old_rack = $('#old_rack').val()
+            var old_unit_num = $('#old_unit_num').val()
+            var rack = $('#rebase_rack').val()
+            var unit_num = $('#rebase_unit_num').val()
+            $.ajax({
+                url: "/rebase_unit/",
+                method: "POST",
+                data: {old_rack: old_rack, old_unit_num: old_unit_num, rack: rack, unit_num: unit_num},
+            }).done(function( data ) {
+                if (data[0].result) {
+                    $.cookie('success_msg', data[0].messages.success, { expires: 1, path: '/' });
+                    var url = data[0].location
+                    $(location).attr('href', url)
+                }else{
+                    $('#errors').text(data[0].messages.error.__all__[0].message)
+                }
+            })
+        });
+        $(function () {
+            var success_msg = $.cookie('success_msg')
+            $.removeCookie('success_msg', { path: '/' })
+            if (success_msg) {
+                $N(success_msg).setStyle('success').setAge(2000).show('.full-notify');
+            }
+        });
+    });
+</script>
 
 {% endblock content %}

@@ -4,14 +4,24 @@
 
 {% load static %}
 
-
 <div class="small_tbl_cnt">
-    <div class="tbl_header">Rack List</div>
+    <div class="tbl_header">Список стоек</div>
     <ul>
     {% for r in r_list %}
-        <a href="{% url 'nodes:rack' r.id %}"><li class="rack_list del">{{ r }}</li></a>
+        <a class="my_lnk" href="{% url 'nodes:rack' r.id %}"><li class="rack_list del">{{ r }}</li></a>
     {% endfor %}
 </ul>
 </div>
+
+<script>
+            $(document).ready(function(){
+                $('.sidenav').sidenav();
+                $('.mobile-nav').sidenav();
+             });
+            document.addEventListener('DOMContentLoaded', function() {
+                var e = document.getElementById('mobile-nav');
+                M.Sidenav.init(e);
+            });
+</script>
 
 {% endblock content %}

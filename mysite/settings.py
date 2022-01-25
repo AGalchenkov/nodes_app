@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-$!v0g35u!b(j-&vy$%!7#nt#_s8wu&$ush0f$sea5@@!mxli4p'
+SECRET_KEY = 'xdcx70xc9x04x26xb3xffxb4x28x88xaaxeax89x42xbbx34'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -32,6 +32,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     '10.212.64.79',
     '10.212.130.57',
+    'www.nodebooker.ru',
 ]
 
 MEDIA_URL = ''
@@ -41,11 +42,13 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 INSTALLED_APPS = [
     #MY_APPS
+    'webpush',
     'nodes.apps.NodesConfig',
     'users',
     'advertisements',
     'bootstrap_modal_forms',
     'telechat',
+    'simple_history',
     #default
     'django.contrib.admin',
     'django.contrib.auth',
@@ -56,6 +59,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'simple_history.middleware.HistoryRequestMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -64,6 +68,13 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+### MY SETTING
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+SESSION_SAVE_EVERY_REQUEST = True
+
+###
 
 ROOT_URLCONF = 'mysite.urls'
 
@@ -135,7 +146,7 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/nodes/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -146,3 +157,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/users/login/'
 LOGOUT_REDIRECT_URL = '/users/login/'
+
+
+WEBPUSH_SETTINGS = {
+    "VAPID_PUBLIC_KEY": "BBPoGsOzfCfZJqnwcFTzYfBbsCO_QMgfmEz5h3j2ieSHAY2VwOTeyQp5YFYafdZAFrlWOnFBMIqsmcEhR6JTqeQ",
+    "VAPID_PRIVATE_KEY": "MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgsyLZIrFZZRnwxZWYAXc5WJQ1NmE3X5mH0NNXWXz8f5GhRANCAAQT6BrDs3wn2Sap8HBU82HwW7Ajv0DIH5hM+Yd49onkhwGNlcDk3skKeWBWGn3WQBa5VjpxQTCKrJnBIUeiU6nk",
+    "VAPID_ADMIN_EMAIL": "a.galchenkov@rdp.ru"
+}

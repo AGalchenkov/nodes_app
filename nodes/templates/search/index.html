@@ -14,15 +14,18 @@
                 {% csrf_token %}
                 {{ form_without_csv.as_p }}
         </div>
-        <input type="Submit" value="Search">
+        <label for="submit" class="custom-submit">
+            <i class="green-icon small material-icons">done</i>
+        </label>
+        <input id="submit" type="submit" value="Submit">
         </form>
 </div>
 <div class="small_tbl_cnt_search">
     <h2 class="tbl_header">Result</h2>
-    <div class="unit_dtl_main_conteiner">
+    <div id="result" class="unit_dtl_main_conteiner">
         {% if request.method == 'POST' %}
             {% if qs.count %}
-                <form id="form_csv" class="fnt_sz_14" action="{% url 'nodes:csv_view'%}" method="post" hidden>
+                <form id="form_csv" class="fnt_sz_14" action="{% url 'nodes:csv_view' %}" method="post" hidden>
                     {% csrf_token %}
                     {{ form_csv.as_p }}
                 </form>
@@ -32,7 +35,40 @@
         {% endif %}
         <ul>
             {% for q in qs %}
-                <a href="{% url 'nodes:unit_detail' q.rack_id q.unit_num %}"><li class="rack_list">{{ q }}</li></a>
+                <a href="{% url 'nodes:unit_detail' q.rack_id q.unit_num %}">
+                    <li class="rack_list">
+                        <span>{{ q }}</span>
+                        {% if q.mng_ip %}
+                            {% if q.is_avaliable %}
+                                <div class="green_status"></div>
+                            {% else%}
+                                <div class="red_status"></div>
+                            {% endif %}
+                        {% else %}
+                            <div class="none_status"></div>
+                        {% endif %}
+                        {% if q.ipmi_bmc %}
+                             {% if q.ipmi_is_avaliable %}
+                                <div class="green_status"></div>
+                            {% else %}
+                                <div class="red_status"></div>
+                            {% endif %}
+                        {% else %}
+                                 {% if q.has_ipmi%}
+                                    <td>
+                                        <div class="blue_status"></div>
+                                    </td>
+                                {% else %}
+                                    <td>
+                                        <div class="empty_status"></div>
+                                    </td>
+                                {% endif %}
+                        {% endif %}
+                        {% if q.owner %}
+                            <span> {{q.owner}}</span>
+                        {% endif %}
+                    </li>
+                </a>
             {% empty %}
                 {% if request.method != 'POST' %}
                     <h2 class="tbl_header">There are no results yet</h2>
@@ -41,5 +77,5 @@
         </ul>
     </div>
 </div>
-</div>
+
 {% endblock content %}

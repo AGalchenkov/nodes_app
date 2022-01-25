@@ -3,98 +3,16 @@
 {% block content %}
 
 {% load static %}
-<div class="pstn_adv_btn">
-    {% if request.user.is_staff %}
-        <a class="my_lnk" data-toggle="modal" data-target="#confirm-delete" data-href="{% url 'nodes:delete_rack' rack_id %}"><div id="del_btn" class="edit_red_btn">Delete</div></a>
+<div class="absl_pos">
+    {% if role < 3 %}
+    <!--
+        <a class="my_lnk modal-trigger" href="#confirm-delete" data-href="{% url 'nodes:delete_rack' rack_id %}"><div id="del_btn" class="flask_del_btn">Удалить стойку</div></a>
+        -->
     {% endif %}
 </div>
-<div class="node_tbl_cnt">
-    <div class="tbl_header">{{ location }}</div>
-    <div class="table_container">
-    <table class="nbs_table">
-	    <thead>
-		    <tr>
-			    <td class="rack_tbl">Unit</td>
-			    <td>Node</td>
-                <td>Status</td>
-                <td>Mng ip</td>
-			    <td>Owner</td>
-                <td>Appliance</td>
-                <td>Inf</td>
-                <td>Comment</td>
-		    </tr>
-	    </thead>
-	    <tbody class="section">
-        {% for item in u_list %}
-                <tr>
-                    {% if item.unit_num in units_used %}
-                    <td class="rack_tbl"><span class="in_used">U{{item.unit_num}}</span></td>
-                    {% else %}
-                        <td class="rack_tbl">U{{item.unit_num}}</td>
-                    {% endif %}
-                    {% if item.used_by_unit %}
-                        <td class="not_active">U{{item.used_by_unit}}</td>
-                    {% elif item.model == None %}
-                        <td class="rack_tbl"><a class="flx_cntr hght_100_prc my_lnk" href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">empty</a></td>
-                    {% else %}
-                        {% if item.model.units_takes > 1 %}
-                            {% if item.hostname %}
-                                <td class="rack_tbl with_model"><a class="bold flx_cntr hght_100_prc my_lnk" href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">{{item.model}}@{{item.hostname}} ({{item.model.units_takes}}U)</a></td>
-                            {% else %}
-                                <td class="rack_tbl with_model bold"><a class="bold flx_cntr hght_100_prc my_lnk" href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">{{item.model}}{{item.hostname}} ({{item.model.units_takes}}U)</a></td>
-                            {% endif %}
-                        {% else %}
-                                {% if item.hostname %}
-                                    <td class="rack_tbl with_model"><a class="bold flx_cntr hght_100_prc my_lnk" href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">{{item.model}}@{{item.hostname}}</a></td>
-                                {% else %}
-                                    <td class="rack_tbl with_model"><a class="bold flx_cntr hght_100_prc my_lnk" href="{% url 'nodes:unit_detail' rack_id item.unit_num %}">{{item.model}}{{item.hostname}}</a></td>
-                                {% endif %}
-                        {% endif %}
-                    {% endif%}
-                    {% if item.mng_ip %}
-                        {% if item.is_avaliable %}
-                            <td>
-                                <div class="green_status"></div>
-                            </td>
-                        {% else %}
-                            <td>
-                                <div class="red_status"></div>
-                            </td>
-                        {% endif %}
-                        <td>{{item.mng_ip}}</td>
-                    {% else %}
-                        <td>
-                            <div class="none_status"></div>
-                        </td>
-                        <td></td>
-                    {% endif %}
-                    {% if item.owner == None %}
-                        <td></td>
-                    {% else %}
-                        <td>{{item.owner}}</td>
-                    {% endif %}
-                    {% if item.appliance == None %}
-                        <td></td>
-                    {% else %}
-                        <td>{{item.appliance}}</td>
-                    {% endif %}
 
-                    {% if item.model %}
-                        <td class="unit_detail_modal" data-toggle="modal" data-target="#create-modal" value="{{item.unit_num}}"><span class="inf_btn" >i</span></td>
-                    {% else %}
-                        <td></td>
-                    {% endif %}
-                    {% if item.comment == None %}
-                        <td class="comment"></td>
-                    {% else %}
-                        <td class="comment">{{item.comment}}</td>
-                    {% endif %}
-                </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    </div>
-</div>
+<div class="tbl_header">{{ location }}</div>
+
 
 <div class="modal" id="create-modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-lg modal_div">
@@ -103,19 +21,23 @@
   </div>
 </div>
 
-<div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-            </div>
-            <div class="modal-body">
-                Delete Rack on = {{ location }} =
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-danger btn-ok" style="color:white;">Delete</a>
+           <h4>Подтверждение удаления</h4>
+           Удалить стойку :  " {{ location }} "
+           <div class="modal-footer">
+                <button type="button" class="btn btn-default modal-close" data-dismiss="modal">Отмена</button>
+                <a class="btn btn-danger" style="color:white;" href="{% url 'nodes:delete_rack' rack_id %}">Удалить!</a>
             </div>
         </div>
+    </div>
+</div>
+
+
+<div class="node_tbl_cnt">
+    <div class="table_container">
+        <div id="example-table"></div>
     </div>
 </div>
 
@@ -126,7 +48,45 @@
 -->
 <script>
 
-$('#create-modal').on('shown.bs.modal', function (e) {
+$(document).ready(function(){
+    $(document).click(function (e) {
+        var elem = e.target
+        if((!$(elem).hasClass('collapsible-header')) && (!$(elem).hasClass('collapsible-body'))) {
+            $('.collapsible-body').hide()
+        }
+    });
+});
+
+$(document).ready(function(){
+    $('.modal').modal();
+});
+
+$( document ).ready(function() {
+    autosize();
+    function autosize(){
+        var text = $('.autosize');
+
+        text.each(function(){
+            $(this).attr('rows',1);
+            resize($(this));
+        });
+
+        text.on('input', function(){
+            resize($(this));
+        });
+
+        function resize ($text) {
+            $text.css('height', 'auto');
+            $text.css('height', $text[0].scrollHeight+'px');
+        }
+    }
+
+});
+
+
+
+
+$('#create-modal').on('show.bs.modal', function (e) {
     url = "{% url 'nodes:bs_unit_detail' rack_id 48 %}"
     url = url.replace('48', $(e.relatedTarget).attr('value'))
     $('#create-modal .modal-content').load(url)
@@ -137,9 +97,106 @@ $('#create-modal').on('hidden.bs.modal', function (e) {
 })
 
 $('#confirm-delete').on('show.bs.modal', function(e) {
-    $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+    $(this).find('.btn-danger').attr('href', $(e.relatedTarget).data('href'));
 });
 
+    var sorterParams = 'number'
+    var path = window.location.pathname
+    var rack_id = path.split('/').pop()
+	var table = new Tabulator("#example-table", {
+            ajaxURL: "/rack_to_json/" + rack_id,
+            columns:[
+                {title:"U", field:"unit_num", hozAlign:"left", headerHozAlign:"left", width:10, formatter:"html", headerFilter:true, sorter:function(a, b, aRow, bRow, column, dir, sorterParams){
+                    a = a.replace(/<(.|\n)*?>/g, '');
+                    b = b.replace(/<(.|\n)*?>/g, '');
+                    return a - b;
+                }},
+                {title:"Node", field:"model", hozAlign:"left", sorter:"string", width:190, formatter:"html", headerFilter:true},
+                {title:"Mng ip", field:"mng_ip", headerSort:false, width:120, formatter:"html", headerFilter:true},
+                {title:"Ipmi/BMC", field:"ipmi", headerSort:false, width:120, formatter:"html", headerFilter:true},
+                {title:"Console", field:"console", width:60, headerSort:false, formatter:"html", headerFilter:true},
+                {title:"Owner", field:"owner", sorter:"string", width:145, headerFilter:true},
+                {title:"Sn", field:"sn", headerSort:false, width:120, headerFilter:true},
+                {title:"Appliance", field:"appliance", sorter:"string", width:300, headerFilter:true},
+                {title:"Ram", field:"ram", sorter:"number", width:55, headerFilter:true},
+                {title:"Vendor", field:"vendor", sorter:"string", width:80, headerFilter:true},
+                {title:"Model", field:"vendor_model", sorter:"string", width:130, headerFilter:true},
+                {title:"Pwr", field:"pwr", sorter:"string", width:50, headerFilter:true},
+                {title:"Int", field:"int", sorter:"string", width:165, formatter:"html", headerFilter:true},
+                {title:"Comment", field:"comment", headerSort:false, width:240, formatter:"html", headerFilter:true},
+            ],
+        });
+
+
+    $(document).ready(function(){
+        setTimeout(function(){
+            $('.collapsible').collapsible();
+
+            $('.collapsible-header').click(function(e) {
+                var elem = e.target
+                var elem_body = $(elem).siblings('.collapsible-body')
+                $('.collapsible-body').each(function() {
+                    if (!$(this).is(elem_body)) {
+                        $(this).hide()
+                    }
+                })
+            })
+
+            $('.tabulator-cell').dblclick(function (){
+            if ($(this).attr('tabulator-field') == 'model') {
+                if ($(this).text().indexOf("used by") >= 0) {
+                            window.unit_num = $(this).text().split("U")[1]
+                            var curr = window.location.pathname
+                            var url =  curr + '/unit_detail/' + window.unit_num
+                            $(location).attr('href', url)
+                            return
+                        }
+            }
+
+            if ($(this).attr('tabulator-field') != 'comment') {
+                var sibl = $(this).siblings()
+                $(this).siblings().each(function() {
+                    if ($(this).attr('tabulator-field') == 'unit_num') {
+                        window.unit_num =$(this).first().text()
+                    }
+                    if ($(this).attr('tabulator-field') == 'model') {
+                        if ($(this).text().indexOf("used by") >= 0) {
+                            window.unit_num = $(this).text().split("U")[1]
+                        }
+                    }
+
+                })
+                var curr = window.location.pathname
+                var url =  curr + '/unit_detail/' + window.unit_num
+                $(location).attr('href', url)
+            }
+    })
+
+    $('.tabulator-cell').dblclick(function (){
+        if ($(this).attr('tabulator-field') == 'comment') {
+            $(this).siblings().each(function() {
+                if ($(this).attr('tabulator-field') == 'unit_num') {
+                    var unit_num =$(this).first().text()
+                    var curr = window.location.pathname
+                    var url =  curr + '/unit_detail/' + unit_num
+                    $(location).attr('href', url)
+                }
+            })
+        }
+    })
+
+    }, 2000);
+
+    $(document).keyup(function (e) {
+        $('input[type="search"]').each(function() {
+            if ($(this).val()) {
+                $(this).addClass('has_val')
+            }else{
+                $(this).removeClass('has_val')
+           }
+         })
+    });
+});
 </script>
 
 

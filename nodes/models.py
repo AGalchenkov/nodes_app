@@ -5,9 +5,11 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.utils.timezone import now
 from bootstrap_modal_forms.forms import BSModalModelForm
-from functions.ping import *
+from functions.ping import ping
+from simple_history.models import HistoricalRecords
 
-from ping3 import ping
+
+#from ping3 import ping
 
 class Customers(models.Model):
     customer = models.CharField(unique=True, max_length=50)
@@ -34,22 +36,46 @@ class Racks(models.Model):
             MaxValueValidator(48, message='to much unit number'),
         ]
     )
+    history = HistoricalRecords()
 
     class Meta:
         unique_together = ['rack_id', 'location']
         ordering = ['location', 'rack_id']
 
     def __str__(self):
-        return f'{self.location}_#{self.rack_id} ({self.units_num}U)'
+        return f'{self.location} #{self.rack_id} ({self.units_num}U)'
+
+class Interfaces(models.Model):
+    g10 = models.IntegerField(default=0,
+        validators=[
+            MinValueValidator(0, message='negative unit number'),
+            MaxValueValidator(52, message='to much unit number'),
+        ]
+    )
+    g40 = models.IntegerField(default=0,
+        validators=[
+            MinValueValidator(0, message='negative unit number'),
+            MaxValueValidator(52, message='to much unit number'),
+        ]
+    )
+    g100 = models.IntegerField(default=0,
+        validators=[
+            MinValueValidator(0, message='negative unit number'),
+            MaxValueValidator(52, message='to much unit number'),
+        ]
+    )
+
 
 class Models(models.Model):
     model_name = models.CharField(unique=True, max_length=20)
+    #interface = models.ForeignKey(Interfaces, null=True, blank=True, on_delete=models.CASCADE)
     units_takes = models.IntegerField(default=1,
         validators=[
             MinValueValidator(1, message='negative unit number'),
             MaxValueValidator(5, message='to much unit number'),
         ]
     )
+
     def __str__(self):
         return self.model_name
 
@@ -107,6 +133,34 @@ class Appliances(models.Model):
     def __str__(self):
         return self.appliance
 
+#Little Secret
+
+class Ram(models.Model):
+    ram = models.IntegerField(
+        validators=[
+            MinValueValidator(16, message='negative unit number'),
+            MaxValueValidator(4096, message='to much unit number'),
+        ]
+    )
+
+    def __str__(self):
+        return str(self.ram) + 'G'
+
+class TelegramToken(models.Model):
+    telegram_bot_name = models.CharField(null=True, blank=True, max_length=100)
+    token = models.CharField(null=True, blank=True, max_length=150)
+
+class TelegramUser(models.Model):
+    telegram_id = models.IntegerField(null=True, blank=True)
+    telegram_name = models.CharField(unique=True, max_length=50)
+    real_name = models.CharField(null=True, blank=True, max_length=50)
+
+class LittleSecret(models.Model):
+    in_use = models.BooleanField(default=False)
+    owner = models.ForeignKey(TelegramUser, null=True, blank=True, default=None, related_name='ls_owner', on_delete=models.SET_DEFAULT)
+
+    def __str__(self):
+        return f'LittleSecret Node #{self.id}'
 
 class Units(models.Model):
     in_use = models.BooleanField(default=False)
@@ -120,12 +174,34 @@ class Units(models.Model):
         ]
     )
     model = models.ForeignKey(Models, null=True, blank=True, on_delete=models.RESTRICT)
+    ram = models.ForeignKey(Ram,null=True, blank=True, on_delete=models.RESTRICT)
     vendor = models.ForeignKey(Vendors,null=True, blank=True, on_delete=models.RESTRICT)
     power = models.ForeignKey(PowerSupply,null=True, blank=True, on_delete=models.RESTRICT)
     vendor_model = models.ForeignKey(VendorModels,null=True, blank=True, on_delete=models.RESTRICT)
     console = models.ForeignKey(Consoles,null=True, blank=True, on_delete=models.RESTRICT)
     mng_ip = models.GenericIPAddressField(blank=True, null=True)
+    ipmi_bmc = models.GenericIPAddressField(blank=True, null=True)
+    has_ipmi = models.BooleanField(default=False)
+    ipmi_is_avaliable = models.BooleanField(default=False)
     appliance = models.ForeignKey(Appliances, null=True, blank=True, default=None,  on_delete=models.RESTRICT)
+    g10 = models.IntegerField(default=0,
+        validators=[
+            MinValueValidator(0, message='negative unit number'),
+            MaxValueValidator(52, message='to much unit number'),
+        ]
+    )
+    g40 = models.IntegerField(default=0,
+        validators=[
+            MinValueValidator(0, message='negative unit number'),
+            MaxValueValidator(52, message='to much unit number'),
+        ]
+    )
+    g100 = models.IntegerField(default=0,
+        validators=[
+            MinValueValidator(0, message='negative unit number'),
+            MaxValueValidator(52, message='to much unit number'),
+        ]
+    )
     is_avaliable = models.BooleanField(default=False)
     sn = models.CharField(blank=True, max_length=30)
     hostname = models.CharField(blank=True, max_length=15)
@@ -134,6 +210,7 @@ class Units(models.Model):
     modified = models.DateTimeField(default=now().replace(microsecond=0))
     modified_by = models.ForeignKey(User, null=True, blank=True, default=None, related_name='modified_by', on_delete=models.SET_DEFAULT)
     comment = models.OneToOneField(Comments, null=True, blank=True, default=None, on_delete=models.SET_DEFAULT)
+    history = HistoricalRecords()
 
     class Meta:
         unique_together = ['rack_id', 'unit_num']
@@ -161,12 +238,221 @@ class Units(models.Model):
 #        return self.text
 
 
+class UnitRebaseForm(ModelForm):
+    model = Units
+    class Meta:
+        model = Units
+        fields = ['rack', 'unit_num']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['rack'].widget.attrs['id'] = 'rebase_rack'
+        self.fields['unit_num'].widget.attrs['id'] = 'rebase_unit_num'
+
+    def clean(self):
+        cleaned_data = super().clean()
+        print(f'CLEANED DATA:    {cleaned_data}')
+        rack = cleaned_data.get('rack')
+        unit_num = cleaned_data.get('unit_num')
+        model = Units.objects.get(rack=rack, unit_num=unit_num).model
+        print(model)
+        if Units.objects.get(rack=rack, unit_num=unit_num).model:
+            raise ValidationError('Юнит назначения занят')
+        return self.cleaned_data
+
+
+
 class UnitForm(ModelForm):
+    error_css_class = 'error'
+    rack = Field(disabled=True)
+    in_use = Field(disabled=True)
+    modified = Field(disabled=True)
+    unit_num = CharField(disabled=True)
+    comment = CharField(widget=Textarea(attrs={'cols': 40, 'rows': 3, 'style': 'resize:none;'}), required=False)
+    comment_author = CharField(disabled=True, required=False)
+    comment_pub_date = CharField(disabled=True, required=False)
+    modified_by = CharField(disabled=True, required=False)
+    #ram = CharField(required=False, disabled=True)
+    field_order = [
+        'in_use', 'owner', 'rack', 'unit_num', 'model', 'vendor', 'power', 'vendor_model',
+        'console', 'has_ipmi', 'ipmi_bmc', 'appliance', 'mng_ip', 'ram', 'g10', 'sn', 'g40', 'hostname', 'g100', 'modified',  'modified_by',
+        'comment_author', 'comment_pub_date',
+    ]
+    model = Units
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        self.user = kwargs.pop('user', None)
+        self.role = kwargs.pop('role', None)
+        super().__init__(*args, **kwargs)
+        self.initial['rack'] = kwargs['instance'].rack
+        #try:
+        #    self.initial['ram'] = kwargs['instance'].appliance.ram
+        #except AttributeError:
+        #    self.initial['ram'] = None
+        try:
+            self.initial['comment_author'] = kwargs['instance'].comment.author
+            self.initial['comment_pub_date'] = kwargs['instance'].comment.pub_date
+        except AttributeError:
+            self.initial['comment_author'] = None
+
+    def add_fatboy(self, unit_num, model, rack):
+        other_unit_used_list = []
+        start_unit = int(unit_num) + 1
+        end_unit = int(unit_num) + int(model.units_takes)
+        if end_unit > rack.units_num:
+            raise ValidationError('this model takes too much units')
+        list = [i for i in range(start_unit, end_unit)]
+        for item in list:
+
+            try:
+                u = Units.objects.get(rack=rack, unit_num=item)
+                if u.model or u.in_use == True:
+                    raise ValidationError(f'for this model needs {model.units_takes}U next unit are in use(U{u.unit_num})')
+                else:
+                    use_u = Units.objects.get(rack=rack, unit_num=item)
+                    use_u.used_by_unit = unit_num
+                    other_unit_used_list.append(use_u)
+                    continue
+            except ObjectDoesNotExist:
+                raise ValidationError('Internal Error!!! Ask for administrator!')
+        Units.objects.bulk_update(other_unit_used_list, ['used_by_unit'])
+
+    def remove_fatboy(self, unit_num, old_model, rack):
+        start_unit = int(unit_num) + 1
+        end_unit = int(unit_num) + int(old_model.units_takes)
+        list = [i for i in range(start_unit, end_unit)]
+        for item in list:
+            use_u = Units.objects.get(rack=rack, unit_num=item)
+            use_u.used_by_unit = ''
+            use_u.save()
+            continue
+
+    def change_fatboy(self, unit_num, model, old_model, rack):
+        start_unit = int(unit_num) + 1
+        end_unit = int(unit_num) + int(old_model.units_takes)
+        if model.units_takes > old_model.units_takes:
+            diff = model.units_takes - old_model.units_takes
+        else:
+            diff = old_model.units_takes - model.units_takes
+            list = [i for i in range(end_unit - diff, end_unit)]
+            for item in list:
+                use_u = Units.objects.get(rack=rack, unit_num=item)
+                use_u.used_by_unit = ''
+                use_u.save()
+                continue
+
+    def clean(self):
+        other_unit_used_list = []
+        user = self.user
+        cleaned_data = super().clean()
+        modified_by = cleaned_data.get('modified_by')
+        comment = cleaned_data.get('comment')
+        if not comment:
+            cleaned_data['comment'] = None
+            cleaned_data['comment_pub_date'] = None
+        if comment in self.changed_data:
+            cleaned_data['comment'] = Units.objects.get(id=comment).comment
+        mng_ip = cleaned_data.get('mng_ip')
+        if 'mng_ip' in self.changed_data:
+            try:
+                if ping(mng_ip):
+                    self.instance.is_avaliable = True
+                else:
+                    self.instance.is_avaliable = False
+            except (OSError, TypeError):
+                self.instance.is_avaliable = False
+        ipmi_bmc = cleaned_data.get('ipmi_bmc')
+        if 'ipmi_bmc' in self.changed_data:
+            try:
+                if ping(ipmi_bmc):
+                    self.instance.ipmi_is_avaliable = True
+                else:
+                    self.instance.ipmi_is_avaliable = False
+            except (OSError, TypeError):
+                self.instance.ipmi_is_avaliable = False
+        if self.has_changed():
+            #if not user.is_staff:
+            cleaned_data['modified_by'] = user
+            cleaned_data['modified'] = now().replace(microsecond=0)
+        else:
+            if not modified_by:
+                cleaned_data['modified_by'] = None
+            else:
+                cleaned_data['modified_by'] = User.objects.get(id=modified_by)
+        in_use = cleaned_data.get('in_use')
+        has_ipmi = cleaned_data.get('has_ipmi')
+        owner = cleaned_data.get('owner')
+        sn = cleaned_data.get('sn')
+        unit_num = cleaned_data.get('unit_num')
+        rack = cleaned_data.get('rack')
+        model = cleaned_data.get('model')
+        vendor = cleaned_data.get('vendor')
+        power = cleaned_data.get('power')
+        old_model = Units.objects.get(rack=rack, unit_num=unit_num).model
+        old_model_units_takes = old_model.units_takes if hasattr(old_model, 'units_takes') else 0
+
+        if mng_ip and not model:
+            raise ValidationError('set model')
+        if ipmi_bmc and not has_ipmi:
+            raise ValidationError("set 'has_ipmi' if you set 'ipmi_bmc' ip")
+        if model:
+            if sn == '':
+                raise ValidationError('if one of fields model or SN are set then both must be filled')
+            if vendor == None:
+                raise ValidationError('if model are set then vendor must be filled')
+        if sn:
+            if model == None:
+                raise ValidationError('if one of fields model or SN are set then both must be filled')
+            sn_unit = Units.objects.filter(sn=sn).exclude(unit_num=unit_num, rack=rack)
+            if sn_unit:
+                raise ValidationError(
+                    f'''
+                    unit with this SN are exists <a class="clr_blue underline"
+                    href="/rack/{sn_unit[0].rack.id}/unit_detail/{sn_unit[0].unit_num}">
+                    {sn_unit[0].rack.location} #{sn_unit[0].rack.rack_id} U{sn_unit[0].unit_num}</a>
+                    '''
+                )
+        self.cleaned_data['in_use'] = True if owner else False
+            #raise ValidationError('not in use unit must have no owner')
+        if model:
+            if old_model == model:
+                pass
+            else:
+                if model.units_takes > 1 and old_model_units_takes > 1 and model.units_takes < old_model_units_takes:
+                    self.change_fatboy(unit_num, model, old_model, rack)
+                elif model.units_takes > 1 and old_model == None or \
+                        model.units_takes > 1 and old_model_units_takes > 1 and model.units_takes > old_model_units_takes or \
+                        model.units_takes > 1 and old_model_units_takes == 1:
+                    self.add_fatboy(unit_num, model, rack)
+                elif model.units_takes == 1 and old_model_units_takes > 1:
+                    self.remove_fatboy(unit_num, old_model, rack)
+        elif  model == None and old_model_units_takes > 1:
+            self.remove_fatboy(unit_num, old_model, rack)
+
+        if self.has_changed():
+            if self.role >= 3:
+                raise ValidationError('Недостаточно прав!')
+
+        return self.cleaned_data
+
+    class Meta:
+        model = Units
+        fields = '__all__'
+        exclude = ['used_by_unit', 'comment', 'is_avaliable', 'ipmi_is_avaliable',]
+        labels = {
+            'g10': '10G',
+            'g40': '40G',
+            'g100': '100G',
+        }
+
+
+
+class UnitFormDisabled(ModelForm):
     error_css_class = 'error'
     rack = Field(disabled=True)
     modified = Field(disabled=True)
     unit_num = CharField(disabled=True)
-    comment = CharField(widget=Textarea(attrs={'cols': 40, 'rows': 3}), required=False)
+    comment = CharField(widget=Textarea(attrs={'cols': 40, 'rows': 3}), required=False, disabled=True)
     comment_author = CharField(disabled=True, required=False)
     comment_pub_date = CharField(disabled=True, required=False)
     modified_by = CharField(disabled=True, required=False)
@@ -191,142 +477,11 @@ class UnitForm(ModelForm):
         except AttributeError:
             self.initial['comment_author'] = None
 
-    def add_fatboy(self, unit_num, model, rack):
-        other_unit_used_list = []
-        start_unit = int(unit_num) - 1
-        end_unit = int(unit_num) - int(model.units_takes)
-        if start_unit == 0 or end_unit < 0:
-            raise ValidationError('At this unit cant set this model')
-        list = [i for i in range(start_unit, end_unit, -1)]
-        for item in list:
-            try:
-                u = Units.objects.get(rack=rack, unit_num=item)
-                if u.model or u.in_use == True:
-                    raise ValidationError(f'for this model needs {model.units_takes}U next unit are in use(U{u.unit_num})')
-                else:
-                    use_u = Units.objects.get(rack=rack, unit_num=item)
-                    use_u.used_by_unit = unit_num
-                    other_unit_used_list.append(use_u)
-                    continue
-            except ObjectDoesNotExist:
-                raise ValidationError('Internal Error!!! Ask for administrator!')
-        Units.objects.bulk_update(other_unit_used_list, ['used_by_unit'])
-
-    def remove_fatboy(self, unit_num, old_model, rack):
-        start_unit = int(unit_num) - 1
-        end_unit = int(unit_num) - int(old_model.units_takes)
-        list = [i for i in range(start_unit, end_unit, -1)]
-        for item in list:
-            use_u = Units.objects.get(rack=rack, unit_num=item)
-            use_u.used_by_unit = ''
-            use_u.save()
-            continue
-
-    def change_fatboy(self, unit_num, model, old_model, rack):
-        start_unit = int(unit_num) - 1
-        end_unit = int(unit_num) - int(old_model.units_takes)
-        if model.units_takes > old_model.units_takes:
-            diff = model.units_takes - old_model.units_takes
-        else:
-            diff = old_model.units_takes - model.units_takes
-            list = [i for i in range(end_unit + 1, end_unit + diff + 1)]
-            for item in list:
-                use_u = Units.objects.get(rack=rack, unit_num=item)
-                use_u.used_by_unit = ''
-                use_u.save()
-                continue
-
-    def clean(self):
-        print(f'########## CHANGED:   {self.changed_data}')
-        print('SELF FORMS::::')
-        print(self.instance.is_avaliable)
-        other_unit_used_list = []
-        user = self.request.user
-        cleaned_data = super().clean()
-        modified_by = cleaned_data.get('modified_by')
-        comment = cleaned_data.get('comment')
-        if not comment:
-            cleaned_data['comment'] = None
-            cleaned_data['comment_pub_date'] = None
-        if comment in self.changed_data:
-            cleaned_data['comment'] = Units.objects.get(id=comment).comment
-        if 'mng_ip' in self.changed_data:
-            mng_ip = cleaned_data.get('mng_ip')
-            try:
-                if ping(mng_ip):
-                    self.instance.is_avaliable = True
-                else:
-                    self.instance.is_avaliable = False
-            except (OSError, TypeError):
-                self.instance.is_avaliable = False
-        if not modified_by:
-            cleaned_data['modified_by'] = None
-        if self.has_changed():
-            cleaned_data['modified_by'] = user
-            cleaned_data['modified'] = now().replace(microsecond=0)
-        else:
-            cleaned_data['modified_by'] = User.objects.get(id=modified_by)
-        in_use = cleaned_data.get('in_use')
-        owner = cleaned_data.get('owner')
-        mng_ip = cleaned_data.get('mng_ip')
-        sn = cleaned_data.get('sn')
-        unit_num = cleaned_data.get('unit_num')
-        rack = cleaned_data.get('rack')
-        model = cleaned_data.get('model')
-        vendor = cleaned_data.get('vendor')
-        power = cleaned_data.get('power')
-        #cleaned_data['modified_by'] = user
-        old_model = Units.objects.get(rack=rack, unit_num=unit_num).model
-        old_model_units_takes = old_model.units_takes if hasattr(old_model, 'units_takes') else 0
-
-        if mng_ip and not model:
-            raise ValidationError('set model')
-        if in_use == True and owner == None:
-            raise ValidationError('assigned(in use) unit must have owner')
-        if model:
-            if sn == '':
-                raise ValidationError('if one of fields model or SN are set then both must be filled')
-            if vendor == None or power == None:
-                raise ValidationError('if model are set then vendor and power must be filled')
-        if sn:
-            if model == None:
-                raise ValidationError('if one of fields model or SN are set then both must be filled')
-            sn_unit = Units.objects.filter(sn=sn).exclude(unit_num=unit_num, rack=rack)
-            if sn_unit:
-                raise ValidationError(f'unit with this SN are exists ({sn_unit[0]})')
-        if in_use == False and owner:
-            raise ValidationError('not in use unit must have no owner')
-        if model:
-            if old_model == model:
-                pass
-            else:
-                if model.units_takes > 1 and old_model_units_takes > 1 and model.units_takes < old_model_units_takes:
-                    self.change_fatboy(unit_num, model, old_model, rack)
-               # elif model.units_takes > 1 and old_model_units_takes > 1 and model.units_takes > old_model_units_takes:
-               #     pass
-                elif model.units_takes > 1 and old_model == None or \
-                        model.units_takes > 1 and old_model_units_takes > 1 and model.units_takes > old_model_units_takes or \
-                        model.units_takes > 1 and old_model_units_takes == 1:
-                    self.add_fatboy(unit_num, model, rack)
-                elif model.units_takes == 1 and old_model_units_takes > 1 or model == None and old_model_units_takes > 1:
-                    self.remove_fatboy(unit_num, old_model, rack)
-
-        if self.has_changed():
-            if not user.has_perm('nodes.can_edit_unit'):
-                raise ValidationError('You dont have permisson to change unit!')
-            if 'owner' in self.changed_data and not user.has_perm('nodes.can_set_owner'):
-                raise ValidationError('You dont have permission to set unit owner!')
-            cleaned_data['modified_by'] = user
-            cleaned_data['modified'] = now().replace(microsecond=0)
-        else:
-            cleaned_data['modified_by'] = User.objects.get(id=modified_by)
-
-        return self.cleaned_data
-
     class Meta:
         model = Units
         fields = '__all__'
         exclude = ['used_by_unit', 'comment', 'is_avaliable']
+
 
 class CommentForm(ModelForm):
     class Meta:
@@ -336,7 +491,7 @@ class CommentForm(ModelForm):
 
 class SearchForm(ModelForm):
 
-    comment = CharField(widget=Textarea(attrs={'cols': 40, 'rows': 3}), required=False)
+    comment = CharField(widget=Textarea(attrs={'cols': 40, 'rows': 3, 'style': 'resize:none;'}), required=False)
     has_model_choises = (
         (1, 'no matter'),
         (2, 'yes'),
@@ -347,8 +502,45 @@ class SearchForm(ModelForm):
         (2, 'yes'),
         (3, 'no'),
     )
+    ipmi_is_avaliable_choises = (
+        (1, 'no matter'),
+        (2, 'yes'),
+        (3, 'no'),
+    )
+    has_ipmi = (
+        (1, 'no matter'),
+        (2, 'yes'),
+        (3, 'no'),
+    )
+    has_10G = (
+        (1, 'no matter'),
+        (2, 'yes'),
+        (3, 'no'),
+    )
+    has_40G = (
+        (1, 'no matter'),
+        (2, 'yes'),
+        (3, 'no'),
+    )
+    has_100G = (
+        (1, 'no matter'),
+        (2, 'yes'),
+        (3, 'no'),
+    )
     has_model = ChoiceField(choices=has_model_choises)
+    has_ipmi = ChoiceField(choices=has_ipmi)
+    has_10G = ChoiceField(choices=has_10G)
+    has_40G = ChoiceField(choices=has_40G)
+    has_100G = ChoiceField(choices=has_100G)
     is_avaliable = ChoiceField(choices=is_avaliable_choises)
+    ipmi_is_avaliable = ChoiceField(choices=ipmi_is_avaliable_choises)
+
+    field_order = [
+        'owner', 'rack', 'model', 'vendor', 'power', 'vendor_model',
+        'mng_ip', 'ipmi_bmc', 'appliance', 'sn', 'ram', 'hostname', 'comment',
+        'has_ipmi', 'ipmi_is_avaliable', 'is_avaliable', 'has_10G', 'has_40G', 'has_100G',
+        'has_model',
+    ]
 
     model = Units
 
@@ -358,7 +550,7 @@ class SearchForm(ModelForm):
 
     class Meta:
         model = Units
-        exclude = ['used_by_unit', 'in_use', 'unit_num', 'console', 'modified', 'modified_by']
+        exclude = ['used_by_unit', 'in_use', 'unit_num', 'console', 'modified', 'modified_by', 'g10', 'g40', 'g100', 'ipmi', 'ipmi_is_avaliable']
 
 class UnitCreateForm(ModelForm):
     comment = CharField(widget=Textarea(attrs={'cols': 40, 'rows': 3}), required=False)
