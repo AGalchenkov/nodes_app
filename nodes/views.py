@@ -486,7 +486,17 @@ def rebase_unit(request, **kwargs):
     new_unit_num = request.POST['unit_num']
     old_rack = Racks.objects.get(rack_id=request.POST['old_rack'])
     old_unit_num = request.POST['old_unit_num']
-    unit = Units.objects.get(rack_id=new_rack_id, unit_num=new_unit_num)
+    try:
+        unit = Units.objects.get(rack_id=new_rack_id, unit_num=new_unit_num)
+    except ObjectDoesNotExist:
+        json_resp.append(
+            {
+                'messages': {'error': 'Юнит не существует'},
+                'result': False,
+            }
+        )
+        json_resp = json.dumps(json_resp)
+        return HttpResponse(json_resp, content_type='application/json')
     if request.method == 'POST':
         rebase_form = UnitRebaseForm(instance=unit, data=request.POST)
     if rebase_form.is_valid():
@@ -543,9 +553,10 @@ def rebase_unit(request, **kwargs):
         json_resp = json.dumps(json_resp)
         return HttpResponse(json_resp, content_type='application/json')
     else:
+        print(f'ERROR :::: {rebase_form.errors.get_json_data(escape_html=False)["__all__"]}')
         json_resp.append(
             {
-                'messages': {'error': rebase_form.errors.get_json_data(escape_html=False)},
+                'messages': {'error': rebase_form.errors.get_json_data(escape_html=False)['__all__'][0]['message']},
                 'result': False,
             }
         )
