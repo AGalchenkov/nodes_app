@@ -208,7 +208,7 @@
             var rack = $('#rebase_rack').val()
             var unit_num = $('#rebase_unit_num').val()
             $.ajax({
-                url: "/rebase_unit/",
+                url: "/nodes/rebase_unit/",
                 method: "POST",
                 data: {old_rack: old_rack, old_unit_num: old_unit_num, rack: rack, unit_num: unit_num},
             }).done(function( data ) {
