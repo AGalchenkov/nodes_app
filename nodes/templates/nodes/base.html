@@ -4,73 +4,29 @@
 
 {% webpush_header %}
 
-<link href="https://unpkg.com/tabulator-tables@5.0.10/dist/css/tabulator.min.css" rel="stylesheet">
-<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.10/dist/js/tabulator.min.js"></script>
-
-<script type="text/javascript" src="{% static 'js/jquery-3.6.0.js' %}"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-
-
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
-
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
-
-<!--
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
--->
-<!--
-<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
--->
-
+<link rel="stylesheet" href="{% static 'css/tabulator.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/Material_Icons.css' %}">
+<link rel="stylesheet" href="{% static 'css/materialize.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/jquery.datetimepicker.min.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'css/Notiser.css' %}">
-<script type="text/javascript" src="{% static 'js/Notiser.js' %}"></script>
-
-<!--
-<script type="text/javascript" src="{% static 'js/bootstrap.js' %}"></script>
--->
-
-<script src="{% static 'nodes/js/clamp.js' %}"></script>
-<!--
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
--->
-
-<!--
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
-
--->
-
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
-<!--
-{% webpush_button %}
--->
-
-
-
-<script src="{% static 'js/jquery.cookie.js' %}"></script>
-
 <link rel="stylesheet" type="text/css" href="{% static 'nodes/style.css' %}">
+<script type="text/javascript" src="{% static 'js/tabulator.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery-3.6.0.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/materialize.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/Notiser.js' %}"></script>
+<script type="text/javascript" src="{% static 'nodes/js/clamp.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery.cookie.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery.datetimepicker.full.min.js' %}"></script>
 
 <div class="full-notify"></div>
-
 <ul class="sidenav" id="mobile-nav">
-    <li><a href="http://10.212.64.79:5000/bookings">Bookings</a></li>
-                <li><a href="http://10.212.64.79:5000/zone/1">Рабочие места</a></li>
-                <li><a href="http://10.212.64.79:5000/zone/2">Парковка</a></li>
-                <li><a href="http://10.212.64.79:5000/zone/3">Переговорки</a></li>
-                <li><a href="http://10.212.64.79:5000/zone/4">Лаба 1</a></li>
-                <li><a href="http://10.212.64.79:5000/zone/5">Лаба 2</a></li>
-                <li class="active"><a href="http://10.212.64.79:8000/rack_list/">Сборочная</a></li>
-                <li><a href="http://10.212.64.79:5000/logout"><i class="material-icons">logout</i></a></li>
+    <li><a href="/bookings">Bookings</a></li>
+                <li><a href="/zone/1">Рабочие места</a></li>
+                <li><a href="/zone/2">Парковка</a></li>
+                <li><a href="/zone/3">Переговорки</a></li>
+                <li><a href="/zone/4">Лаба 1</a></li>
+                <li class="active"><a href="{% url 'nodes:rack_list' %}">Сборочная</a></li>
+                <li><a href="/logout"><i class="material-icons">logout</i></a></li>
 
     </ul>
 
@@ -78,18 +34,17 @@
     <nav>
         <div class="nav-wrapper">
             <div class="right">
-                <a href="http://10.212.64.79:5000/" class="right_float"><img class="logo" src="{% static 'nodes/image/logo.png' %}"></a>
+                <a href="/" class="right_float"><img class="logo" src="{% static 'nodes/image/logo.png' %}"></a>
             </div>
           <a href="#" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
         <ul class="left hide-on-med-and-down">
-                <li><a href="http://10.212.64.79:5000/bookings">Bookings</a></li>
-                <li><a href="http://10.212.64.79:5000/zone/1">Рабочие места</a></li>
-                <li><a href="http://10.212.64.79:5000/zone/2">Парковка</a></li>
-                <li><a href="http://10.212.64.79:5000/zone/3">Переговорки</a></li>
-                <li><a href="http://10.212.64.79:5000/zone/4">Лаба 1</a></li>
-                <li><a href="http://10.212.64.79:5000/zone/5">Лаба 2</a></li>
-                <li class="active"><a href="http://10.212.64.79:8000/rack_list/">Сборочная</a></li>
-                <li><a href="http://10.212.64.79:5000/logout"><i class="material-icons">logout</i></a></li>
+                <li><a href="/bookings">Bookings</a></li>
+                <li><a href="/zone/1">Рабочие места</a></li>
+                <li><a href="/zone/2">Парковка</a></li>
+                <li><a href="/zone/3">Переговорки</a></li>
+                <li><a href="/zone/4">Лаба 1</a></li>
+                <li class="active"><a href="{% url 'nodes:rack_list' %}">Сборочная</a></li>
+                <li><a href="/logout"><i class="material-icons">logout</i></a></li>
             </ul>
         </div>
     </nav>
