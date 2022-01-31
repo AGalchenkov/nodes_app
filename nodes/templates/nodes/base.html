@@ -111,7 +111,7 @@
                     <li><a href="{% url 'nodes:rack_list' %}">Список стоек</a></li>
                 {% endif %}
                 {% if 'unit_detail' in request.path %}
-                    <li><a href="{% url 'nodes:rack' rack_id %}">Стойка</a></li>
+                    <li><a href="{% url 'nodes:rack' rack_id %}">Текущая стойка</a></li>
                 {% endif %}
                 {% if not 'search' in request.path  %}
                     <li><a href="{% url 'nodes:search' %}">Поиск</a></li>
@@ -136,8 +136,10 @@
     $(document).ready(function (){
         var elem_height = $('.unit_dtl_main_conteiner').outerHeight( false )
         var pos = $('.unit_dtl_main_conteiner').position()
-        $('.custom-submit').outerHeight(elem_height, false)
-        $('.custom-submit').offset({top: pos.top, left: pos.left - 50});
+        if (pos) {
+            $('.custom-submit').outerHeight(elem_height, false)
+            $('.custom-submit').offset({top: pos.top, left: pos.left - 50})
+        }
     });
 </script>
 

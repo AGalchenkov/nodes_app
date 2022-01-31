@@ -217,7 +217,7 @@
                     var url = data[0].location
                     $(location).attr('href', url)
                 }else{
-                    $('#errors').text(data[0].messages.error.__all__[0].message)
+                    $('#errors').text(data[0].messages.error)
                 }
             })
         });

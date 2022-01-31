@@ -32,8 +32,8 @@ class Racks(models.Model):
     )
     units_num = models.IntegerField(
         validators=[
-            MinValueValidator(0, message='negative unit number'),
-            MaxValueValidator(48, message='to much unit number'),
+            MinValueValidator(0, message='Отрицательное значение'),
+            MaxValueValidator(48, message='Слишком большое значение(макс. 48)'),
         ]
     )
     history = HistoricalRecords()
@@ -48,20 +48,20 @@ class Racks(models.Model):
 class Interfaces(models.Model):
     g10 = models.IntegerField(default=0,
         validators=[
-            MinValueValidator(0, message='negative unit number'),
-            MaxValueValidator(52, message='to much unit number'),
+            MinValueValidator(0, message='Отрицательное значение'),
+            MaxValueValidator(52, message='Слишком большое значение(макс. 52)'),
         ]
     )
     g40 = models.IntegerField(default=0,
         validators=[
-            MinValueValidator(0, message='negative unit number'),
-            MaxValueValidator(52, message='to much unit number'),
+            MinValueValidator(0, message='Отрицательное значение'),
+            MaxValueValidator(52, message='Слишком большое значение(макс. 52)'),
         ]
     )
     g100 = models.IntegerField(default=0,
         validators=[
-            MinValueValidator(0, message='negative unit number'),
-            MaxValueValidator(52, message='to much unit number'),
+            MinValueValidator(0, message='Отрицательное значение'),
+            MaxValueValidator(52, message='Слишком большое значение(макс. 52)'),
         ]
     )
 
@@ -71,8 +71,8 @@ class Models(models.Model):
     #interface = models.ForeignKey(Interfaces, null=True, blank=True, on_delete=models.CASCADE)
     units_takes = models.IntegerField(default=1,
         validators=[
-            MinValueValidator(1, message='negative unit number'),
-            MaxValueValidator(5, message='to much unit number'),
+            MinValueValidator(1, message='Отрицательное значение'),
+            MaxValueValidator(5, message='Слишком большое значение(макс. 5)'),
         ]
     )
 
@@ -123,8 +123,8 @@ class Appliances(models.Model):
     appliance = models.CharField(unique=True, max_length=60)
     ram = models.IntegerField(null=True, blank=True,
         validators=[
-            MinValueValidator(1, message='negative unit number'),
-            MaxValueValidator(4096, message='to much unit number'),
+            MinValueValidator(1, message='Отрицательное значение'),
+            MaxValueValidator(4096, message='Слишком большое значение(макс. 4096)'),
         ]
     )
     ipmi = models.BooleanField(default=False)
@@ -138,8 +138,8 @@ class Appliances(models.Model):
 class Ram(models.Model):
     ram = models.IntegerField(
         validators=[
-            MinValueValidator(16, message='negative unit number'),
-            MaxValueValidator(4096, message='to much unit number'),
+            MinValueValidator(16, message='Отрицательное значение'),
+            MaxValueValidator(4096, message='Слишком большое значение(макс. 4096)'),
         ]
     )
 
@@ -169,8 +169,8 @@ class Units(models.Model):
     rack = models.ForeignKey(Racks, null=True, blank=True, default=None,  on_delete=models.CASCADE)
     unit_num = models.IntegerField(blank=False,
         validators=[
-            MinValueValidator(0, message='negative unit number'),
-            MaxValueValidator(48, message='to much unit number')
+            MinValueValidator(0, message='Отрицательное значение'),
+            MaxValueValidator(48, message='Слишком большое значение(макс. 48)')
         ]
     )
     model = models.ForeignKey(Models, null=True, blank=True, on_delete=models.RESTRICT)
@@ -186,20 +186,20 @@ class Units(models.Model):
     appliance = models.ForeignKey(Appliances, null=True, blank=True, default=None,  on_delete=models.RESTRICT)
     g10 = models.IntegerField(default=0,
         validators=[
-            MinValueValidator(0, message='negative unit number'),
-            MaxValueValidator(52, message='to much unit number'),
+            MinValueValidator(0, message='Отрицательное значение'),
+            MaxValueValidator(52, message='Слишком большое значение(макс. 52)'),
         ]
     )
     g40 = models.IntegerField(default=0,
         validators=[
-            MinValueValidator(0, message='negative unit number'),
-            MaxValueValidator(52, message='to much unit number'),
+            MinValueValidator(0, message='Отрицательное значение'),
+            MaxValueValidator(52, message='Слишком большое значение(макс. 52)'),
         ]
     )
     g100 = models.IntegerField(default=0,
         validators=[
-            MinValueValidator(0, message='negative unit number'),
-            MaxValueValidator(52, message='to much unit number'),
+            MinValueValidator(0, message='Отрицательное значение'),
+            MaxValueValidator(52, message='Слишком большое значение(макс. 52)'),
         ]
     )
     is_avaliable = models.BooleanField(default=False)
@@ -300,21 +300,21 @@ class UnitForm(ModelForm):
         start_unit = int(unit_num) + 1
         end_unit = int(unit_num) + int(model.units_takes)
         if end_unit > rack.units_num:
-            raise ValidationError('this model takes too much units')
+            raise ValidationError('Данная моедль занимает слишком много юнитов.')
         list = [i for i in range(start_unit, end_unit)]
         for item in list:
 
             try:
                 u = Units.objects.get(rack=rack, unit_num=item)
                 if u.model or u.in_use == True:
-                    raise ValidationError(f'for this model needs {model.units_takes}U next unit are in use(U{u.unit_num})')
+                    raise ValidationError(f'Данная модель занимает {model.units_takes}U, но следующий юнит занят (U{u.unit_num})')
                 else:
                     use_u = Units.objects.get(rack=rack, unit_num=item)
                     use_u.used_by_unit = unit_num
                     other_unit_used_list.append(use_u)
                     continue
             except ObjectDoesNotExist:
-                raise ValidationError('Internal Error!!! Ask for administrator!')
+                raise ValidationError('Внутренняя ошибка. Обратитесь к администратору.')
         Units.objects.bulk_update(other_unit_used_list, ['used_by_unit'])
 
     def remove_fatboy(self, unit_num, old_model, rack):
@@ -392,22 +392,22 @@ class UnitForm(ModelForm):
         old_model_units_takes = old_model.units_takes if hasattr(old_model, 'units_takes') else 0
 
         if mng_ip and not model:
-            raise ValidationError('set model')
+            raise ValidationError('Укажите модель')
         if ipmi_bmc and not has_ipmi:
-            raise ValidationError("set 'has_ipmi' if you set 'ipmi_bmc' ip")
+            raise ValidationError("Укажите 'has_ipmi' если указан 'ipmi_bmc' ip")
         if model:
             if sn == '':
-                raise ValidationError('if one of fields model or SN are set then both must be filled')
+                raise ValidationError('Модель и серийный номер заполняются вместе')
             if vendor == None:
-                raise ValidationError('if model are set then vendor must be filled')
+                raise ValidationError('Модель и вендор заполняются вместе')
         if sn:
             if model == None:
-                raise ValidationError('if one of fields model or SN are set then both must be filled')
+                raise ValidationError('Модель и серийный номер заполняются вместе')
             sn_unit = Units.objects.filter(sn=sn).exclude(unit_num=unit_num, rack=rack)
             if sn_unit:
                 raise ValidationError(
                     f'''
-                    unit with this SN are exists <a class="clr_blue underline"
+                    Юнит с таким серийным номером уже существует <a class="clr_blue underline"
                     href="/rack/{sn_unit[0].rack.id}/unit_detail/{sn_unit[0].unit_num}">
                     {sn_unit[0].rack.location} #{sn_unit[0].rack.rack_id} U{sn_unit[0].unit_num}</a>
                     '''

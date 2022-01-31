@@ -3,7 +3,7 @@ html {
 }
 
 body {
-			font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+		//	font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
 		//	margin: 200px 200px;
 			background-color:#f7f7f7;
 			margin: 0px;
@@ -250,7 +250,7 @@ tbody td.bg_green:hover {
 }
 
 .clr_green {
-			color: #3caa3c !important;
+			color: #4cec4c !important;
 }
 
 .clr_gray {
@@ -258,7 +258,7 @@ tbody td.bg_green:hover {
 }
 
 .clr_red {
-    color: red !important;
+    color: #ff1c1c !important;
 }
 
 .bold {
@@ -1117,6 +1117,7 @@ select {
 label {
     font-size: 1rem;
     color: #484848;
+    font-weight: 500;
 }
 
 .logo {
@@ -1204,7 +1205,7 @@ nav .nav-wrapper {
     padding: 5px;
     border-radius: 10px;
     border: none;
-    box-shadow: 0 0 10px #d7d7d7;
+    box-shadow: 0 0 10px #686868;
     margin-top: 6px;
     white-space: break-spaces;
     text-align: left;
@@ -1428,6 +1429,11 @@ td.comment li {
 }
 
 .tabulator .tabulator-header .tabulator-col.tabulator-sortable:hover {
+    cursor: pointer;
+    background-color: #e6e6e6;
+}
+
+.tabulator .tabulator-header .tabulator-col:hover {
     cursor: pointer;
     background-color: #e6e6e6;
 }
