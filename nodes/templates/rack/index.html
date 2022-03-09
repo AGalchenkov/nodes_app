@@ -27,7 +27,6 @@
            <h4>Подтверждение удаления</h4>
            Удалить стойку :  " {{ location }} "
            <div class="modal-footer">
-                <button type="button" class="btn btn-default modal-close" data-dismiss="modal">Отмена</button>
                 <a class="btn btn-danger" style="color:white;" href="{% url 'nodes:delete_rack' rack_id %}">Удалить!</a>
             </div>
         </div>
@@ -41,13 +40,7 @@
     </div>
 </div>
 
-<!--
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
--->
 <script>
-
 $(document).ready(function(){
     $(document).click(function (e) {
         var elem = e.target
@@ -55,36 +48,8 @@ $(document).ready(function(){
             $('.collapsible-body').hide()
         }
     });
-});
-
-$(document).ready(function(){
     $('.modal').modal();
 });
-
-$( document ).ready(function() {
-    autosize();
-    function autosize(){
-        var text = $('.autosize');
-
-        text.each(function(){
-            $(this).attr('rows',1);
-            resize($(this));
-        });
-
-        text.on('input', function(){
-            resize($(this));
-        });
-
-        function resize ($text) {
-            $text.css('height', 'auto');
-            $text.css('height', $text[0].scrollHeight+'px');
-        }
-    }
-
-});
-
-
-
 
 $('#create-modal').on('show.bs.modal', function (e) {
     url = "{% url 'nodes:bs_unit_detail' rack_id 48 %}"

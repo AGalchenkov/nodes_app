@@ -41,15 +41,20 @@ def flask_session_required(func):
         return func(request, **kwargs)
     return wrapper
 
-def flask_permission_required(func):
-    def wrapper(request, **kwargs):
-        signer = flask_signer()
-        session_data = signer.loads(request.COOKIES['session'])
-        if session_data['role'] > 3:
-            #return HttpResponseForbidden()
-            raise PermissionDenied()
-        return func(request, **kwargs)
-    return wrapper
+def flask_permission_required(role=3):
+    def actual_decorator(func):
+        def wrapper(request, **kwargs):
+            signer = flask_signer()
+            try:
+                session_data = signer.loads(request.COOKIES['session'])
+                if session_data['role'] > role:
+                    #return HttpResponseForbidden()
+                    raise PermissionDenied()
+            except KeyError:
+                return HttpResponseRedirect('/login')
+            return func(request, **kwargs)
+        return wrapper
+    return actual_decorator
 
 def set_role_context(func):
     def wrapper(request, *args, **kwargs):

@@ -4,24 +4,24 @@
 
 {% load static %}
 
-<script type="text/javascript" src="{% static 'nodes/js/jquery-3.6.0.min.js' %}"></script>
-
 <div class="search">
     <div class="small_tbl_cnt_search">
-        <h2 class="tbl_header">Search</h2>
-        <div class="unit_dtl_main_conteiner">
-            <form action="{% url 'nodes:search'%}" method="post">
+        <h2 class="tbl_header">Поиск</h2>
+        <div class="unit_dtl_main_conteiner is_submit">
+            {% if role <= 2 %}
+                <label for="submit" class="custom-submit">
+                    <i class="green-icon small material-icons">done</i>
+                </label>
+                <input id="submit" form="search_form" type="submit" value="Submit">
+            {% endif %}
+            <form id="search_form" action="{% url 'nodes:search'%}" method="post">
                 {% csrf_token %}
                 {{ form_without_csv.as_p }}
+            </form>
         </div>
-        <label for="submit" class="custom-submit">
-            <i class="green-icon small material-icons">done</i>
-        </label>
-        <input id="submit" type="submit" value="Submit">
-        </form>
 </div>
 <div class="small_tbl_cnt_search">
-    <h2 class="tbl_header">Result</h2>
+    <h2 class="tbl_header">Результаты</h2>
     <div id="result" class="unit_dtl_main_conteiner">
         {% if request.method == 'POST' %}
             {% if qs.count %}
@@ -29,7 +29,7 @@
                     {% csrf_token %}
                     {{ form_csv.as_p }}
                 </form>
-                <input type="Submit" value="Export to CSV" form="form_csv">
+                <input type="Submit" value="Export to CSV" form="form_csv" class="mrg_tp_20px">
             {% endif %}
             <h2 class="tbl_header">Count {{ qs.count }}</h2>
         {% endif %}
@@ -77,5 +77,32 @@
         </ul>
     </div>
 </div>
+
+<script>
+    $(document).ready(function(){
+        if ($( window ).width() < 750) {
+            {% if request.method == 'POST' %}
+                window.scrollTo({
+                    top: 500,
+                    behavior: "smooth"
+                });
+            {% endif %}
+            $('input[type="text"]').outerWidth(75, false);
+            $('select').outerWidth(75, false);
+            $('textarea').outerWidth(75, false);
+            $('.select2-container').outerWidth(75, false);
+            $('.custom-submit').offset({left: 0}).outerWidth(30, false);
+            $('.unit_dtl_main_conteiner').css({'padding-right': '0px', 'padding-left': '30px', 'margin-left': '0px'});
+            $('.small_tbl_cnt_search').css('margin-left', '40px')
+            $('.search').css('display', 'inline-block');
+            $('.small_tbl_cnt_search').outerWidth('85%')
+            var elem_height = $('.unit_dtl_main_conteiner').outerHeight( false )
+            var pos = $('.unit_dtl_main_conteiner').position()
+            if (pos) {
+                $('.custom-submit').outerHeight(elem_height, false)
+            }
+        }
+    });
+</script>
 
 {% endblock content %}

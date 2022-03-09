@@ -1,5 +1,6 @@
 html {
     font-size: 13px;
+    line-height: 1.15;
 }
 
 body {
@@ -261,6 +262,14 @@ tbody td.bg_green:hover {
     color: #ff1c1c !important;
 }
 
+.clr_foggy {
+    color: #aeaeae !important;
+}
+
+.clr_rose {
+    color: #ff8585 !important;
+}
+
 .bold {
 			font-weight: bold;
 }
@@ -484,7 +493,7 @@ input[type="text"]:not(.browser-default), input[type="number"]:not(.browser-defa
     border: 1px solid #cecdcd;
     border-radius: 4px;
     padding: 5px;
-    font-family: Arial, Helvetica Neue, Helvetica, sans-serif !important;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif !important;
     font-size: 1rem;
     margin: 0px;
     box-sizing: border-box;
@@ -562,12 +571,14 @@ input[type=submit]:hover {
     background-color: white;
  //   border-radius: 15px;
     padding-left: 80px;
-    padding-bottom: 30px;
-    padding-top: 30px;
+    padding-bottom: 10px;
+    padding-top: 10px;
     box-shadow: 0 0 15px #d7d7d7;
-    margin-bottom: 20px;
+ //   margin-bottom: 20px;
     padding-right: 50px;
     position: relative;
+    width: 70%;
+    float: left;
 }
 
 .in_used {
@@ -687,6 +698,10 @@ input[type=submit]:hover {
     font-size: 14px;
 }
 
+.mrg_tp_20px {
+    margin-top: 20px;
+}
+
 .search {
     display: flex;
     justify-content: space-around;
@@ -718,8 +733,9 @@ input[type=submit]:hover {
 
 .frm_unit_dtl .field {
       width: 600px;
-        margin: 5px;
-        display: inline-block;
+      margin: 4px;
+      display: inline-block;
+      height: 27px;
 }
 
 
@@ -769,7 +785,8 @@ input[type=submit]:hover {
 }
 
 .main_conteiner {
-    margin: 78px 200px;
+   // margin: 78px 200px;
+   margin: auto 80px;
 }
 
 .stndr_div {
@@ -1112,6 +1129,7 @@ select {
 //    width: auto;
     height: auto;
     padding: 5px;
+    vertical-align: middle;
 }
 
 label {
@@ -1304,8 +1322,8 @@ nav.node_nav ul a:hover {
     background-color: rgba(0,0,0,0.1);
 }
 
-div.search form {
-    font-size: 4px;
+div.search p {
+    margin: 4px;
 }
 
 td.comment li {
@@ -1327,8 +1345,9 @@ td.comment li {
     box-shadow: 0 0 15px #d7d7d7;
     padding: 5px;
     position: absolute;
-    top: 155px;
-    left: 110px;
+    top: 0px;
+    left: -50px;
+    height: 100%;
     display: flex;
     align-items: center;
 }
@@ -1484,7 +1503,7 @@ td.comment li {
 }
 
 .off-padding-bottom {
-    padding-bottom: 0px;
+  //  padding-bottom: 0px;
 }
 
 .off-padding-top {
@@ -1496,3 +1515,10 @@ td.comment li {
     font-weight: bold;
 }
 
+.fieldWrapper_gray.short_field .field {
+    width: 500px;
+}
+
+.fieldWrapper_gray.short_field .field label {
+    width: 100px;
+}

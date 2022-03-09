@@ -35,8 +35,8 @@ class IndexView(generic.ListView):
 
 class RackListView(generic.ListView):
     decorators = [
-        flask_session_required,
-        flask_permission_required,
+        #flask_session_required,
+        flask_permission_required(role=3),
     ]
 
     def __init__(self):
@@ -66,7 +66,9 @@ def index(request):
 
 
 #@login_required
+@set_role_context
 @flask_session_required
+@flask_permission_required(role=3)
 def rack_list(request):
     r_list = Racks.objects.all().order_by('location')
     context = {
@@ -77,7 +79,7 @@ def rack_list(request):
 #@login_required
 @set_role_context
 @flask_session_required
-@flask_permission_required
+@flask_permission_required()
 def rack(request, rack_id, **kwargs):
     units_used = Units.objects.values_list('unit_num', flat=True).filter(in_use=True, rack_id=rack_id)
     u_list = []
@@ -102,7 +104,7 @@ def rack(request, rack_id, **kwargs):
 #@login_required
 @set_role_context
 @flask_session_required
-@flask_permission_required
+@flask_permission_required()
 def unit_detail(request, rack_id, unit_num, **kwargs):
     #custom_messages = kwargs.get('messages', None)
     if Units.objects.get(rack_id=rack_id, unit_num=unit_num).used_by_unit:
@@ -152,7 +154,7 @@ def unit_detail(request, rack_id, unit_num, **kwargs):
 #@login_required
 @set_role_context
 @flask_session_required
-@flask_permission_required
+@flask_permission_required()
 def search(request, **kwargs):
     qs = {}
     form = SearchForm(instance=Units)
@@ -297,7 +299,7 @@ def search(request, **kwargs):
 #@login_required
 @set_role_context
 @flask_session_required
-@flask_permission_required
+@flask_permission_required()
 def unit_create(request, rack_id, unit_num, **kwargs):
     rack = Racks.objects.get(id=rack_id)
     form = UnitCreateForm(instance=Units, initial={
@@ -317,8 +319,10 @@ def unit_create(request, rack_id, unit_num, **kwargs):
     }
     return render(request, 'unit_create/index.html', context)
 
-def create_rack(request):
-
+@set_role_context
+@flask_session_required
+@flask_permission_required(role=5)
+def create_rack(request, **kwargs):
     if request.method != 'POST':
         form = RackCreateForm(instance=Racks)
     else:
@@ -334,6 +338,7 @@ def create_rack(request):
 
     context = {
         'form': form,
+        'role': kwargs['role'],
     }
 
     return render(request, 'create_rack/index.html', context)
@@ -445,11 +450,15 @@ def BsUnitDetail(request, rack_id, unit_num):
     }
     return render(request, 'nodes/bs_unit_detail.html', context)
 
+@flask_session_required
+@flask_permission_required(role=1)
 def delet_rack(request, rack_id):
     Racks.objects.get(id=rack_id).delete()
     messages.success(request, 'Готово')
     return HttpResponseRedirect(reverse('nodes:rack_list'))
 
+@flask_session_required
+@flask_permission_required(role=2)
 def clear_unit(request, rack_id, unit_num):
     rack = Racks.objects.get(id=rack_id)
     unit = Units.objects.get(rack_id=rack_id, unit_num=unit_num)
@@ -478,6 +487,8 @@ def clear_unit(request, rack_id, unit_num):
     messages.success(request, 'Готово')
     return HttpResponseRedirect(reverse('nodes:unit_detail', args=[rack_id, unit_num]))
 
+@flask_session_required
+@flask_permission_required(role=2)
 def rebase_unit(request, **kwargs):
     print(request.POST)
     json_resp = []
@@ -569,15 +580,14 @@ def send_notifi(request):
     send_group_notification(group_name='all', payload=payload, ttl=1000)
     return JsonResponse(status=200, data={"message": "Web push successful"})
 
-@set_role_context
 @flask_session_required
-@flask_permission_required
+@flask_permission_required()
 def rack_to_json(request, rack_id, **kwargs):
     u = Units.objects.filter(rack_id=rack_id)
     json_resp = []
-    green = '<div class="green status"></div>'
-    red = '<div class="red status"></div>'
-    blue = '<div class="blue status"></div>'
+    green = '<div class="has up green status"></div>'
+    red = '<div class="has down red status"></div>'
+    blue = '<div class="has blue status"></div>'
     for e in reversed(u):
         unit_takes = ''
         int = ''
