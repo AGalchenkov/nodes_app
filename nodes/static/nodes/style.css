@@ -577,8 +577,8 @@ input[type=submit]:hover {
  //   margin-bottom: 20px;
     padding-right: 50px;
     position: relative;
-    width: 70%;
-    float: left;
+ //   width: 70%;
+ //   float: left;
 }
 
 .in_used {
@@ -786,7 +786,8 @@ input[type=submit]:hover {
 
 .main_conteiner {
    // margin: 78px 200px;
-   margin: auto 80px;
+    margin: 0px auto;
+    width: 80%;
 }
 
 .stndr_div {
@@ -1515,10 +1516,3 @@ td.comment li {
     font-weight: bold;
 }
 
-.fieldWrapper_gray.short_field .field {
-    width: 500px;
-}
-
-.fieldWrapper_gray.short_field .field label {
-    width: 100px;
-}

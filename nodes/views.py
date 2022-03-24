@@ -36,7 +36,7 @@ class IndexView(generic.ListView):
 class RackListView(generic.ListView):
     decorators = [
         #flask_session_required,
-        flask_permission_required(role=3),
+        #flask_permission_required(role=3),
     ]
 
     def __init__(self):
