@@ -5,7 +5,7 @@
 {% load static %}
 
 
-<div class="node_tbl_cnt_sml">
+<div class="main_conteiner">
     <h1 class="tbl_header">U{{ unit_num }}</h1>
     <div class="unit_dtl_main_conteiner is_submit">
             {% if role <= 2 %}
@@ -23,7 +23,7 @@
                     </li>
                 </ul>
                 {% endfor %}
-                <div class="fieldWrapper_gray">
+                <div class="fieldWrapper_gray short_field">
                     <div class="field">
                         <label for="{{ form.rack.id_for_label }}">Rack:</label>
                         {{ form.rack }}
@@ -40,7 +40,7 @@
                         {{ form.owner }}
                     </div>
                 </div>
-                <div class="fieldWrapper_gray">
+                <div class="fieldWrapper_gray short_field">
                     <div class="field">
                         <label for="{{ form.model.id_for_label }}">Model:</label>
                         {{ form.model }}
@@ -76,7 +76,7 @@
                         {{ form.hostname.errors}}
                     </div>
                 </div>
-                <div class="fieldWrapper_gray">
+                <div class="fieldWrapper_gray short_field">
                     <div class="field">
                         <label for="{{ form.has_ipmi.id_for_label }}">Has IPMI:</label>
                         {{ form.has_ipmi }}
@@ -112,7 +112,7 @@
                         {{ form.g40.errors }}
                     </div>
                 </div>
-                <div class="fieldWrapper_gray">
+                <div class="fieldWrapper_gray short_field">
                     <div class="field">
                         <label for="{{ form.modified.id_for_label }}">Modified:</label>
                         {{ form.modified }}
