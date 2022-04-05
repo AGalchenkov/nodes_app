@@ -1,19 +1,24 @@
+<!doctype html>
+
 {% load static %}
-
 {% load webpush_notifications %}
-
 {% webpush_header %}
 
-<link rel="stylesheet" type="text/css" href="{% static 'css/tabulator.min.css' %}">
-<link rel="stylesheet" type="text/css" href="{% static 'css/Material_Icons.css' %}">
-<link rel="stylesheet" type="text/css" href="{% static 'css/materialize.min.css' %}">
-<link rel="stylesheet" type="text/css" href="{% static 'css/jquery.datetimepicker.min.css' %}">
-<link rel="stylesheet" type="text/css" href="{% static 'css/Notiser.css' %}">
-<link rel="stylesheet" type="text/css" href="{% static 'css/select2.css' %}">
-<link rel="stylesheet" type="text/css" href="{% static 'nodes/style.css' %}">
+<title>Nodes App</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-<script type="text/javascript" src="{% static 'js/jquery-3.6.0.js' %}"></script>
+<link rel="icon" href="/static/favicon.png" type="image/png">
+
+<link rel="stylesheet" href="{% static 'css/tabulator.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/Material_Icons.css' %}">
+<link rel="stylesheet" href="{% static 'css/materialize.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/jquery.datetimepicker.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/Notiser.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'nodes/style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/select2.css' %}">
+
 <script type="text/javascript" src="{% static 'js/tabulator.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery-3.6.0.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/materialize.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/Notiser.js' %}"></script>
 <script type="text/javascript" src="{% static 'nodes/js/clamp.js' %}"></script>
@@ -24,15 +29,45 @@
 <div class="full-notify"></div>
 <ul class="sidenav" id="mobile-nav">
     <li><a href="/bookings">Bookings</a></li>
-                <li><a href="/zone/1">Рабочие места</a></li>
-                <li><a href="/zone/2">Парковка</a></li>
-                <li><a href="/zone/3">Переговорки</a></li>
-                <li><a href="/zone/4">Лаба 1</a></li>
-                <li class="active"><a href="{% url 'nodes:rack_list' %}">Сборочная</a></li>
-                <li><a href="/logout"><i class="material-icons">logout</i></a></li>
+    <li><a href="/zone/1">Рабочие места</a></li>
+    <li><a href="/zone/2">Парковка</a></li>
+    <li><a href="/zone/3">Переговорки</a></li>
+    <li><a href="/zone/4">Лаба 1</a></li>
+    <li class="active"><a href="{% url 'nodes:rack_list' %}">Сборочная</a></li>
+    <li><a href="/logout"><i class="material-icons">logout</i></a></li>
+</ul>
+<ul class="sidenav" id="nodes-mobile-nav">
+    {% if role < 2 and 'rack/' in request.path and 'unit_detail' not in request.path %}
+        <li><a class="modal-trigger" href="#confirm-delete" data-href="{% url 'nodes:delete_rack' rack_id %}">Удалить стойку</a></li>
+    {% endif %}
+    {% if role < 3 and 'unit_detail' in request.path %}
+        <li><a class="modal-trigger" href="#clear_unit" data-href="{% url 'nodes:clear_unit' rack_id unit_num %}">Освободить юнит</a></li>
+    {% endif %}
+    {% if role < 3 and 'unit_detail' in request.path %}
+        <li><a class="modal-trigger" href="#rebase_unit" data-href="{% url 'nodes:clear_unit' rack_id unit_num %}">Переместить юнит</a></li>
+    {% endif %}
+    {% if not 'rack_list' in request.path %}
+        <li><a href="{% url 'nodes:rack_list' %}">Список стоек</a></li>
+    {% endif %}
+    {% if 'unit_detail' in request.path %}
+        <li><a href="{% url 'nodes:rack' rack_id %}">Текущая стойка</a></li>
+    {% endif %}
+    {% if not 'search' in request.path  %}
+        <li><a href="{% url 'nodes:search' %}">Поиск</a></li>
+    {% endif %}
+    {% if role < 2 %}
+    <li><a href="{% url 'nodes:create_rack' %}">Создать стойку</a></li>
+    {% endif %}
+</ul>
 
-    </ul>
-
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var e = document.getElementById('mobile-nav');
+            M.Sidenav.init(e);
+            var e = document.getElementById('nodes-mobile-nav');
+            M.Sidenav.init(e);
+        });
+</script>
 
     <nav>
         <div class="nav-wrapper">
@@ -54,13 +89,13 @@
 
     <nav class="node_nav">
         <div class="nav-wrapper">
-            <a href="#" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+            <a href="#" data-target="nodes-mobile-nav" class="sidenav-trigger"><i class="material-icons" style="line-height: 40px;">menu</i></a>
             <ul class="left hide-on-med-and-down">
                 {% if role < 2 and 'rack/' in request.path and 'unit_detail' not in request.path %}
-                   <li><a class="clr_red modal-trigger" href="#confirm-delete" data-href="{% url 'nodes:delete_rack' rack_id %}">Удалить стойку</a></li>
+                   <li><a class="clr_rose modal-trigger" href="#confirm-delete" data-href="{% url 'nodes:delete_rack' rack_id %}">Удалить стойку</a></li>
                 {% endif %}
                 {% if role < 3 and 'unit_detail' in request.path %}
-                   <li><a class="clr_red modal-trigger" href="#clear_unit" data-href="{% url 'nodes:clear_unit' rack_id unit_num %}">Освободить юнит</a></li>
+                   <li><a class="clr_rose modal-trigger" href="#clear_unit" data-href="{% url 'nodes:clear_unit' rack_id unit_num %}">Освободить юнит</a></li>
                 {% endif %}
                 {% if role < 3 and 'unit_detail' in request.path %}
                    <li><a class="clr_green modal-trigger" href="#rebase_unit" data-href="{% url 'nodes:clear_unit' rack_id unit_num %}">Переместить юнит</a></li>
@@ -74,7 +109,7 @@
                 {% if not 'search' in request.path  %}
                     <li><a href="{% url 'nodes:search' %}">Поиск</a></li>
                 {% endif %}
-                {% if role < 2 %}
+                {% if role < 2 and 'create_rack' not in request.path %}
                     <li><a href="{% url 'nodes:create_rack' %}">Создать стойку</a></li>
                 {% endif %}
             </ul>
@@ -92,13 +127,11 @@
 
 <script>
     $(document).ready(function (){
-        var elem_height = $('.unit_dtl_main_conteiner').outerHeight( false )
-        var pos = $('.unit_dtl_main_conteiner').position()
-        if (pos) {
-            $('.custom-submit').outerHeight(elem_height, false)
-            $('.custom-submit').offset({top: pos.top, left: pos.left - 50})
-        }
+	    $('select').select2({
+            minimumResultsForSearch: 6,
+        });
     });
 </script>
+
 
 {% block content %}{% endblock content %}

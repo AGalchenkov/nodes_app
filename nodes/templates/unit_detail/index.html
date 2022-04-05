@@ -7,8 +7,14 @@
 
 <div class="node_tbl_cnt_sml">
     <h1 class="tbl_header">U{{ unit_num }}</h1>
-    <div class="unit_dtl_main_conteiner off-padding-bottom off-padding-top">
-            <form class="frm_unit_dtl" action="{% url 'nodes:unit_detail' rack_id unit_num %}" method="post">
+    <div class="unit_dtl_main_conteiner is_submit">
+            {% if role <= 2 %}
+                <label for="submit" class="custom-submit">
+                    <i class="green-icon small material-icons">done</i>
+                </label>
+                <input form="frm_unit_dtl" id="submit" type="submit" value="Submit">
+            {% endif %}
+            <form class="frm_unit_dtl" id="frm_unit_dtl" action="{% url 'nodes:unit_detail' rack_id unit_num %}" method="post">
                 {% csrf_token %}
                 {% for error in form.non_field_errors %}
                 <ul class="errorlist nonfield">
@@ -132,10 +138,12 @@
 
     </div>
 {% if role <= 2 %}
+    <!--
     <label for="submit" class="custom-submit">
         <i class="green-icon small material-icons">done</i>
     </label>
     <input id="submit" type="submit" value="Submit">
+    -->
 {% endif %}
 </form>
 </div>
@@ -191,9 +199,20 @@
 
 <script>
     $(document).ready(function(){
-        $('select').select2({
-            minimumResultsForSearch: 6,
-        });
+        var elem_height = $('.unit_dtl_main_conteiner').outerHeight( false )
+        var pos = $('.unit_dtl_main_conteiner').position()
+        if (pos) {
+            $('.custom-submit').outerHeight(elem_height, false)
+            $('.custom-submit').offset({top: pos.top, left: pos.left - 50})
+        }
+        if ($( window ).width() < 750) {
+            $('input').outerWidth(75, false);
+            $('select').outerWidth(75, false);
+            $('textarea').outerWidth(75, false);
+            $('.select2-container').outerWidth(75, false);
+            $('.custom-submit').offset({left: 0}).outerWidth(30, false)
+            $('.unit_dtl_main_conteiner').css('padding-left', '0px')
+        }
         $('.modal').modal();
         $('#confirm-delete').on('show.bs.modal', function(e) {
             $(this).find('.btn-danger').attr('href', $(e.relatedTarget).data('href'));
