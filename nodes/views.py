@@ -452,14 +452,14 @@ def BsUnitDetail(request, rack_id, unit_num):
 
 @flask_session_required
 @flask_permission_required(role=1)
-def delet_rack(request, rack_id):
+def delet_rack(request, rack_id, *args, **kwargs):
     Racks.objects.get(id=rack_id).delete()
     messages.success(request, 'Готово')
     return HttpResponseRedirect(reverse('nodes:rack_list'))
 
 @flask_session_required
 @flask_permission_required(role=2)
-def clear_unit(request, rack_id, unit_num):
+def clear_unit(request, rack_id, unit_num, *args, **kwargs):
     rack = Racks.objects.get(id=rack_id)
     unit = Units.objects.get(rack_id=rack_id, unit_num=unit_num)
     if unit.model.units_takes > 1:
