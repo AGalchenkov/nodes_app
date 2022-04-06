@@ -7,5 +7,6 @@ telethon
 pillow
 django-webpush
 django_simple_history
+flask
 
 
