@@ -33,11 +33,19 @@
                         {{ form.unit_num }}
                     </div>
                      <div class="field">
-
+                        <!--space -->
                     </div>
                     <div class="field">
                         <label for="{{ form.owner.id_for_label }}">Owner:</label>
                         {{ form.owner }}
+                    </div>
+                    <div class="field">
+                        <!--space -->
+                    </div>
+                    <div class="field">
+                        <label for="{{ form.expired_date.id_for_label }}">Owner Till:</label>
+                        {{ form.expired_date }}
+                        {{ form.expired_date.errors }}
                     </div>
                 </div>
                 <div class="fieldWrapper_gray short_field">
@@ -199,6 +207,14 @@
 
 <script>
     $(document).ready(function(){
+
+        $(function () {
+            $("#id_expired_date").datetimepicker({
+                format: 'd-m-Y H:i',
+            });
+        });
+
+
         var elem_height = $('.unit_dtl_main_conteiner').outerHeight( false )
         var pos = $('.unit_dtl_main_conteiner').position()
         if (pos) {

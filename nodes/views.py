@@ -1,3 +1,5 @@
+import datetime
+
 from django.shortcuts import render, reverse
 from django.views import generic
 from .models import *
@@ -13,6 +15,7 @@ import html
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.serializers import serialize
 from . import views
+from django.core.mail import send_mail
 
 class IndexView(generic.ListView):
     model = Racks
@@ -116,26 +119,54 @@ def unit_detail(request, rack_id, unit_num, **kwargs):
         unit = Units(rack_id=rack_id, unit_num=unit_num, owner=None)
         unit.save()
     if request.method != 'POST':
-        unit_form = UnitForm(instance=unit, initial={'modified_by': unit.modified_by, 'comment': unit.comment})
+        if unit.expired_date:
+            unit_form = UnitForm(instance=unit, initial={'modified_by': unit.modified_by,
+                                                     'comment': unit.comment, 'expired_date': unit.expired_date.strftime("%d-%m-%Y %H:%i")})
+        else:
+            unit_form = UnitForm(instance=unit, initial={'modified_by': unit.modified_by,
+                                                     'comment': unit.comment, 'expired_date': unit.expired_date})
     else:
         if request.POST['comment']:
             if not unit.comment or unit.comment.text != request.POST['comment']:
                 c1 = Comments(text=request.POST['comment'], author=kwargs['user'], units=unit)
                 c1.save()
-                unit_form = UnitForm(user=kwargs['user'], role=kwargs['role'], request=request, instance=unit, data=request.POST, initial={'modified_by': unit.modified_by, 'comment': unit.comment})
+                unit_form = UnitForm(user=kwargs['user'], role=kwargs['role'],
+                                     request=request, instance=unit,
+                                     data=request.POST, initial={'modified_by': unit.modified_by,
+                                                                 'comment': unit.comment})
             else:
-                unit_form = UnitForm(user=kwargs['user'], role=kwargs['role'], request=request, instance=unit, data=request.POST, initial={'comment': unit.comment.text})
+                unit_form = UnitForm(user=kwargs['user'], role=kwargs['role'],
+                                     request=request, instance=unit,
+                                     data=request.POST, initial={'comment': unit.comment.text})
         else:
             # c1 = Comments(text=None, author=None, units=unit, pub_date=None)
             # c1.save()
-            unit_form = UnitForm(user=kwargs['user'], role=kwargs['role'], request=request, instance=unit, data=request.POST, initial={'comment': None})
+            unit_form = UnitForm(user=kwargs['user'], role=kwargs['role'], request=request,
+                                 instance=unit, data=request.POST, initial={'comment': None})
         if unit_form.is_valid():
             if unit_form.has_changed():
-                unit_form.save()
+                u = unit_form.save(commit=False)
+                u.save()
+                print(f'CHANGED ###   {unit_form.changed_data}')
+                if u.owner and 'expired_date' in unit_form.changed_data:
+                    send_mail(
+                        f'[NodesApp] Юнит забронирован {u} ',
+                        '',
+                        #f'<a src="{request.META.get("HTTP_REFERER")}">мой юнит</a>\r\n\r\nДата истечения: {u.expired_date.strftime("%d/%m/%Y %H:%M")}',
+                        '',
+                        [f'{u.owner.email}'],
+                        fail_silently=False,
+                        html_message=f'<a href="{request.META.get("HTTP_REFERER")}">{u}</a><br><br>Дата истечения: {u.expired_date.strftime("%d/%m/%Y %H:%M")}'
+                    )
                 messages.success(request, 'Готово')
+                if u.expired_date:
+                    delta = u.expired_date - datetime.datetime.now()
+                    if delta.total_seconds() < 900:
+                        messages.info(request, 'Юнит забронирован менее чем на 15 минут')
                 return HttpResponseRedirect(reverse('nodes:unit_detail', args=[rack_id, unit_num]))
             else:
-                unit_form = UnitForm(user=kwargs['user'], role=kwargs['role'], request=request, instance=unit, initial=unit_form.cleaned_data)
+                unit_form = UnitForm(user=kwargs['user'], role=kwargs['role'],
+                                     request=request, instance=unit, initial=unit_form.cleaned_data)
     rebase_form = UnitRebaseForm(instance=unit)
     context = {
         'unit': unit,
@@ -490,7 +521,6 @@ def clear_unit(request, rack_id, unit_num, *args, **kwargs):
 @flask_session_required
 @flask_permission_required(role=2)
 def rebase_unit(request, **kwargs):
-    print(request.POST)
     json_resp = []
     new_rack_id = request.POST['rack']
     rack = Racks.objects.get(id=new_rack_id)
@@ -508,12 +538,22 @@ def rebase_unit(request, **kwargs):
         )
         json_resp = json.dumps(json_resp)
         return HttpResponse(json_resp, content_type='application/json')
+    if Units.objects.get(rack_id=new_rack_id, unit_num=new_unit_num).model:
+        json_resp.append(
+            {
+                'messages': {'error': 'Юнит назначения ЗАНЯТ'},
+                'result': False,
+            }
+        )
+        json_resp = json.dumps(json_resp)
+        return HttpResponse(json_resp, content_type='application/json')
+
     if request.method == 'POST':
         rebase_form = UnitRebaseForm(instance=unit, data=request.POST)
     if rebase_form.is_valid():
-        if Units.objects.get(rack_id=new_rack_id, unit_num=new_unit_num).model:
-            messages.warning(request, 'Юнит назначения ЗАНЯТ')
-            return HttpResponseRedirect(reverse('nodes:unit_detail', args=[old_rack.id, old_unit_num]))
+        #if Units.objects.get(rack_id=new_rack_id, unit_num=new_unit_num).model:
+        #    messages.warning(request, 'Юнит назначения ЗАНЯТ')
+        #    return HttpResponseRedirect(reverse('nodes:unit_detail', args=[old_rack.id, old_unit_num]))
         old_unit = Units.objects.get(rack=old_rack, unit_num=old_unit_num)
         new_unit = Units.objects.get(rack=rack, unit_num=new_unit_num)
         new_unit.owner = old_unit.owner

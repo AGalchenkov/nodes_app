@@ -31,7 +31,8 @@ def flask_session_required(func):
                 first_name = session_data['username'].split(' ')[0]
                 last_name = session_data['username'].split(' ')[1]
                 is_staff = True if session_data['role'] <= 2 else False
-                User(username=session_data['username'], first_name=first_name, last_name=last_name, is_staff=is_staff).save()
+                User(username=session_data['username'], first_name=first_name, last_name=last_name,
+                     email=session_data['login'], is_staff=is_staff).save()
                 u = User.objects.get(username=session_data['username'])
         except KeyError:
             return HttpResponseRedirect('/login')

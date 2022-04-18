@@ -1,6 +1,8 @@
+import datetime
+
 from django.db import models
 from django.contrib.auth.models import User
-from django.forms import ModelForm, Textarea, CharField, ChoiceField, Field, BooleanField, HiddenInput
+from django.forms import ModelForm, Textarea, CharField, ChoiceField, Field, BooleanField, HiddenInput, DateTimeField
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.utils.timezone import now
@@ -166,6 +168,8 @@ class Units(models.Model):
     in_use = models.BooleanField(default=False)
     used_by_unit = models.CharField(blank=True, default='', max_length=3)
     owner = models.ForeignKey(User, null=True, blank=True, default=None, related_name='owner', on_delete=models.SET_DEFAULT)
+    expired_date = models.DateTimeField(null=True, blank=True)
+    is_notifi_send = models.BooleanField(default=False)
     rack = models.ForeignKey(Racks, null=True, blank=True, default=None,  on_delete=models.CASCADE)
     unit_num = models.IntegerField(blank=False,
         validators=[
@@ -266,6 +270,7 @@ class UnitForm(ModelForm):
     error_css_class = 'error'
     rack = Field(disabled=True)
     in_use = Field(disabled=True)
+    expired_date = DateTimeField(input_formats=['%d-%m-%Y %H:%M'], required=False)
     modified = Field(disabled=True)
     unit_num = CharField(disabled=True)
     comment = CharField(widget=Textarea(attrs={'cols': 40, 'rows': 3, 'style': 'resize:none;'}), required=False)
@@ -294,6 +299,11 @@ class UnitForm(ModelForm):
             self.initial['comment_pub_date'] = kwargs['instance'].comment.pub_date
         except AttributeError:
             self.initial['comment_author'] = None
+        try:
+            #self.initial['expired_date'] = kwargs['instance'].expired_date.strftime('%d/%m/%Y %H:%M')
+            self.initial['expired_date'] = kwargs['instance'].expired_date
+        except AttributeError:
+            self.initial['expired_date'] = None
 
     def add_fatboy(self, unit_num, model, rack):
         other_unit_used_list = []
@@ -388,9 +398,18 @@ class UnitForm(ModelForm):
         model = cleaned_data.get('model')
         vendor = cleaned_data.get('vendor')
         power = cleaned_data.get('power')
+        expired_date = cleaned_data.get('expired_date')
         old_model = Units.objects.get(rack=rack, unit_num=unit_num).model
         old_model_units_takes = old_model.units_takes if hasattr(old_model, 'units_takes') else 0
 
+        if expired_date:
+            delta = expired_date - datetime.datetime.now()
+            if delta.total_seconds() < 0:
+                raise ValidationError('Дата истечения брони меньше текущей.')
+            if delta.total_seconds() < 900:
+                cleaned_data['small_delta'] = True
+            else:
+                cleaned_data['small_delta'] = False
         if mng_ip and not model:
             raise ValidationError('Укажите модель')
         if ipmi_bmc and not has_ipmi:
@@ -444,7 +463,6 @@ class UnitForm(ModelForm):
             'g40': '40G',
             'g100': '100G',
         }
-
 
 
 class UnitFormDisabled(ModelForm):
@@ -550,7 +568,7 @@ class SearchForm(ModelForm):
 
     class Meta:
         model = Units
-        exclude = ['used_by_unit', 'in_use', 'unit_num', 'console', 'modified', 'modified_by', 'g10', 'g40', 'g100', 'ipmi', 'ipmi_is_avaliable']
+        exclude = ['used_by_unit', 'in_use', 'unit_num', 'console', 'modified', 'modified_by', 'expired_date', 'g10', 'g40', 'g100', 'ipmi', 'ipmi_is_avaliable']
 
 class UnitCreateForm(ModelForm):
     comment = CharField(widget=Textarea(attrs={'cols': 40, 'rows': 3}), required=False)

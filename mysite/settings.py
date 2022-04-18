@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+from os import getenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
@@ -133,13 +134,17 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
+#DATETIME_INPUT_FORMATS = "%d-%m-%Y %H:%M"
+
+DATETIME_FORMAT = "%d-%m-%Y %H:%M"
+
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = False
 
 USE_TZ = False
 
@@ -159,6 +164,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/users/login/'
 LOGOUT_REDIRECT_URL = '/users/login/'
+
+#EMAIL
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.rdp.ru'
+EMAIL_HOST_USER = 'a.galchenkov@rdp.ru'
+EMAIL_HOST_PASSWORD = getenv('DJANGO_EMAIL_PASS')
+EMAIL_PORT = 587
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 WEBPUSH_SETTINGS = {

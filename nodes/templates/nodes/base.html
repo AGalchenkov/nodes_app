@@ -23,7 +23,7 @@
 <script type="text/javascript" src="{% static 'js/Notiser.js' %}"></script>
 <script type="text/javascript" src="{% static 'nodes/js/clamp.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/jquery.cookie.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/jquery.datetimepicker.full.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery.datetimepicker.full.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/select2.min.js' %}"></script>
 
 <div class="full-notify"></div>
@@ -118,11 +118,17 @@
 
 
 {% if messages %}
-{% for message in messages %}
-    <script>
-        $N('{{message}}').setStyle('{{message.tags}}').setAge(2000).show('.full-notify');
-    </script>
-  {% endfor %}
+    {% for message in messages %}
+        {% if message.tags == 'info' %}
+            <script>
+                $N('{{message}}').setStyle('{{message.tags}}').setAge(7000).show('.full-notify');
+            </script>
+        {% else %}
+            <script>
+                $N('{{message}}').setStyle('{{message.tags}}').setAge(2000).show('.full-notify');
+            </script>
+        {% endif %}
+    {% endfor %}
 {% endif %}
 
 <script>
