@@ -170,8 +170,8 @@ LOGOUT_REDIRECT_URL = '/users/login/'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.rdp.ru'
-EMAIL_HOST_USER = 'a.galchenkov@rdp.ru'
-EMAIL_HOST_PASSWORD = getenv('DJANGO_EMAIL_PASS')
+EMAIL_HOST_USER = 'booking@rdp.ru'
+EMAIL_HOST_PASSWORD = getenv('NODES_EMAIL_PASS')
 EMAIL_PORT = 587
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 

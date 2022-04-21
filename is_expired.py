@@ -21,12 +21,15 @@ while True:
                     send_mail(
                                     f'[NodesApp] Бронь истекает для {u} ',
                                     '',
-                                    #f'<a src="http://127.0.0.1:8080/nodes/rack/{u.rack_id}/unit_detail/{u.unit_num}">мой юнит</a>\r\n\r\nДата истечения: {u.expired_date.strftime("%d/%m/%Y %H:%M")}',
                                     '',
                                     [f'{u.owner.email}'],
                                     auth_user='a.galchenkov@rdp.ru',
                                     fail_silently=False,
-                                    html_message=f'<a href="http://127.0.0.1:8080/nodes/rack/{u.rack_id}/unit_detail/{u.unit_num}">{u}</a><br><br>Дата истечения: {u.expired_date.strftime("%d/%m/%Y %H:%M")}'
+                                    html_message=f'''
+                                        <a href="http://127.0.0.1:8080/nodes/rack/{u.rack_id}/unit_detail/{u.unit_num}">
+                                        {u}</a>
+                                        <br><br>Истекает: {u.expired_date.strftime("%d/%m/%Y %H:%M")}
+                                    '''
                             )
                     u.is_notifi_send = True
                     u.save()

@@ -1,5 +1,3 @@
-import datetime
-
 from django.shortcuts import render, reverse
 from django.views import generic
 from .models import *
@@ -16,6 +14,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.core.serializers import serialize
 from . import views
 from django.core.mail import send_mail
+from datetime import datetime
 
 class IndexView(generic.ListView):
     model = Racks
@@ -121,7 +120,8 @@ def unit_detail(request, rack_id, unit_num, **kwargs):
     if request.method != 'POST':
         if unit.expired_date:
             unit_form = UnitForm(instance=unit, initial={'modified_by': unit.modified_by,
-                                                     'comment': unit.comment, 'expired_date': unit.expired_date.strftime("%d-%m-%Y %H:%i")})
+                                                     'comment': unit.comment,
+                                                     'expired_date': unit.expired_date.strftime("%d-%m-%Y %H:%i")})
         else:
             unit_form = UnitForm(instance=unit, initial={'modified_by': unit.modified_by,
                                                      'comment': unit.comment, 'expired_date': unit.expired_date})
@@ -148,19 +148,28 @@ def unit_detail(request, rack_id, unit_num, **kwargs):
                 u = unit_form.save(commit=False)
                 u.save()
                 if u.owner and 'expired_date' in unit_form.changed_data:
-                    send_mail(
-                        f'[NodesApp] Юнит забронирован {u} ',
-                        '',
-                        '',
-                        [f'{u.owner.email}'],
-                        fail_silently=False,
-                        html_message=f'<a href="{request.META.get("HTTP_REFERER")}">{u}</a><br><br>Дата истечения: {u.expired_date.strftime("%d/%m/%Y %H:%M")}'
-                    )
-                    u.is_notifi_send = False
-                    u.save()
+                    try:
+                        send_mail(
+                            f'[NodesApp] Юнит забронирован {u} ',
+                            '',
+                            '',
+                            [f'{u.owner.email}'],
+                            fail_silently=False,
+                            html_message=f'''
+                                <a href="{request.META.get("HTTP_REFERER")}">{u}</a>
+                                <br><br>Истекает: {u.expired_date.strftime("%d/%m/%Y %H:%M")}
+                            '''
+                        )
+                        u.is_notifi_send = False
+                        u.save()
+                        with open('sendmail.log', 'a+') as f:
+                            f.write(f'{datetime.now()} SEND MAIL TO {u.owner.email} ABOUT BOOKING {u}\r\n')
+                    except Exception as e:
+                        with open('sendmail_error.log', 'a+') as f:
+                            f.write(f'{datetime.now()} {e}\r\n')
                 messages.success(request, 'Готово')
                 if u.expired_date:
-                    delta = u.expired_date - datetime.datetime.now()
+                    delta = u.expired_date - datetime.now()
                     if delta.total_seconds() < 900:
                         messages.info(request, 'Юнит забронирован менее чем на 15 минут')
                 return HttpResponseRedirect(reverse('nodes:unit_detail', args=[rack_id, unit_num]))
@@ -190,7 +199,8 @@ def search(request, **kwargs):
     qs = {}
     form = SearchForm(instance=Units)
     if request.method != 'POST':
-        form_without_csv = SearchForm(instance=Units, initial={'sn': '', 'comment': '', 'hostname': '', 'mng_ip': '', 'ipmi_bmc': ''})
+        form_without_csv = SearchForm(instance=Units, initial={'sn': '', 'comment': '',
+                                                               'hostname': '', 'mng_ip': '', 'ipmi_bmc': ''})
         form_csv = None
     else:
         qs = Units.objects.all()
@@ -632,7 +642,8 @@ def rack_to_json(request, rack_id, **kwargs):
         unit_takes = ''
         int = ''
         used_by = 'used_by' if e.used_by_unit else ''
-        unit_num = '<span class="in_used">' + str(e.unit_num) + '</span>' if e.in_use else f'<span class="free {used_by}">' + str(e.unit_num) + '</span>'
+        unit_num = '<span class="in_used">' + str(e.unit_num) + \
+                   '</span>' if e.in_use else f'<span class="free {used_by}">' + str(e.unit_num) + '</span>'
         hostname = ' (<span class="bold">' + e.hostname + '</span>)' if e.hostname else ''
         if e.model:
             if e.model.units_takes > 1:
@@ -660,7 +671,8 @@ def rack_to_json(request, rack_id, **kwargs):
         else:
             ipmi = ''
         owner = e.owner.username if e.owner else ''
-        console = '<a class="hover_bold my_lnk" href="ssh://tac@10.212.130.117">' + e.console.console + '</a>' if e.console else ''
+        console = '<a class="hover_bold my_lnk" href="ssh://tac@10.212.130.117">' + \
+                  e.console.console + '</a>' if e.console else ''
         appliance = e.appliance.appliance if e.appliance else ''
         vendor = e.vendor.vendor_name if e.vendor else ''
         vendor_model = e.vendor_model.vendor_model if e.vendor_model else ''

@@ -380,18 +380,23 @@ class UnitForm(ModelForm):
                     self.instance.ipmi_is_avaliable = False
             except (OSError, TypeError):
                 self.instance.ipmi_is_avaliable = False
+        owner = cleaned_data.get('owner')
         if self.has_changed():
-            #if not user.is_staff:
             cleaned_data['modified_by'] = user
             cleaned_data['modified'] = now().replace(microsecond=0)
+            if self.role >= 3:
+                raise ValidationError('Недостаточно прав!')
+            if owner:
+                if self.role > 1 and user != owner:
+                    raise ValidationError('Вам доступно бронирование только для себя.')
         else:
             if not modified_by:
                 cleaned_data['modified_by'] = None
             else:
+                pass
                 cleaned_data['modified_by'] = User.objects.get(id=modified_by)
         in_use = cleaned_data.get('in_use')
         has_ipmi = cleaned_data.get('has_ipmi')
-        owner = cleaned_data.get('owner')
         sn = cleaned_data.get('sn')
         unit_num = cleaned_data.get('unit_num')
         rack = cleaned_data.get('rack')
@@ -447,10 +452,6 @@ class UnitForm(ModelForm):
                     self.remove_fatboy(unit_num, old_model, rack)
         elif  model == None and old_model_units_takes > 1:
             self.remove_fatboy(unit_num, old_model, rack)
-
-        if self.has_changed():
-            if self.role >= 3:
-                raise ValidationError('Недостаточно прав!')
 
         return self.cleaned_data
 
