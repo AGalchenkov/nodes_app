@@ -147,17 +147,17 @@ def unit_detail(request, rack_id, unit_num, **kwargs):
             if unit_form.has_changed():
                 u = unit_form.save(commit=False)
                 u.save()
-                print(f'CHANGED ###   {unit_form.changed_data}')
                 if u.owner and 'expired_date' in unit_form.changed_data:
                     send_mail(
                         f'[NodesApp] Юнит забронирован {u} ',
                         '',
-                        #f'<a src="{request.META.get("HTTP_REFERER")}">мой юнит</a>\r\n\r\nДата истечения: {u.expired_date.strftime("%d/%m/%Y %H:%M")}',
                         '',
                         [f'{u.owner.email}'],
                         fail_silently=False,
                         html_message=f'<a href="{request.META.get("HTTP_REFERER")}">{u}</a><br><br>Дата истечения: {u.expired_date.strftime("%d/%m/%Y %H:%M")}'
                     )
+                    u.is_notifi_send = False
+                    u.save()
                 messages.success(request, 'Готово')
                 if u.expired_date:
                     delta = u.expired_date - datetime.datetime.now()

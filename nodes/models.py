@@ -457,7 +457,7 @@ class UnitForm(ModelForm):
     class Meta:
         model = Units
         fields = '__all__'
-        exclude = ['used_by_unit', 'comment', 'is_avaliable', 'ipmi_is_avaliable',]
+        exclude = ['used_by_unit', 'comment', 'is_avaliable', 'ipmi_is_avaliable', 'is_notifi_send']
         labels = {
             'g10': '10G',
             'g40': '40G',
