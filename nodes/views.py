@@ -671,6 +671,16 @@ def rack_to_json(request, rack_id, **kwargs):
         else:
             ipmi = ''
         owner = e.owner.username if e.owner else ''
+        exp = ''
+        if e.expired_date:
+            d =  e.expired_date - datetime.now()
+            if d.days:
+                exp += str(d.days) + ' d'
+            else:
+                if round(d.seconds / 60) > 60:
+                    exp = str(round(d.seconds / 3600)) + ' h'
+                else:
+                    exp = str(round(d.seconds / 60)) + ' m' if d.seconds > 60 else str(d.seconds) + ' s'
         console = '<a class="hover_bold my_lnk" href="ssh://tac@10.212.130.117">' + \
                   e.console.console + '</a>' if e.console else ''
         appliance = e.appliance.appliance if e.appliance else ''
@@ -696,7 +706,7 @@ def rack_to_json(request, rack_id, **kwargs):
         int += f' {e.g100}<span class="clr_gray">x100G</span>' if e.g100 else ''
         json_resp.append({
             'unit_num': unit_num, 'model': model, 'is_avaliable': is_avaliable, 'mng_ip': mng_ip,
-            'ipmi': ipmi, 'owner': owner, 'appliance': appliance, 'sn': sn, 'ram': ram, 'vendor': vendor,
+            'ipmi': ipmi, 'owner': owner, 'exp': exp, 'appliance': appliance, 'sn': sn, 'ram': ram, 'vendor': vendor,
             'console': console, 'vendor_model': vendor_model, 'pwr': pwr, 'int': int, 'comment': c
             })
     json_resp = json.dumps(json_resp)

@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -381,14 +381,22 @@ class UnitForm(ModelForm):
             except (OSError, TypeError):
                 self.instance.ipmi_is_avaliable = False
         owner = cleaned_data.get('owner')
+        unit_num = cleaned_data.get('unit_num')
+        rack = cleaned_data.get('rack')
         if self.has_changed():
             cleaned_data['modified_by'] = user
             cleaned_data['modified'] = now().replace(microsecond=0)
             if self.role >= 3:
                 raise ValidationError('Недостаточно прав!')
-            if owner:
-                if self.role > 1 and user != owner:
-                    raise ValidationError('Вам доступно бронирование только для себя.')
+            old_owner = Units.objects.get(rack=rack, unit_num=unit_num).owner
+            if 'owner' in self.changed_data and self.role > 1 and old_owner and old_owner != user:
+                #old_owner = Units.objects.get(rack=rack, unit_num=unit_num).owner
+                raise ValidationError('Вам не доступно изменение чужого бронирования.')
+            elif (('owner' in self.changed_data and owner and self.role > 1 and old_owner and old_owner == user) or
+                 ('owner' in self.changed_data and owner != user and self.role > 1 and not old_owner)):
+                raise ValidationError('Вам доступно бронирование только для себя.')
+            if self.role > 1 and owner and owner != user:
+                raise ValidationError('Вам не доступно изменение чужого бронирования.')
         else:
             if not modified_by:
                 cleaned_data['modified_by'] = None
@@ -398,8 +406,6 @@ class UnitForm(ModelForm):
         in_use = cleaned_data.get('in_use')
         has_ipmi = cleaned_data.get('has_ipmi')
         sn = cleaned_data.get('sn')
-        unit_num = cleaned_data.get('unit_num')
-        rack = cleaned_data.get('rack')
         model = cleaned_data.get('model')
         vendor = cleaned_data.get('vendor')
         power = cleaned_data.get('power')
@@ -407,8 +413,19 @@ class UnitForm(ModelForm):
         old_model = Units.objects.get(rack=rack, unit_num=unit_num).model
         old_model_units_takes = old_model.units_takes if hasattr(old_model, 'units_takes') else 0
 
+        if owner:
+            if not expired_date:
+                self.cleaned_data['expired_date'] = datetime.now() + timedelta(hours=8)
+            self.cleaned_data['in_use'] = True
+        else:
+            if expired_date:
+                if user != old_owner and self.role > 1:
+                    raise ValidationError('Указана только дата бронирования, укажите владельца.')
+            self.cleaned_data['in_use'] = False
+            self.cleaned_data['expired_date'] = None
+
         if expired_date:
-            delta = expired_date - datetime.datetime.now()
+            delta = expired_date - datetime.now()
             if delta.total_seconds() < 0:
                 raise ValidationError('Дата истечения брони меньше текущей.')
             if delta.total_seconds() < 900:
@@ -436,7 +453,6 @@ class UnitForm(ModelForm):
                     {sn_unit[0].rack.location} #{sn_unit[0].rack.rack_id} U{sn_unit[0].unit_num}</a>
                     '''
                 )
-        self.cleaned_data['in_use'] = True if owner else False
             #raise ValidationError('not in use unit must have no owner')
         if model:
             if old_model == model:

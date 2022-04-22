@@ -3,6 +3,7 @@ from datetime import datetime
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
+
 import django
 django.setup()
 
@@ -23,7 +24,6 @@ while True:
                                     '',
                                     '',
                                     [f'{u.owner.email}'],
-                                    auth_user='a.galchenkov@rdp.ru',
                                     fail_silently=False,
                                     html_message=f'''
                                         <a href="http://127.0.0.1:8080/nodes/rack/{u.rack_id}/unit_detail/{u.unit_num}">
@@ -35,6 +35,29 @@ while True:
                     u.save()
                     with open('sendmail.log', 'a+') as f:
                         f.write(f'{datetime.now()} SEND MAIL TO {u.owner.email} ABOUT EXPIRED {u}\r\n')
+                except Exception as e:
+                    with open('sendmail_error.log', 'a+') as f:
+                        f.write(f'{datetime.now()} {e}\r\n')
+            elif datetime.now() > u.expired_date:
+                try:
+                    send_mail(
+                                    f'[NodesApp] Бронь снята для {u} ',
+                                    '',
+                                    '',
+                                    [f'{u.owner.email}'],
+                                    fail_silently=False,
+                                    html_message=f'''
+                                        <a href="http://127.0.0.1:8080/nodes/rack/{u.rack_id}/unit_detail/{u.unit_num}">
+                                        {u}</a>
+                                        <br><br>Истекла: {u.expired_date.strftime("%d/%m/%Y %H:%M")}
+                                    '''
+                            )
+                    u.owner = None
+                    u.expired_date = None
+                    u.is_notifi_send = False
+                    u.save()
+                    with open('sendmail.log', 'a+') as f:
+                        f.write(f'{datetime.now()} SEND MAIL TO {u.owner.email} ABOUT RELEASE {u}\r\n')
                 except Exception as e:
                     with open('sendmail_error.log', 'a+') as f:
                         f.write(f'{datetime.now()} {e}\r\n')
