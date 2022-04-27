@@ -2,16 +2,19 @@ from datetime import datetime, timedelta
 
 from django.db import models
 from django.contrib.auth.models import User
-from django.forms import ModelForm, Textarea, CharField, ChoiceField, Field, BooleanField, HiddenInput, DateTimeField
+from django.forms import ModelForm, Textarea, CharField, ChoiceField, Field, BooleanField, \
+                         HiddenInput, DateTimeField, IntegerField
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.utils.timezone import now
 from bootstrap_modal_forms.forms import BSModalModelForm
 from functions.ping import ping
 from simple_history.models import HistoricalRecords
+import ipaddress
+from django.utils.ipv6 import is_valid_ipv6_address
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
-
-#from ping3 import ping
 
 class Customers(models.Model):
     customer = models.CharField(unique=True, max_length=50)
@@ -51,22 +54,27 @@ class Interfaces(models.Model):
     g10 = models.IntegerField(default=0,
         validators=[
             MinValueValidator(0, message='Отрицательное значение'),
-            MaxValueValidator(52, message='Слишком большое значение(макс. 52)'),
+            MaxValueValidator(52, message='Максимальное значение 52'),
         ]
     )
     g40 = models.IntegerField(default=0,
         validators=[
             MinValueValidator(0, message='Отрицательное значение'),
-            MaxValueValidator(52, message='Слишком большое значение(макс. 52)'),
+            MaxValueValidator(52, message='Максимальное значение 52'),
         ]
     )
     g100 = models.IntegerField(default=0,
         validators=[
             MinValueValidator(0, message='Отрицательное значение'),
-            MaxValueValidator(52, message='Слишком большое значение(макс. 52)'),
+            MaxValueValidator(52, message='Максимальное значение 52'),
         ]
     )
 
+
+class RdpModels(models.Model):
+    rdp_model = models.CharField(unique=True, max_length=20)
+    def __str__(self):
+        return self.rdp_model
 
 class Models(models.Model):
     model_name = models.CharField(unique=True, max_length=20)
@@ -77,6 +85,8 @@ class Models(models.Model):
             MaxValueValidator(5, message='Слишком большое значение(макс. 5)'),
         ]
     )
+    is_rdp = models.BooleanField(default=False)
+    rdp_name = models.ForeignKey(RdpModels, null=True, blank=True, on_delete=models.RESTRICT)
 
     def __str__(self):
         return self.model_name
@@ -178,32 +188,33 @@ class Units(models.Model):
         ]
     )
     model = models.ForeignKey(Models, null=True, blank=True, on_delete=models.RESTRICT)
-    ram = models.ForeignKey(Ram,null=True, blank=True, on_delete=models.RESTRICT)
-    vendor = models.ForeignKey(Vendors,null=True, blank=True, on_delete=models.RESTRICT)
-    power = models.ForeignKey(PowerSupply,null=True, blank=True, on_delete=models.RESTRICT)
+    ram = models.ForeignKey(Ram, null=True, blank=True, on_delete=models.RESTRICT)
+    vendor = models.ForeignKey(Vendors, null=True, blank=True, on_delete=models.RESTRICT)
+    power = models.ForeignKey(PowerSupply, null=True, blank=True, on_delete=models.RESTRICT)
     vendor_model = models.ForeignKey(VendorModels,null=True, blank=True, on_delete=models.RESTRICT)
-    console = models.ForeignKey(Consoles,null=True, blank=True, on_delete=models.RESTRICT)
+    console = models.ForeignKey(Consoles, null=True, blank=True, on_delete=models.RESTRICT)
     mng_ip = models.GenericIPAddressField(blank=True, null=True)
     ipmi_bmc = models.GenericIPAddressField(blank=True, null=True)
     has_ipmi = models.BooleanField(default=False)
     ipmi_is_avaliable = models.BooleanField(default=False)
     appliance = models.ForeignKey(Appliances, null=True, blank=True, default=None,  on_delete=models.RESTRICT)
+    rdp_firmware = models.CharField(blank=True, max_length=30)
     g10 = models.IntegerField(default=0,
         validators=[
             MinValueValidator(0, message='Отрицательное значение'),
-            MaxValueValidator(52, message='Слишком большое значение(макс. 52)'),
+            MaxValueValidator(52, message='Максимальное значение 52'),
         ]
     )
     g40 = models.IntegerField(default=0,
         validators=[
             MinValueValidator(0, message='Отрицательное значение'),
-            MaxValueValidator(52, message='Слишком большое значение(макс. 52)'),
+            MaxValueValidator(52, message='Максимальное значение 52'),
         ]
     )
     g100 = models.IntegerField(default=0,
         validators=[
             MinValueValidator(0, message='Отрицательное значение'),
-            MaxValueValidator(52, message='Слишком большое значение(макс. 52)'),
+            MaxValueValidator(52, message='Максимальное значение 52'),
         ]
     )
     is_avaliable = models.BooleanField(default=False)
@@ -277,6 +288,8 @@ class UnitForm(ModelForm):
     comment_author = CharField(disabled=True, required=False)
     comment_pub_date = CharField(disabled=True, required=False)
     modified_by = CharField(disabled=True, required=False)
+    mng_ip = Field(required=False, error_messages={'invalid': 'Введите верный ipv4/ipv6 адрес.'})
+    ipmi_bmc = Field(required=False, error_messages={'invalid': 'Введите верный ipv4/ipv6 адрес.'})
     #ram = CharField(required=False, disabled=True)
     field_order = [
         'in_use', 'owner', 'rack', 'unit_num', 'model', 'vendor', 'power', 'vendor_model',
@@ -585,7 +598,10 @@ class SearchForm(ModelForm):
 
     class Meta:
         model = Units
-        exclude = ['used_by_unit', 'in_use', 'unit_num', 'console', 'modified', 'modified_by', 'expired_date', 'g10', 'g40', 'g100', 'ipmi', 'ipmi_is_avaliable']
+        exclude = ['used_by_unit', 'in_use', 'unit_num', 'console',
+                   'modified', 'modified_by', 'expired_date', 'g10',
+                   'g40', 'g100', 'ipmi', 'ipmi_is_avaliable', 'rdp_firmware', 'is_notifi_send'
+        ]
 
 class UnitCreateForm(ModelForm):
     comment = CharField(widget=Textarea(attrs={'cols': 40, 'rows': 3}), required=False)

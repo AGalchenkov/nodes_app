@@ -1,6 +1,8 @@
 from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
-from .models import Models, Customers, Locations, Racks, Units, Comments, PowerSupply, Vendors, VendorModels, Consoles, Appliances, LittleSecret, TelegramUser
+from .models import Models, Customers, Locations, Racks, Units, Comments, \
+                    PowerSupply, Vendors, VendorModels, Consoles, Appliances, \
+                    LittleSecret, TelegramUser, RdpModels
 
 admin.site.register(Models)
 admin.site.register(Customers)
@@ -15,3 +17,4 @@ admin.site.register(Consoles)
 admin.site.register(Appliances)
 admin.site.register(LittleSecret)
 admin.site.register(TelegramUser)
+admin.site.register(RdpModels)

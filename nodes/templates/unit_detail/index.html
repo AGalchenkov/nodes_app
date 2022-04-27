@@ -23,124 +23,68 @@
                     </li>
                 </ul>
                 {% endfor %}
-                <div class="fieldWrapper_gray short_field">
-                    <div class="field">
-                        <label for="{{ form.rack.id_for_label }}">Rack:</label>
-                        {{ form.rack }}
-                    </div>
-                    <div class="field">
-                        <label for="{{ form.unit_num.id_for_label }}">Unit Num:</label>
-                        {{ form.unit_num }}
-                    </div>
-                     <div class="field">
-                        <!--space -->
-                    </div>
-                    <div class="field">
-                        <label for="{{ form.owner.id_for_label }}">Owner:</label>
-                        {{ form.owner }}
-                    </div>
-                    <div class="field">
-                        <!--space -->
-                    </div>
-                    <div class="field">
-                        <label for="{{ form.expired_date.id_for_label }}">Owner Till:</label>
-                        {{ form.expired_date }}
-                        {{ form.expired_date.errors }}
+                <div class="fieldWrapper_gray short_field"><div class="field">
+                        <label for="{{ form.rack.id_for_label }}">Rack:</label>{{ form.rack }}
+                    </div><div class="field">
+                        <label for="{{ form.unit_num.id_for_label }}">Unit Num:</label>{{ form.unit_num }}
+                    </div><div class="field">
+                         <label></label><input type="text" disabled class="space_input"><!--space -->
+                    </div><div class="field">
+                        <label for="{{ form.owner.id_for_label }}">Owner:</label>{{ form.owner }}
+                    </div><div class="field">
+                        <label></label><input type="text" disabled class="space_input"><!--space -->
+                    </div><div class="field">
+                        <label for="{{ form.expired_date.id_for_label }}">Owner Till:</label>{{ form.expired_date }}{{ form.expired_date.errors }}
                     </div>
                 </div>
-                <div class="fieldWrapper_gray short_field">
-                    <div class="field">
-                        <label for="{{ form.model.id_for_label }}">Model:</label>
-                        {{ form.model }}
-                    </div>
-                    <div class="field">
-                        <label for="{{ form.vendor.id_for_label }}">Vendor:</label>
-                        {{ form.vendor }}
-                    </div>
-                    <div class="field">
-                        <label for="{{ form.power.id_for_label }}">Power:</label>
-                        {{ form.power }}
-                    </div>
-                    <div class="field">
-                        <label for="{{ form.vendor_model.id_for_label }}">Vendor Model:</label>
-                        {{ form.vendor_model }}
-                    </div>
-                    <div class="field">
-                        <label for="{{ form.appliance.id_for_label }}">Appliance:</label>
-                        {{ form.appliance }}
-                    </div>
-                    <div class="field">
-                        <label for="{{ form.ram.id_for_label }}">Ram:</label>
-                        {{ form.ram }}
-                    </div>
-                    <div class="field">
-                        <label for="{{ form.sn.id_for_label }}">SN:</label>
-                        {{ form.sn }}
-                        {{ form.sn.errors}}
-                    </div>
-                    <div class="field">
-                        <label for="{{ form.hostname.id_for_label }}">Hostname:</label>
-                        {{ form.hostname }}
-                        {{ form.hostname.errors}}
+                <div class="fieldWrapper_gray short_field"><div class="field">
+                        <label for="{{ form.model.id_for_label }}">Model:</label>{{ form.model }}
+                    </div><div class="field">
+                        <label for="{{ form.vendor.id_for_label }}">Vendor:</label>{{ form.vendor }}
+                    </div><div class="field">
+                        <label for="{{ form.power.id_for_label }}">Power:</label>{{ form.power }}
+                    </div><div class="field">
+                        <label for="{{ form.vendor_model.id_for_label }}">Vendor Model:</label>{{ form.vendor_model }}
+                    </div><div class="field">
+                        <label for="{{ form.appliance.id_for_label }}">Appliance:</label>{{ form.appliance }}
+                    </div><div class="field">
+                        <label for="{{ form.ram.id_for_label }}">Ram:</label>{{ form.ram }}
+                    </div><div class="field">
+                        <label for="{{ form.sn.id_for_label }}">SN:</label>{{ form.sn }}{{ form.sn.errors}}
+                    </div><div class="field">
+                        <label for="{{ form.hostname.id_for_label }}">Hostname:</label>{{ form.hostname }}{{ form.hostname.errors}}
+                    </div><div class="field">
+                        <label for="{{ form.rdp_firmware.id_for_label }}">RDP Firmware:</label>{{ form.rdp_firmware }}{{ form.rdp_firmware.errors}}
                     </div>
                 </div>
-                <div class="fieldWrapper_gray short_field">
-                    <div class="field">
-                        <label for="{{ form.has_ipmi.id_for_label }}">Has IPMI:</label>
-                        {{ form.has_ipmi }}
-                    </div>
-                    <div class="field">
-                        <label for="{{ form.ipmi_bmc.id_for_label }}">IPMI/BMC:</label>
-                        {{ form.ipmi_bmc }}
-                        {{ form.ipmi_bmc.errors }}
-                    </div>
-                    <div class="field">
-                        <label for="{{ form.console.id_for_label }}">Console:</label>
-                        {{ form.console }}
-                    </div>
-                    <div class="field">
-                        <label for="{{ form.mng_ip.id_for_label }}">Mng Ip:</label>
-                        {{ form.mng_ip }}
-                        {{ form.mng_ip.errors }}
-                    </div>
-                    <div class="field">
-                        <label for="{{ form.g10.id_for_label }}">10G:</label>
-                        {{ form.g10 }}
-                        {{ form.g10.errors }}
-                    </div>
-                    <div class="field"></div>
-                    <div class="field">
-                        <label for="{{ form.g100.id_for_label }}">100G:</label>
-                        {{ form.g100 }}
-                        {{ form.g100.errors }}
-                    </div>
-                    <div class="field">
-                        <label for="{{ form.g40.id_for_label }}">40G:</label>
-                        {{ form.g40 }}
-                        {{ form.g40.errors }}
+                <div class="fieldWrapper_gray short_field"><div class="field">
+                        <label for="{{ form.has_ipmi.id_for_label }}">Has IPMI:</label>{{ form.has_ipmi }}
+                    </div><div class="field">
+                        <label for="{{ form.ipmi_bmc.id_for_label }}">IPMI/BMC:</label>{{ form.ipmi_bmc }}{{ form.ipmi_bmc.errors }}
+                    </div><div class="field">
+                        <label for="{{ form.console.id_for_label }}">Console:</label>{{ form.console }}
+                    </div><div class="field">
+                        <label for="{{ form.mng_ip.id_for_label }}">Mng Ip:</label>{{ form.mng_ip }}{{ form.mng_ip.errors }}
+                    </div><div class="field">
+                        <label for="{{ form.g10.id_for_label }}">10G:</label>{{ form.g10 }}{{ form.g10.errors }}
+                    </div><div class="field">
+                        <label></label><input type="text" disabled class="space_input">
+                    </div><div class="field">
+                        <label for="{{ form.g100.id_for_label }}">100G:</label>{{ form.g100 }}{{ form.g100.errors }}
+                    </div><div class="field">
+                        <label for="{{ form.g40.id_for_label }}">40G:</label>{{ form.g40 }}{{ form.g40.errors }}
                     </div>
                 </div>
-                <div class="fieldWrapper_gray short_field">
-                    <div class="field">
-                        <label for="{{ form.modified.id_for_label }}">Modified:</label>
-                        {{ form.modified }}
-                    </div>
-                    <div class="field">
-                        <label for="{{ form.modified_by.id_for_label }}">Modified By:</label>
-                        {{ form.modified_by }}
-                    </div>
-                    <div class="field">
-                        <label for="{{ form.comment_pub_date.id_for_label }}">Comment Pub Date:</label>
-                        {{ form.comment_pub_date }}
-                    </div>
-                    <div class="field">
-                        <label for="{{ form.comment_author.id_for_label }}">Comment Author:</label>
-                        {{ form.comment_author }}
-                    </div>
-                    <div class="field">
-                        <label for="{{ form.comment.id_for_label }}">Comment:</label>
-                        {{ form.comment }}
-                        {{ form.comment.errors }}
+                <div class="fieldWrapper_gray short_field"><div class="field">
+                        <label for="{{ form.modified.id_for_label }}">Modified:</label>{{ form.modified }}
+                    </div><div class="field">
+                        <label for="{{ form.modified_by.id_for_label }}">Modified By:</label>{{ form.modified_by }}
+                    </div><div class="field">
+                        <label for="{{ form.comment_pub_date.id_for_label }}">Comment Pub Date:</label>{{ form.comment_pub_date }}
+                    </div><div class="field">
+                        <label for="{{ form.comment_author.id_for_label }}">Comment Author:</label>{{ form.comment_author }}
+                    </div><div class="field">
+                        <label for="{{ form.comment.id_for_label }}">Comment:</label>{{ form.comment }}{{ form.comment.errors }}
                     </div>
                 </div>
 
@@ -207,7 +151,6 @@
 
 <script>
     $(document).ready(function(){
-
         $(function () {
             $("#id_expired_date").datetimepicker({
                 format: 'd-m-Y H:i',

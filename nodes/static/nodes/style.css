@@ -1142,6 +1142,7 @@ label {
     font-size: 1rem;
     color: #484848;
     font-weight: 500;
+    line-height: 2em;
 }
 
 .logo {
@@ -1519,5 +1520,9 @@ td.comment li {
 .hover_bold {}
 .hover_bold:hover {
     font-weight: bold;
+}
+
+input[type="text"].space_input:not(.browser-default):disabled {
+    border: 1px solid white !important;
 }
 

@@ -190,7 +190,6 @@ def unit_detail(request, rack_id, unit_num, **kwargs):
 
     return render(request, 'unit_detail/index.html', context)
 
-
 #@login_required
 @set_role_context
 @flask_session_required
@@ -206,6 +205,12 @@ def search(request, **kwargs):
         qs = Units.objects.all()
         for key, val in request.POST.items():
             if key == 'csrfmiddlewaretoken':
+                continue
+            if key == 'mng_ip' and val != '':
+                qs = qs.filter(mng_ip__icontains=val)
+                continue
+            if key == 'ipmi_bmc' and val != '':
+                qs = qs.filter(ipmi_bmc__icontains=val)
                 continue
             if key == 'comment' and val != '':
                 qs = qs.filter(comment__text__icontains=val)
@@ -387,8 +392,15 @@ def create_rack(request, **kwargs):
 def csv_view(request, *args, **kwargs):
     qs = Units.objects.all()
     for key, val in request.POST.items():
+        print(key)
         if key == 'csrfmiddlewaretoken':
             continue
+        if key == 'mng_ip' and val != '':
+            qs = qs.filter(mng_ip__icontains=val)
+            continue
+        if key == 'ipmi_bmc' and val != '':
+                qs = qs.filter(ipmi_bmc__icontains=val)
+                continue
         if key == 'comment' and val != '':
             qs = qs.filter(comment__text__icontains=val)
             continue
