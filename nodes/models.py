@@ -429,6 +429,7 @@ class UnitForm(ModelForm):
         if owner:
             if not expired_date:
                 self.cleaned_data['expired_date'] = datetime.now() + timedelta(hours=8)
+                self.changed_data.append('expired_date')
             self.cleaned_data['in_use'] = True
         else:
             if expired_date:

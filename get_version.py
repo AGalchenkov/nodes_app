@@ -33,6 +33,7 @@ for u in units:
                         print(f'{u.mng_ip} -> version : {version}')
                         u.rdp_firmware = version
                         u.save()
+                        continue
                 except StopIteration:
                     continue
         except Exception as e:
