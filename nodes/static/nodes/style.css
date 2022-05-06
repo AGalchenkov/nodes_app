@@ -227,6 +227,10 @@ tbody td.bg_green:hover {
     		background-color: #3caa3c;
 }
 
+.bg_white {
+        background-color: white;
+}
+
 .bg_red {
     		background-color: red;
 }
@@ -327,12 +331,11 @@ tbody td.bg_green:hover {
 }
 
 .none_status {
-        background-color: white;
+        background-color: gray;
         display: inline-block;
         width: 12px;
         height: 12px;
         border-radius: 50%;
-        border: 3px solid #dfdddd;
         box-sizing: border-box;
 }
 
@@ -1398,6 +1401,14 @@ td.comment li {
     background-color: #6e7fe8;
 }
 
+.gray {
+    background-color: gray;
+}
+
+.empty {
+    background-color: transparent;
+}
+
 .status {
     display: inline-block;
     width: 10px;
@@ -1526,3 +1537,46 @@ input[type="text"].space_input:not(.browser-default):disabled {
     border: 1px solid white !important;
 }
 
+.mrg_100px {
+    margin: 100px;
+}
+.rack_vis {
+    width: 33%;
+}
+.rack_vis tr {
+    border:none;
+    height: 21px;
+}
+
+.rack_vis tr:hover td:first-child {
+    font-weight: bold;
+}
+.rack_vis td {
+    text-align: center;
+    border: none;
+}
+.rack_vis td:nth-child(2) {
+    border: 4px solid rgb(185, 185, 185);
+    background-color: white;
+    min-width: 249px;
+}
+.rack_vis span {
+    display: inline-block;
+    min-width: 150px;
+}
+.unit_filled {
+    background-color: #0e5986 !important;
+    color: white;
+    font-weight: bold;
+}
+
+.px10 {
+    width: 10px;
+    height: 10px;
+}
+
+.my-btn {
+    background: white;
+    box-shadow: 0 0 15px #d7d7d7;
+    display: inline-block;
+}

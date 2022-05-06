@@ -49,14 +49,17 @@
     {% if not 'rack_list' in request.path %}
         <li><a href="{% url 'nodes:rack_list' %}">Список стоек</a></li>
     {% endif %}
-    {% if 'unit_detail' in request.path %}
+    {% if 'unit_detail' in request.path or 'rack_visual' in request.path %}
         <li><a href="{% url 'nodes:rack' rack_id %}">Текущая стойка</a></li>
     {% endif %}
     {% if not 'search' in request.path  %}
         <li><a href="{% url 'nodes:search' %}">Поиск</a></li>
     {% endif %}
+    {% if 'rack/' in request.path and 'unit_detail' not in request.path  %}
+        <li><a class="modal-trigger" href="#create-modal">Общий вид</a></li>
+    {% endif %}
     {% if role < 2 and 'create_rack' not in request.path%}
-    <li><a href="{% url 'nodes:create_rack' %}">Создать стойку</a></li>
+    <li><a class="modal-trigger" href="#create-modal" href="{% url 'nodes:create_rack' %}">Создать стойку</a></li>
     {% endif %}
 </ul>
 
@@ -103,11 +106,14 @@
                 {% if not 'rack_list' in request.path %}
                     <li><a href="{% url 'nodes:rack_list' %}">Список стоек</a></li>
                 {% endif %}
-                {% if 'unit_detail' in request.path %}
+                {% if 'unit_detail' in request.path or 'rack_visual' in request.path %}
                     <li><a href="{% url 'nodes:rack' rack_id %}" title="{{rack}}">Текущая стойка</a></li>
                 {% endif %}
                 {% if not 'search' in request.path  %}
                     <li><a href="{% url 'nodes:search' %}">Поиск</a></li>
+                {% endif %}
+                {% if 'rack/' in request.path and 'unit_detail' not in request.path  %}
+                    <li><a class="modal-trigger" href="#create-modal">Общий вид</a></li>
                 {% endif %}
                 {% if role < 2 and 'create_rack' not in request.path %}
                     <li><a href="{% url 'nodes:create_rack' %}">Создать стойку</a></li>
@@ -115,7 +121,6 @@
             </ul>
         </div>
     </nav>
-
 
 {% if messages %}
     {% for message in messages %}

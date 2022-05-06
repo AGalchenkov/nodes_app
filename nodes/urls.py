@@ -9,6 +9,7 @@ urlpatterns = [
     path('', views.RackListView.as_view(), name='rack_list'),
     path('nodes/rack_list/', views.RackListView.as_view(), name='rack_list'),
     path('nodes/rack/<int:rack_id>', views.rack, name='rack'),
+    path('nodes/rack_visual/<int:rack_id>', views.rack_vizual, name='rack_visual'),
     path('nodes/rack_to_json/<int:rack_id>', views.rack_to_json, name='rack_to_json'),
     path('nodes/rack/<int:rack_id>/unit_detail/<int:unit_num>', views.unit_detail, name='unit_detail'),
     path('nodes/rack/<int:rack_id>/unit_creat/<int:unit_num>', views.unit_create, name='unit_create'),

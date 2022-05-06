@@ -190,6 +190,34 @@ def unit_detail(request, rack_id, unit_num, **kwargs):
 
     return render(request, 'unit_detail/index.html', context)
 
+@set_role_context
+@flask_session_required
+@flask_permission_required()
+def rack_vizual(request, rack_id, **kwargs):
+    units = Units.objects.filter(rack_id=rack_id)
+    Units.must_continue = False
+    Units.rowspan = 0
+    Units.used_model = ''
+    for u in units:
+        if u.used_by_unit:
+            n = int(u.used_by_unit)-1
+            if u.unit_num != int(u.used_by_unit) + units[n].model.units_takes - 1:
+                u.must_continue = True
+                continue
+            u.rowspan = units[n].model.units_takes
+            u.used_model = units[n].model
+            u.used_comment= units[n].comment
+        if u.model and u.model.units_takes > 1:
+            u.must_continue = True
+    units = reversed(units)
+    context = {
+        'rack_id': rack_id,
+        'units': units,
+        'role': kwargs['role'],
+        'user': kwargs['user'],
+    }
+    return render(request, 'rack_visual/index.html', context)
+
 #@login_required
 @set_role_context
 @flask_session_required
