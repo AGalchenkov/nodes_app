@@ -87,11 +87,11 @@
                     behavior: "smooth"
                 });
             {% endif %}
-            $('input[type="text"]').outerWidth(75, false);
+            $('input').outerWidth(75, false);
             $('select').outerWidth(75, false);
             $('textarea').outerWidth(75, false);
             $('.select2-container').outerWidth(75, false);
-            $('.custom-submit').offset({left: 0}).outerWidth(30, false);
+            $('.custom-submit').offset({left: 0}).outerWidth(30, false).css({'position': 'absolute', 'left': '-35px'});
             $('.unit_dtl_main_conteiner').css({'padding-right': '0px', 'padding-left': '30px', 'margin-left': '0px'});
             $('.small_tbl_cnt_search').css('margin-left', '40px')
             $('.search').css('display', 'inline-block');

@@ -324,6 +324,7 @@ def search(request, **kwargs):
             'power': request.POST['power'],
             'vendor_model': request.POST['vendor_model'],
             'appliance': request.POST['appliance'],
+            'ram': request.POST['ram'],
             'sn': sn,
             'mng_ip': mng_ip,
             'ipmi_bmc': ipmi_bmc,
@@ -346,6 +347,7 @@ def search(request, **kwargs):
             'power': request.POST['power'],
             'vendor_model': request.POST['vendor_model'],
             'appliance': request.POST['appliance'],
+            'ram': request.POST['ram'],
             'sn': sn,
             'mng_ip': mng_ip,
             'ipmi_bmc': ipmi_bmc,
@@ -724,6 +726,7 @@ def rack_to_json(request, rack_id, **kwargs):
         console = '<a class="hover_bold my_lnk" href="ssh://tac@10.212.130.117">' + \
                   e.console.console + '</a>' if e.console else ''
         appliance = e.appliance.appliance if e.appliance else ''
+        rdp_firmware = e.rdp_firmware if e.rdp_firmware else ''
         vendor = e.vendor.vendor_name if e.vendor else ''
         vendor_model = e.vendor_model.vendor_model if e.vendor_model else ''
         pwr = e.power.power if e.power else ''
@@ -746,8 +749,9 @@ def rack_to_json(request, rack_id, **kwargs):
         int += f' {e.g100}<span class="clr_gray">x100G</span>' if e.g100 else ''
         json_resp.append({
             'unit_num': unit_num, 'model': model, 'is_avaliable': is_avaliable, 'mng_ip': mng_ip,
-            'ipmi': ipmi, 'owner': owner, 'exp': exp, 'appliance': appliance, 'sn': sn, 'ram': ram, 'vendor': vendor,
-            'console': console, 'vendor_model': vendor_model, 'pwr': pwr, 'int': int, 'comment': c
+            'ipmi': ipmi, 'owner': owner, 'exp': exp, 'appliance': appliance, 'rdp_firmware': rdp_firmware, 'sn': sn,
+            'ram': ram, 'vendor': vendor, 'console': console, 'vendor_model': vendor_model, 'pwr': pwr,
+            'int': int, 'comment': c
             })
     json_resp = json.dumps(json_resp)
 
