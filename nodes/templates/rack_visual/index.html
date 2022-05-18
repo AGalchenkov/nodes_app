@@ -90,15 +90,12 @@
         $(document).ready(function() {
             $('.row').on("mouseenter", function() {
                 var elem = $(this).find("td");
-                //if tds[0].data()
                 var data = elem[0].dataset.parent
                 if (data) {
-                    //var tds = $('.unit_num')
                     $('.unit_num[data-parent=' + data + ']').addClass('rack_vis_td_hover')
                     $("td").filter(function() {
                         return $(this).text() === data;
                     }).addClass('rack_vis_td_hover')
-                    var b = 1
                 }
 
             })

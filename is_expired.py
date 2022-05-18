@@ -54,6 +54,7 @@ while True:
                             )
                     u.owner = None
                     u.expired_date = None
+                    u.in_use = False
                     u.is_notifi_send = False
                     u.save()
                     with open('sendmail.log', 'a+') as f:
