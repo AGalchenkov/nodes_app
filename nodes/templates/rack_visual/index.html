@@ -1,0 +1,120 @@
+{% load static %}
+<script type="text/javascript" src="{% static 'js/jquery-3.6.0.js' %}"></script>
+    <table class="rack_vis">
+   {% for u in units %}
+    <tr class="row">
+        {% if u.used_by_unit %}
+            <td class="unit_num" data-parent="{{u.used_by_unit}}">{{u.unit_num}}</td>
+            {% if u.must_continue %}
+                <!-- continue -->
+            {% else %}
+                <td class="unit_filled" rowspan="{{u.rowspan}}" title="{{u.used_comment}}">
+                    {% if u.mng_ip %}
+                        {% if u.is_avaliable %}
+                            <div class="green_status px10" title="mng_ip UP"></div>
+                        {% else%}
+                            <div class="red_status px10" title="mng_ip DOWN"></div>
+                        {% endif %}
+                    {% else %}
+                        <div class="none_status px10" title="mng_ip NOT set"></div>
+                    {% endif %}
+                    {% if u.ipmi_bmc %}
+                        {% if u.ipmi_is_avaliable %}
+                            <div class="green_status px10" title="ipmi UP"></div>
+                        {% else %}
+                            <div class="red_status px10" title="ipmi DOWN"></div>
+                        {% endif %}
+                    {% else %}
+                        {% if u.has_ipmi%}
+                            <div class="blue_status px10" title="has ipmi"></div>
+                        {% else %}
+                            <div class="empty_status px10"></div>
+                        {% endif %}
+                    {% endif %}
+                    {% if u.owner %}
+                        <i class="material-icons md-light" style="width:12px; font-size:12px;" title="{{u.owner}}">persone</i>
+                    {% else %}
+                        <i class="material-icons md-light" style="width:12px; font-size:12px;"></i>
+                    {% endif %}
+                    <span>{{u.used_model}}</span>
+                </td>
+            {% endif %}
+        {% else %}
+            <td>{{u.unit_num}}</td>
+        {% endif %}
+        {% if u.model %}
+            {% if u.must_continue %}
+                <!-- continue -->
+            {% else %}
+                <td class="unit_filled" title="{{u.comment}}">
+                {% if u.mng_ip %}
+                        {% if u.is_avaliable %}
+                            <div class="green_status px10" title="mng_ip UP"></div>
+                        {% else%}
+                            <div class="red_status px10" title="mng_ip DOWN"></div>
+                        {% endif %}
+                    {% else %}
+                        <div class="none_status px10" title="mng_ip NOT set"></div>
+                    {% endif %}
+                    {% if u.ipmi_bmc %}
+                        {% if u.ipmi_is_avaliable %}
+                            <div class="green_status px10" title="ipmi UP"></div>
+                        {% else %}
+                            <div class="red_status px10" title="ipmi DOWN"></div>
+                        {% endif %}
+                    {% else %}
+                        {% if u.has_ipmi%}
+                            <div class="blue_status px10" title="has ipmi"></div>
+                        {% else %}
+                            <div class="empty_status px10"></div>
+                        {% endif %}
+                    {% endif %}
+                    {% if u.owner %}
+                        <i class="material-icons md-light" style="width:12px; font-size:12px;" title="{{u.owner}}">persone</i>
+                    {% else %}
+                        <i class="material-icons md-light" style="width:12px; font-size:12px;"></i>
+                    {% endif %}
+                    <span>{{u.model}}</span>
+                </td>
+            {% endif %}
+        {% else %}
+            {% if not u.used_by_unit %}
+                <td></td>
+            {% endif %}
+        {% endif %}
+    </tr>
+   {% endfor %}
+</table>
+
+        <script>
+        $(document).ready(function() {
+            $('.row').on("mouseenter", function() {
+                var elem = $(this).find("td");
+                //if tds[0].data()
+                var data = elem[0].dataset.parent
+                if (data) {
+                    //var tds = $('.unit_num')
+                    $('.unit_num[data-parent=' + data + ']').addClass('rack_vis_td_hover')
+                    $("td").filter(function() {
+                        return $(this).text() === data;
+                    }).addClass('rack_vis_td_hover')
+                    var b = 1
+                }
+
+            })
+            $('.row').on("mouseleave", function() {
+                var elem = $(this).find("td");
+                //if tds[0].data()
+                var data = elem[0].dataset.parent
+                if (data) {
+                    //var tds = $('.unit_num')
+                    $('.unit_num[data-parent=' + data + ']').removeClass('rack_vis_td_hover')
+                    $("td").filter(function() {
+                        return $(this).text() === data;
+                    }).removeClass('rack_vis_td_hover')
+                    var b = 1
+                }
+
+            })
+        })
+    </script>

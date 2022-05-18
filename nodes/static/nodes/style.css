@@ -1570,8 +1570,13 @@ input[type="text"].space_input:not(.browser-default):disabled {
     display: inline-block;
     min-width: 150px;
 }
+
+.rack_vis_td_hover {
+    background: #eaeaea !important;
+    font-weight: bold;
+}
 .unit_filled {
-    background-color: #3949ab !important;
+    background-color: #2e3b8a !important;
     color: white;
     font-weight: bold;
 }
