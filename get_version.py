@@ -18,7 +18,7 @@ while True:
     for u in units:
         if u.mng_ip and u.is_avaliable:
             try:
-                with pexpect.spawn(f"ssh -i /home/gal/.ssh/dev -oStrictHostKeyChecking=no root@{u.mng_ip}", timeout=5, encoding="utf-8") as ssh:
+                with pexpect.spawn(f"ssh -i ~/.ssh/dev -oStrictHostKeyChecking=no root@{u.mng_ip}", timeout=5, encoding="utf-8") as ssh:
                     ssh.expect("#")
                     ssh.sendline('ecw -c "sh version"')
                     ssh.expect("#")

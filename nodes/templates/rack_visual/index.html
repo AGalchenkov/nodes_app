@@ -46,7 +46,11 @@
             {% if u.must_continue %}
                 <!-- continue -->
             {% else %}
-                <td class="unit_filled" title="{{u.comment}}">
+                {% if u.model.is_rdp %}
+                    <td class="unit_filled" title="{{u.comment}}">
+                {% else %}
+                    <td class="unit_filled not_rdp_eqp" title="{{u.comment}}">
+                {% endif %}
                 {% if u.mng_ip %}
                         {% if u.is_avaliable %}
                             <div class="green_status px10" title="mng_ip UP"></div>
@@ -79,7 +83,7 @@
             {% endif %}
         {% else %}
             {% if not u.used_by_unit %}
-                <td></td>
+                <td class="unit_empty"></td>
             {% endif %}
         {% endif %}
     </tr>
