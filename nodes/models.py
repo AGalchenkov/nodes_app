@@ -266,15 +266,12 @@ class UnitRebaseForm(ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        print(f'CLEANED DATA:    {cleaned_data}')
         rack = cleaned_data.get('rack')
         unit_num = cleaned_data.get('unit_num')
         model = Units.objects.get(rack=rack, unit_num=unit_num).model
-        print(model)
         if Units.objects.get(rack=rack, unit_num=unit_num).model:
             raise ValidationError('Юнит назначения занят')
         return self.cleaned_data
-
 
 
 class UnitForm(ModelForm):
