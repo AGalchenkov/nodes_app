@@ -23,6 +23,10 @@ class Customers(models.Model):
 
 class Locations(models.Model):
     rack_location = models.CharField(unique=True, max_length=50)
+
+    class Meta:
+        verbose_name_plural = 'Locations'
+
     def __str__(self):
         return self.rack_location
 
@@ -46,6 +50,7 @@ class Racks(models.Model):
     class Meta:
         unique_together = ['rack_id', 'location']
         ordering = ['location', 'rack_id']
+        verbose_name_plural = 'Racks'
 
     def __str__(self):
         return f'{self.location} #{self.rack_id} ({self.units_num}U)'
@@ -70,9 +75,16 @@ class Interfaces(models.Model):
         ]
     )
 
+    class Meta:
+        verbose_name_plural = 'Interfaces'
+
 
 class RdpModels(models.Model):
     rdp_model = models.CharField(unique=True, max_length=20)
+
+    class Meta:
+        verbose_name_plural = 'RdpModels'
+
     def __str__(self):
         return self.rdp_model
 
@@ -85,14 +97,22 @@ class Models(models.Model):
             MaxValueValidator(5, message='Слишком большое значение(макс. 5)'),
         ]
     )
+    active = models.BooleanField(default=True)
     is_rdp = models.BooleanField(default=False)
     rdp_name = models.ForeignKey(RdpModels, null=True, blank=True, on_delete=models.RESTRICT)
+
+    class Meta:
+        verbose_name_plural = 'Models'
 
     def __str__(self):
         return self.model_name
 
 class Vendors(models.Model):
     vendor_name = models.CharField(unique=True, max_length=20)
+
+    class Meta:
+        verbose_name_plural = 'Vendors'
+
     def __str__(self):
         return self.vendor_name
 
@@ -103,14 +123,20 @@ class PowerSupply(models.Model):
 
 class VendorModels(models.Model):
     vendor_model = models.CharField(unique=True, max_length=20)
+
     def __str__(self):
         return self.vendor_model
 
     class Meta:
         ordering = ('vendor_model',)
+        verbose_name_plural = 'VendorModels'
 
 class Consoles(models.Model):
     console = models.CharField(unique=True, max_length=5)
+
+    class Meta:
+        verbose_name_plural = 'Consoles'
+
     def __str__(self):
         return self.console
 
@@ -121,6 +147,10 @@ class Comments(models.Model):
     text = models.CharField(max_length=1000, blank=True, null=True)
     #pub_date = models.DateTimeField(default=now().replace(microsecond=0))
     pub_date = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name_plural = 'Comments'
+
     def __str__(self):
         if self.text == None:
             return ''
@@ -141,6 +171,8 @@ class Appliances(models.Model):
     )
     ipmi = models.BooleanField(default=False)
 
+    class Meta:
+        verbose_name_plural = 'Appliances'
 
     def __str__(self):
         return self.appliance
@@ -154,6 +186,9 @@ class Ram(models.Model):
             MaxValueValidator(4096, message='Слишком большое значение(макс. 4096)'),
         ]
     )
+
+    class Meta:
+        verbose_name_plural = 'Ram'
 
     def __str__(self):
         return str(self.ram) + 'G'
@@ -234,6 +269,7 @@ class Units(models.Model):
             ('can_view_unit', 'view unit'),
             ('can_set_owner', 'owner unit'),
         )
+        verbose_name_plural = 'Units'
 
     def __str__(self):
         return f'{self.rack.location}_{self.rack.rack_id}#{self.model}#{self.unit_num}U'
