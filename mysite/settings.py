@@ -33,8 +33,6 @@ ALLOWED_HOSTS = [
     '*',
     '127.0.0.1',
     '10.212.64.79',
-    '10.212.130.57',
-    'www.nodebooker.ru',
 ]
 
 MEDIA_URL = ''
