@@ -1586,6 +1586,7 @@ input[type="text"].space_input:not(.browser-default):disabled {
 .rack_vis span {
     display: inline-block;
     min-width: 150px;
+    line-height: 1.6em;
 }
 
 .rack_vis_td_hover {
@@ -1595,6 +1596,12 @@ input[type="text"].space_input:not(.browser-default):disabled {
 .unit_filled {
     //background-color: #2e3b8a !important;
     background-color: #2e3b8a;
+    color: white;
+    font-weight: bold;
+}
+
+.unit_filled_passive {
+    background-color: black;
     color: white;
     font-weight: bold;
 }
@@ -1625,4 +1632,11 @@ input[type="text"].space_input:not(.browser-default):disabled {
     width: 8px;
     height: 8px;
     border-radius: 8px;
+}
+
+.dis_field {
+  color: #6a6a6a !important;
+  font-style: oblique !important;
+  border: 1px solid #eee !important;
+  cursor: default !important;
 }
