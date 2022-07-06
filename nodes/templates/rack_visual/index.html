@@ -46,7 +46,9 @@
             {% if u.must_continue %}
                 <!-- continue -->
             {% else %}
-                {% if u.model.is_rdp %}
+                {% if not u.model.active %}
+                    <td class="unit_filled_passive" title="{{u.comment}}">
+                {% elif u.model.is_rdp %}
                     <td class="unit_filled" title="{{u.comment}}">
                 {% else %}
                     <td class="unit_filled not_rdp_eqp" title="{{u.comment}}">

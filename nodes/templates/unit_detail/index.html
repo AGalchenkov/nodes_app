@@ -151,12 +151,47 @@
 
 <script>
     $(document).ready(function(){
+        const ignore_fields = ["unit_num", "rack", "modified", "modified_by", "comment"]
         $(function () {
             $("#id_expired_date").datetimepicker({
                 format: 'd-m-Y H:i',
             });
         });
+        var passive_model = {{passive_model|safe}}
+        if (passive_model.includes( $("#id_model option:selected").text() )) {
+            $('select').each(function() {
+                    if (!$(this).attr("id").includes('id_model')) {
+                        $(this).prop("disabled", true).addClass('dis_field')
+                    }
+                    $("input[type=text], input[type=number], input[type=checkbox]").addClass('dis_field').prop("disabled", true)
+                })
+        }
 
+        $("#id_model").change(function(e) {
+            if (passive_model.includes( $("#id_model option:selected").text() )) {
+                $('select').each(function() {
+                    if (!$(this).attr("id").includes('id_model')) {
+                        $(this).prop("disabled", true).addClass('dis_field')
+                    }
+                    $("input[type=text], input[type=number], input[type=checkbox]").addClass('dis_field').prop("disabled", true)
+                })
+            }else {
+                $('select').each(function() {
+                    if (!$(this).attr("id").includes('id_model')) {
+                        $(this).prop("disabled", false).removeClass('dis_field')
+                    }
+                    $("input[type=text], input[type=number], input[type=checkbox]").each(function () {
+                      if ($(this).hasClass('space_input')) {
+                            return;
+                      }
+                      if (ignore_fields.some(e1 => $(this).attr("id").includes(e1))) {
+                            return;
+                      }
+                      $(this).prop("disabled", false).removeClass('dis_field')
+                    })
+                })
+            }
+        })
 
         var elem_height = $('.unit_dtl_main_conteiner').outerHeight( false )
         var pos = $('.unit_dtl_main_conteiner').position()

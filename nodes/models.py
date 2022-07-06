@@ -323,6 +323,9 @@ class UnitForm(ModelForm):
     modified_by = CharField(disabled=True, required=False)
     mng_ip = Field(required=False, error_messages={'invalid': 'Введите верный ipv4/ipv6 адрес.'})
     ipmi_bmc = Field(required=False, error_messages={'invalid': 'Введите верный ipv4/ipv6 адрес.'})
+    #g10 = Field(required=False)
+    #g40 = Field(required=False)
+    #g100 = Field(required=False)
     #ram = CharField(required=False, disabled=True)
     field_order = [
         'in_use', 'owner', 'rack', 'unit_num', 'model', 'vendor', 'power', 'vendor_model',
@@ -398,6 +401,7 @@ class UnitForm(ModelForm):
                 continue
 
     def clean(self):
+        passive_model = Models.objects.values_list('model_name', flat=True).filter(active=False)
         other_unit_used_list = []
         user = self.user
         cleaned_data = super().clean()
@@ -409,7 +413,7 @@ class UnitForm(ModelForm):
         if comment in self.changed_data:
             cleaned_data['comment'] = Units.objects.get(id=comment).comment
         mng_ip = cleaned_data.get('mng_ip')
-        if 'mng_ip' in self.changed_data:
+        if mng_ip and 'mng_ip' in self.changed_data:
             try:
                 if ping(mng_ip):
                     self.instance.is_avaliable = True
@@ -458,7 +462,21 @@ class UnitForm(ModelForm):
         expired_date = cleaned_data.get('expired_date')
         old_model = Units.objects.get(rack=rack, unit_num=unit_num).model
         old_model_units_takes = old_model.units_takes if hasattr(old_model, 'units_takes') else 0
-
+        if model:
+            if model.model_name in list(passive_model):
+                self.cleaned_data['g10'] = 0
+                self.cleaned_data['g40'] = 0
+                self.cleaned_data['g100'] = 0
+                print('@#$%^&*(@#$%^&*(#$%^&*(#$%^&*(#$%^&*#$%^&*')
+                #self.cleaned_data['appliance'] = None
+                #self.changed_data.append('model')
+                if old_model_units_takes > 1:
+                    self.remove_fatboy(unit_num, old_model, rack)
+                return self.cleaned_data
+            if sn == '':
+                raise ValidationError('Модель и серийный номер заполняются вместе')
+            if vendor == None:
+                raise ValidationError('Модель и вендор заполняются вместе')
         if owner:
             if not expired_date:
                 self.cleaned_data['expired_date'] = datetime.now() + timedelta(hours=8)
@@ -482,11 +500,6 @@ class UnitForm(ModelForm):
             raise ValidationError('Укажите модель')
         if ipmi_bmc and not has_ipmi:
             raise ValidationError("Укажите 'has_ipmi' если указан 'ipmi_bmc' ip")
-        if model:
-            if sn == '':
-                raise ValidationError('Модель и серийный номер заполняются вместе')
-            if vendor == None:
-                raise ValidationError('Модель и вендор заполняются вместе')
         if sn:
             if model == None:
                 raise ValidationError('Модель и серийный номер заполняются вместе')
@@ -512,7 +525,7 @@ class UnitForm(ModelForm):
                     self.add_fatboy(unit_num, model, rack)
                 elif model.units_takes == 1 and old_model_units_takes > 1:
                     self.remove_fatboy(unit_num, old_model, rack)
-        elif  model == None and old_model_units_takes > 1:
+        elif model == None and old_model_units_takes > 1:
             self.remove_fatboy(unit_num, old_model, rack)
 
         return self.cleaned_data

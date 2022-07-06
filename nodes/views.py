@@ -108,6 +108,7 @@ def rack(request, rack_id, **kwargs):
 @flask_session_required
 @flask_permission_required()
 def unit_detail(request, rack_id, unit_num, **kwargs):
+    passive_model = Models.objects.values_list('model_name', flat=True).filter(active=False)
     #custom_messages = kwargs.get('messages', None)
     if Units.objects.get(rack_id=rack_id, unit_num=unit_num).used_by_unit:
         return HttpResponseRedirect(reverse('nodes:rack', args=[rack_id]))
@@ -143,9 +144,12 @@ def unit_detail(request, rack_id, unit_num, **kwargs):
             # c1.save()
             unit_form = UnitForm(user=kwargs['user'], role=kwargs['role'], request=request,
                                  instance=unit, data=request.POST, initial={'comment': None})
+        print(f'UNIT_FORM                    ########### {unit_form}')
         if unit_form.is_valid():
             if unit_form.has_changed():
                 u = unit_form.save(commit=False)
+                if u.model and u.model.model_name in list(passive_model):
+                    u.appliance = None
                 u.save()
                 if u.owner and 'expired_date' in unit_form.changed_data:
                     try:
@@ -174,6 +178,7 @@ def unit_detail(request, rack_id, unit_num, **kwargs):
                         messages.info(request, 'Юнит забронирован менее чем на 15 минут')
                 return HttpResponseRedirect(reverse('nodes:unit_detail', args=[rack_id, unit_num]))
             else:
+                print(f'CLEANDE DATA {unit_form.cleaned_data}')
                 unit_form = UnitForm(user=kwargs['user'], role=kwargs['role'],
                                      request=request, instance=unit, initial=unit_form.cleaned_data)
     rebase_form = UnitRebaseForm(instance=unit)
@@ -182,6 +187,7 @@ def unit_detail(request, rack_id, unit_num, **kwargs):
         'rack_id': rack_id,
         'rack': rack,
         'unit_num': unit_num,
+        'passive_model': list(passive_model),
         'rebase_form': rebase_form,
         'form': unit_form,
         'role': kwargs['role'],
@@ -195,6 +201,7 @@ def unit_detail(request, rack_id, unit_num, **kwargs):
 @flask_permission_required()
 def rack_vizual(request, rack_id, **kwargs):
     units = Units.objects.filter(rack_id=rack_id)
+    passive_model = Models.objects.values_list('model_name', flat=True).filter(active=False)
     Units.must_continue = False
     Units.rowspan = 0
     Units.used_model = ''
@@ -213,6 +220,7 @@ def rack_vizual(request, rack_id, **kwargs):
     context = {
         'rack_id': rack_id,
         'units': units,
+        'passive_model': list(passive_model),
         'role': kwargs['role'],
         'user': kwargs['user'],
     }
