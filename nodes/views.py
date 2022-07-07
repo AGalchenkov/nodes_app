@@ -139,17 +139,18 @@ def unit_detail(request, rack_id, unit_num, **kwargs):
                 unit_form = UnitForm(user=kwargs['user'], role=kwargs['role'],
                                      request=request, instance=unit,
                                      data=request.POST, initial={'comment': unit.comment.text})
+                a = 1
         else:
             # c1 = Comments(text=None, author=None, units=unit, pub_date=None)
             # c1.save()
             unit_form = UnitForm(user=kwargs['user'], role=kwargs['role'], request=request,
-                                 instance=unit, data=request.POST, initial={'comment': None})
-        print(f'UNIT_FORM                    ########### {unit_form}')
+                                 instance=unit, data=request.POST, initial={'comment': None})  
         if unit_form.is_valid():
             if unit_form.has_changed():
                 u = unit_form.save(commit=False)
                 if u.model and u.model.model_name in list(passive_model):
                     u.appliance = None
+                    u.owner = None
                 u.save()
                 if u.owner and 'expired_date' in unit_form.changed_data:
                     try:

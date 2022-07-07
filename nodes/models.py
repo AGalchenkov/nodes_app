@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from email.policy import default
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -234,19 +235,19 @@ class Units(models.Model):
     ipmi_is_avaliable = models.BooleanField(default=False)
     appliance = models.ForeignKey(Appliances, null=True, blank=True, default=None,  on_delete=models.RESTRICT)
     rdp_firmware = models.CharField(blank=True, max_length=30)
-    g10 = models.IntegerField(default=0,
+    g10 = models.IntegerField(default=0, blank=True,
         validators=[
             MinValueValidator(0, message='Отрицательное значение'),
             MaxValueValidator(52, message='Максимальное значение 52'),
         ]
     )
-    g40 = models.IntegerField(default=0,
+    g40 = models.IntegerField(default=0, blank=True,
         validators=[
             MinValueValidator(0, message='Отрицательное значение'),
             MaxValueValidator(52, message='Максимальное значение 52'),
         ]
     )
-    g100 = models.IntegerField(default=0,
+    g100 = models.IntegerField(default=0, blank=True,
         validators=[
             MinValueValidator(0, message='Отрицательное значение'),
             MaxValueValidator(52, message='Максимальное значение 52'),
@@ -323,9 +324,9 @@ class UnitForm(ModelForm):
     modified_by = CharField(disabled=True, required=False)
     mng_ip = Field(required=False, error_messages={'invalid': 'Введите верный ipv4/ipv6 адрес.'})
     ipmi_bmc = Field(required=False, error_messages={'invalid': 'Введите верный ipv4/ipv6 адрес.'})
-    #g10 = Field(required=False)
-    #g40 = Field(required=False)
-    #g100 = Field(required=False)
+    #g10 = Field()
+    #g40 = Field()
+    #g100 = Field()
     #ram = CharField(required=False, disabled=True)
     field_order = [
         'in_use', 'owner', 'rack', 'unit_num', 'model', 'vendor', 'power', 'vendor_model',
@@ -464,15 +465,14 @@ class UnitForm(ModelForm):
         old_model_units_takes = old_model.units_takes if hasattr(old_model, 'units_takes') else 0
         if model:
             if model.model_name in list(passive_model):
-                self.cleaned_data['g10'] = 0
-                self.cleaned_data['g40'] = 0
-                self.cleaned_data['g100'] = 0
-                print('@#$%^&*(@#$%^&*(#$%^&*(#$%^&*(#$%^&*#$%^&*')
+                #cleaned_data['g10'] = 0
+                #cleaned_data['g40'] = 0
+                #cleaned_data['g100'] = 0
                 #self.cleaned_data['appliance'] = None
                 #self.changed_data.append('model')
                 if old_model_units_takes > 1:
                     self.remove_fatboy(unit_num, old_model, rack)
-                return self.cleaned_data
+                return cleaned_data
             if sn == '':
                 raise ValidationError('Модель и серийный номер заполняются вместе')
             if vendor == None:
