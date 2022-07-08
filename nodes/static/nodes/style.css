@@ -1640,3 +1640,8 @@ input[type="text"].space_input:not(.browser-default):disabled {
   border: 1px solid #eee !important;
   cursor: default !important;
 }
+
+.required_alert_field {
+    border: 1px solid #aa4141 !important;
+    
+}
