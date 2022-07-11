@@ -185,6 +185,18 @@
                     $("input[type=text], input[type=number], input[type=checkbox]").addClass('dis_field').prop("disabled", true)
                 })
         }
+        $("#id_expired_date").change(function(e) {
+            if ($(this).val()) {
+                if ($("#id_owner").find(":selected").text() == empty_choise) {
+                    $("span").find( "[aria-labelledby='select2-id_owner-container']" ).addClass("required_alert_field")
+                }else{
+                    $("span").find( "[aria-labelledby='select2-id_owner-container']" ).removeClass("required_alert_field")
+                }
+            }else{
+                $("span").find( "[aria-labelledby='select2-id_owner-container']" ).removeClass("required_alert_field")
+            }
+
+        })
         $("#id_mng_ip, #id_ipmi_bmc").keyup(function(e) {
             var a = $(this).val().match(ipv46_pattern)
             if ($(this).val()) {
