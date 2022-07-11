@@ -168,11 +168,32 @@
                 })
         }
 
-        $("#id_model").change(function(e) {
-            if ( $("#id_model option:selected").text() == empty_choise) {
-                $("span").find( "[aria-labelledby='select2-id_vendor-container']" ).removeClass("required_alert_field")
+        $("#id_model, #id_vendor, #id_sn").change(function(e) {
+            if (($("#id_vendor, #id_model").find(":selected").text() + $("#id_sn").val()) == '------------------') {
+                $("#id_vendor, #id_model").find(":selected").each(function() {
+                    var id = $(this).parent().attr("id")
+                    $("span").find( "[aria-labelledby='select2-" + id + "-container']" ).removeClass("required_alert_field")
+                })
+                $("#id_sn").removeClass("required_alert_field")
                 return
+            }else{
+                $("#id_vendor, #id_model").find(":selected").each(function() {
+                    var id = $(this).parent().attr("id")
+                    if ($(this).text() == empty_choise) {
+                        $("span").find( "[aria-labelledby='select2-" + id + "-container']" ).addClass("required_alert_field")
+                    }else{
+                        $("span").find( "[aria-labelledby='select2-" + id + "-container']" ).removeClass("required_alert_field")
+                    }
+                })
+                if ($("#id_sn").val() == "") {
+                    $("#id_sn").addClass("required_alert_field")
+                }else{
+                    $("#id_sn").removeClass("required_alert_field")
+                }
             }
+        })
+
+        $("#id_model").change(function(e) {
             if (passive_model.includes( $("#id_model option:selected").text() )) {
                 $('select').each(function() {
                     if (!$(this).attr("id").includes('id_model')) {
@@ -195,26 +216,6 @@
                       $(this).prop("disabled", false).removeClass('dis_field')
                     })
                 })
-                if ( $("#id_vendor option:selected").text()  == empty_choise ) {
-                    $("span").find( "[aria-labelledby='select2-id_vendor-container']" ).addClass("required_alert_field")
-                }else{
-                    $("span").find( "[aria-labelledby='select2-id_vendor-container']" ).removeClass("required_alert_field")
-                }
-            }
-        })
-        $("#id_vendor").change(function(e) {
-            var selected_option_value = $(this).find(":selected").text();
-            if ( (selected_option_value == empty_choise) ) {
-                if ($("#id_model").find(":selected").text()  == empty_choise ) {
-                    $("span").find( "[aria-labelledby='select2-id_vendor-container']" ).removeClass("required_alert_field")
-                }else{
-                    $("span").find( "[aria-labelledby='select2-id_vendor-container']" ).addClass("required_alert_field")
-                }
-            }else{
-                if ($("#id_model").find(":selected").text()  == empty_choise ) {
-                    $("span").find( "[aria-labelledby='select2-id_model-container']" ).addClass("required_alert_field")
-                }
-                $("span").find( "[aria-labelledby='select2-id_vendor-container']" ).removeClass("required_alert_field")
             }
         })
 
