@@ -4,6 +4,7 @@ ping3
 django-queryset-csv
 six
 telethon
+pexpect
 pillow
 django-webpush
 django_simple_history
